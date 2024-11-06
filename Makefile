@@ -9,6 +9,7 @@ venv:
 	pip install uv
 	uv venv
 	$(ACTIVATE) && uv pip install -r requirements.txt -r requirements-test.txt -r requirements-dev.txt
+	$(ACTIVATE) && pre-commit install
 
 .PHONY: clean
 clean:
