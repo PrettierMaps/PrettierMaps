@@ -1,0 +1,34 @@
+stages:
+  - lint
+
+before_script:
+  - make venv
+
+ruff:
+  stage: lint
+  image: python:3.12
+  script:
+    - make ruff
+  only:
+    changes:
+      - tests/**/*
+      - map_genie/**/*
+mypy:
+  stage: lint
+  image: python:3.12
+  script:
+    - make mypy
+  only:
+    changes:
+      - tests/**/*
+      - map_genie/**/*
+
+isort:
+  stage: lint
+  image: python:3.12
+  script:
+    - make isort
+  only:
+    changes:
+      - tests/**/*
+      - map_genie/**/*

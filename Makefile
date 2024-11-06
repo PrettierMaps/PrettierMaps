@@ -18,3 +18,16 @@ clean:
 	rm -rf .hypothesis
 	rm -rf .mypy_cache
 	rm -rf .ruff_cache
+
+.PHONY: isort
+isort:
+	$(ACTIVATE) && isort .
+
+.PHONY: ruff
+ruff:
+	$(ACTIVATE) && ruff check .
+	$(ACTIVATE) && ruff format .
+
+.PHONY: mypy
+mypy:
+	$(ACTIVATE) && mypy .
