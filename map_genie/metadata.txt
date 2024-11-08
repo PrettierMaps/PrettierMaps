@@ -1,0 +1,14 @@
+[general]
+name=Map Genie
+description=Style your QGIS maps
+about=Map Genie is a plugin that allows you to style your QGIS maps with ease.
+version=0.1.0
+qgisMinimumVersion=3.0
+
+author=Matthew Mckee
+email=...
+
+repository=...
+
+icon=:...
+
