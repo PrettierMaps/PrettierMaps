@@ -2,9 +2,7 @@
 name = "map_genie"
 version = "0.1.0"
 description="Style Maps Easily in GQIS"
-dependencies = [
-    
-]
+dependencies = []
 authors = [
     {name = "Matthew McKee"},
 ]
