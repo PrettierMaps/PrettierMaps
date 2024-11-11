@@ -7,6 +7,7 @@ class MapGeniePlugin:
         self.iface = iface
 
     def initGui(self):
+        # TODO: Add icon
         self.action = QAction(
             QIcon("map_genie:icon.png"), "MapGenie", self.iface.mainWindow()
         )
