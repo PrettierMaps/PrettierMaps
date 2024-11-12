@@ -32,3 +32,7 @@ ruff:
 .PHONY: mypy
 mypy:
 	$(ACTIVATE) && mypy .
+
+.PHONY: zip_plugin
+zip_plugin:
+	zip -r map_genie.zip map_genie

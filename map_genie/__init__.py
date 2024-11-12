@@ -1,7 +1,10 @@
-from qgis.gui import QgisInterface
+from typing import TYPE_CHECKING
 
 from .plugin import MapGeniePlugin
 
+if TYPE_CHECKING:
+    from qgis.gui import QgisInterface
 
-def classFactory(iface: QgisInterface) -> MapGeniePlugin:
+
+def classFactory(iface: "QgisInterface") -> MapGeniePlugin:
     return MapGeniePlugin(iface)
