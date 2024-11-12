@@ -18,6 +18,7 @@ clean:
 	rm -rf .hypothesis
 	rm -rf .mypy_cache
 	rm -rf .ruff_cache
+	find . -type d -name "__pycache__" -exec rm -rf {} +
 
 .PHONY: isort
 isort:

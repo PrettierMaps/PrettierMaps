@@ -1,6 +1,6 @@
 from qgis.gui import QgisInterface
 
-from .ui import MapGeniePlugin
+from .plugin import MapGeniePlugin
 
 
 def classFactory(iface: QgisInterface) -> MapGeniePlugin:

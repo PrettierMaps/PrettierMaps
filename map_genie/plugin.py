@@ -1,6 +1,8 @@
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtGui import QAction, QIcon, QPainter
 
+from .config import LOGO_PATH
+
 
 class MapGeniePlugin:
     def __init__(self, iface: QgisInterface):
@@ -9,7 +11,7 @@ class MapGeniePlugin:
     def initGui(self):
         # TODO: Add icon
         self.action = QAction(
-            QIcon("map_genie:icon.png"), "MapGenie", self.iface.mainWindow()
+            QIcon(str(LOGO_PATH)), "MapGenie", self.iface.mainWindow()
         )
         self.action.setObjectName("mapGenieAction")
         self.action.setWhatsThis("Configuration for MapGenie")
