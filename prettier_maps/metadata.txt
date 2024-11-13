@@ -11,5 +11,5 @@ email=2772171m@student.gla.ac.uk, 2763283s@student.gla.ac.uk, 2521002s@student.g
 repository=https://github.com/PrettierMaps/PrettierMaps
 
 icon=:...
-homepage=...
+homepage=https://prettiermaps.github.io/PrettierMaps/
 
