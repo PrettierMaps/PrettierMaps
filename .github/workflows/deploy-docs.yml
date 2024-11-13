@@ -1,29 +1,35 @@
-name: Deploy Documentation
+name: Publish Docs
 
 on:
-    workflow_dispatch:
     push:
-        branches:
-            - main
-            - develop
+        branches: [main]
 
 jobs:
-    deploy:
+    publish-docs:
         runs-on: ubuntu-latest
+        name: Docs builder and publisher
 
         steps:
             - name: Checkout code
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
 
             - name: Set up Python
               uses: actions/setup-python@v2
               with:
-                  python-version: "3.12"
+                  python-version: 3.12.4
 
-            - name: Install MkDocs
+            - name: Install dependencies
               run: |
                   pip install -r requirements-docs.txt
 
-            - name: Build and deploy docs
-              run: |
-                  mkdocs gh-deploy --force --clean
+            - name: Build docs
+              run: mkdocs build
+
+            - name: Deploy
+              uses: peaceiris/actions-gh-pages@v4
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: site
+                  publish_branch: gh-pages
+                  keep_files: false
+                  force_orphan: true
