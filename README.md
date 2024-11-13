@@ -1,4 +1,4 @@
-# JH02 Main - Map Genie
+# JH02 Main - Prettier Maps
 
 ## Developing the plugin locally
 
