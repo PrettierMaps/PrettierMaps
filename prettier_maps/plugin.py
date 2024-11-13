@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from qgis.gui import QgisInterface
 
 
-class MapGeniePlugin:
+class PrettierMapsPlugin:
     def __init__(self, iface: "QgisInterface"):
         self.iface = iface
 
@@ -20,9 +20,9 @@ class MapGeniePlugin:
         # TODO: Add icon
         icon = QIcon(str(LOGO_PATH))
 
-        self.action = QAction(icon, "MapGenie", self.iface.mainWindow())
-        self.action.setObjectName("mapGenieAction")
-        self.action.setWhatsThis("Configuration for MapGenie")
+        self.action = QAction(icon, "PrettierMaps", self.iface.mainWindow())
+        self.action.setObjectName("prettierMapsAction")
+        self.action.setWhatsThis("Configuration for PrettierMaps")
         self.action.setStatusTip("This is status tip")
 
         self.action.triggered.connect(self.open_dialog)
@@ -36,4 +36,4 @@ class MapGeniePlugin:
         dialog.exec_()
 
     def renderTest(self, painter: QPainter) -> None:
-        print("MapGeniePlugin: renderTest called!")
+        print("PrettierMapsPlugin: renderTest called!")

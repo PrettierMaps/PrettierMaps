@@ -35,4 +35,4 @@ mypy:
 
 .PHONY: zip_plugin
 zip_plugin:
-	zip -r map_genie.zip map_genie
+	zip -r prettier_maps.zip prettier_maps

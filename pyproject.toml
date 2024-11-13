@@ -1,5 +1,5 @@
 [project]
-name = "map_genie"
+name = "prettier_maps"
 version = "0.1.0"
 description="Style Maps Easily in GQIS"
 dependencies = []

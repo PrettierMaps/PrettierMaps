@@ -12,7 +12,7 @@ ruff:
   only:
     changes:
       - tests/**/*
-      - map_genie/**/*
+      - prettier_maps/**/*
 mypy:
   stage: lint
   image: python:3.12
@@ -21,7 +21,7 @@ mypy:
   only:
     changes:
       - tests/**/*
-      - map_genie/**/*
+      - prettier_maps/**/*
 
 isort:
   stage: lint
@@ -31,4 +31,4 @@ isort:
   only:
     changes:
       - tests/**/*
-      - map_genie/**/*
+      - prettier_maps/**/*
