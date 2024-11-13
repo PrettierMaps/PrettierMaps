@@ -36,3 +36,7 @@ mypy:
 .PHONY: zip_plugin
 zip_plugin:
 	zip -r prettier_maps.zip prettier_maps
+
+.PHONY: docs
+docs:
+	$(ACTIVATE) && mkdocs build

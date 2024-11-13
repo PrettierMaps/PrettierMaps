@@ -6,7 +6,8 @@
         "mypy",
         "pyproject",
         "Qgis",
-        "testplug"
+        "testplug",
+        "venv"
     ],
     "python.analysis.diagnosticSeverityOverrides": {
     "reportMissingTypeStubs": "none",
