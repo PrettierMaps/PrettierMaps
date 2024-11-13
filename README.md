@@ -1,5 +1,7 @@
 # JH02 Main - Map Genie
 
+Style your maps in QGIS.
+
 ## Developing the plugin locally
 
 ### Running the plugin in QGIS
