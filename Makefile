@@ -8,7 +8,7 @@ endif
 venv:
 	pip install uv
 	uv venv
-	$(ACTIVATE) && uv pip install -r requirements.txt -r requirements-test.txt -r requirements-dev.txt
+	$(ACTIVATE) && uv pip install -r requirements.txt -r requirements-test.txt -r requirements-dev.txt -r requirements-docs.txt
 	$(ACTIVATE) && pre-commit install
 
 .PHONY: clean
@@ -36,3 +36,7 @@ mypy:
 .PHONY: zip_plugin
 zip_plugin:
 	zip -r prettier_maps.zip prettier_maps
+
+.PHONY: docs
+docs:
+	$(ACTIVATE) && mkdocs build

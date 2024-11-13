@@ -1,2 +1,46 @@
-include:
-  - local: ".gitlab/ci/lint.yml"
+stages:
+  - lint
+  - build_docs
+
+before_script:
+  - make venv
+
+ruff:
+  stage: lint
+  image: python:3.12
+  script:
+    - make ruff
+  only:
+    changes:
+      - tests/**/*
+      - prettier_maps/**/*
+mypy:
+  stage: lint
+  image: python:3.12
+  script:
+    - make mypy
+  only:
+    changes:
+      - tests/**/*
+      - prettier_maps/**/*
+
+isort:
+  stage: lint
+  image: python:3.12
+  script:
+    - make isort
+  only:
+    changes:
+      - tests/**/*
+      - prettier_maps/**/*
+
+build_docs:
+  stage: build_docs
+  image: python:3.12
+  script:
+    - make docs
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "main"'
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - docs/**/*
