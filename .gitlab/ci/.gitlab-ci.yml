@@ -39,10 +39,8 @@ build_docs:
   image: python:3.12
   script:
     - make docs
-  only:
-    refs:
-      - main
   rules:
+    - if: '$CI_COMMIT_REF_NAME == "main"'
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
         - docs/**/*
