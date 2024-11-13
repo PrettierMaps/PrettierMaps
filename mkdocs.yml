@@ -1,0 +1,31 @@
+site_name: Prettier Maps
+repo_url: https://github.com/PrettierMaps/PrettierMaps
+
+theme:
+  name: material
+  locale: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: slate
+      primary: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: default
+      primary: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.footer
+    - navigation.indexes
+    - content.tabs.link
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+
+extra_css:
+  - stylesheets/extra.css
