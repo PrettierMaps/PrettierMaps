@@ -6,6 +6,7 @@
         "mypy",
         "pyproject",
         "Qgis",
+        "refs",
         "testplug",
         "venv"
     ],

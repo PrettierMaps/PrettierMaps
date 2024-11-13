@@ -40,6 +40,9 @@ build_docs:
   script:
     - make docs
   only:
-    changes:
-      - docs/**/*
-      - prettier_maps/**/*
+    refs:
+      - main
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - docs/**/*
