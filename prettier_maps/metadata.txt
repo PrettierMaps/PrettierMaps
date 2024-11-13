@@ -8,7 +8,8 @@ qgisMinimumVersion=3.0
 author=Matthew Mckee, Fraser Spalding, Nicole Sung, Irene Hanna Anu, Ben Whitehead, Daniel Deneb Mecha Martín
 email=2772171m@student.gla.ac.uk, 2763283s@student.gla.ac.uk, 2521002s@student.gla.ac.uk, 2772146I@student.gla.ac.uk, 2732382w@student.gla.ac.uk, 3050910m@student.gla.ac.uk
 
-repository=...
+repository=https://github.com/PrettierMaps/PrettierMaps
 
 icon=:...
+homepage=...
 
