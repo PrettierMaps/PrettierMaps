@@ -1,0 +1,18 @@
+{
+    "cSpell.words": [
+        "isort",
+        "mypy",
+        "pyproject",
+        "Qgis",
+        "testplug"
+    ],
+    "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingTypeStubs": "none",
+    "reportWildcardImportFromLibrary": "none"
+},
+    "mypy-type-checker.args": [
+        "--strict",
+        "--ignore-missing-imports",
+        "--config-file=pyproject.toml"
+    ]
+}

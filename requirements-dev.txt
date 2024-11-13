@@ -1,0 +1,4 @@
+ruff
+mypy
+isort
+pre-commit
