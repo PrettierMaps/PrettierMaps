@@ -4,6 +4,7 @@
         "fontawesome",
         "isort",
         "mypy",
+        "osgeo",
         "pyproject",
         "Qgis",
         "refs",
