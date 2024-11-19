@@ -1,6 +1,8 @@
 ## Opportunity:
-[What can be improved about the code?]
+<!-- What can be improved about the code? -->
 ## Potential risks:
-[What might you break if/when this refactoring occurs?]
+<!-- What might you break if/when this refactoring occurs? -->
 ## Files:
-[List the relevant files that need refactoring]
+<!-- List the relevant files that need refactoring. -->
+
+/label ~Refactoring
