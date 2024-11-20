@@ -3,7 +3,9 @@ name = "prettier_maps"
 version = "0.1.0"
 description="Style Maps Easily in GQIS"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pyqt5>=5.15.11",
+]
 authors = [
     {name = "Matthew McKee"},
 ]
