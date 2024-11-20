@@ -8,6 +8,7 @@ endif
 venv:
 	pip install uv
 	uv venv
+	$(ACTIVATE) && uv pip install setuptools
 	$(ACTIVATE) && uv pip install -e .[test,dev,docs] --no-build-isolation
 	$(ACTIVATE) && pre-commit install
 
