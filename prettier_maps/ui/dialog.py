@@ -1,6 +1,8 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QLineEdit, QPushButton, QVBoxLayout
 
+from ..core import generate_layers
+
 
 class MainDialog(QDialog):  # type: ignore[misc]
     def __init__(self) -> None:
@@ -22,11 +24,19 @@ class MainDialog(QDialog):  # type: ignore[misc]
         button_layout = QHBoxLayout()
 
         self.add_button = QPushButton("Add to Existing Map", self)
+        self.add_button.clicked.connect(self.add_to_existing_map)
         button_layout.addWidget(self.add_button)
 
         self.create_button = QPushButton("Create New Map", self)
+        self.create_button.clicked.connect(self.create_new_map)
         button_layout.addWidget(self.create_button)
 
         layout.addLayout(button_layout)
 
         self.setLayout(layout)
+
+    def add_to_existing_map(self) -> None:
+        generate_layers(self.text_box.text(), False)
+
+    def create_new_map(self) -> None:
+        generate_layers(self.text_box.text(), True)

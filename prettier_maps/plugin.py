@@ -12,7 +12,6 @@ class PrettierMapsPlugin:
         self.action: QAction | None = None
 
     def initGui(self) -> None:
-        # TODO: Add icon
         icon = QIcon(str(LOGO_PATH))
 
         self.action = QAction(icon, "PrettierMaps", self.iface.mainWindow())
