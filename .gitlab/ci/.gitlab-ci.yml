@@ -2,6 +2,7 @@ stages:
   - lint
   - build_docs
   - deploy
+  - test
 
 before_script:
   - make venv
