@@ -10,7 +10,8 @@ ruff:
   stage: lint
   image: python:3.12
   script:
-    - make ruff
+    - uv run ruff check .
+    - uv run ruff format .
   only:
     changes:
       - tests/**/*
@@ -20,7 +21,7 @@ mypy:
   stage: lint
   image: python:3.12
   script:
-    - make mypy
+    - uv run mypy .
   only:
     changes:
       - tests/**/*
@@ -30,7 +31,7 @@ isort:
   stage: lint
   image: python:3.12
   script:
-    - make isort
+    - uv run isort .
   only:
     changes:
       - tests/**/*

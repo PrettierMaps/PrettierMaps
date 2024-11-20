@@ -10,7 +10,7 @@ authors = [
     {name = "Matthew McKee"},
 ]
 
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
     "ruff>=0.7.4",
     "mypy>=1.13.0",
