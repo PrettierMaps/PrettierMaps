@@ -7,4 +7,4 @@
 ## Suggested updates:
 <!-- Detail the work that needs to be done the update the documentation -->
 
-label ~Documentation
+/label ~Documentation

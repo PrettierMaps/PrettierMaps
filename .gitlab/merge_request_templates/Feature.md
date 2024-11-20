@@ -5,4 +5,4 @@
 ## Issues to close:
 <!-- Link any additional issues this branch closes -->
 
-lebel ~Enchancement
+/label ~Enchancement
