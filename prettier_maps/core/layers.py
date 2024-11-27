@@ -47,9 +47,7 @@ def iterate_groups_and_layers(root: QgsLayerTree):
 
         vector_tile_layers = get_layers_from_group(child)
         for layer in vector_tile_layers:
-            layer_mapping: dict[GroupName, list[tuple[LayerName, int]]] = defaultdict(
-                list
-            )
+            layer_mapping: dict[GroupName, list[int]] = defaultdict(list)
             map_layer = layer.layer()
             print(f"{layer!r}, {map_layer!r}")
             if not isinstance(map_layer, QgsVectorTileLayer):
@@ -61,33 +59,26 @@ def iterate_groups_and_layers(root: QgsLayerTree):
                 symbol = style.symbol()
                 if symbol is None:
                     continue
-                layer_mapping[style.layerName()].append((style.styleName(), i))
+                layer_mapping[style.layerName()].append(i)
 
             for new_group_name, styles in layer_mapping.items():
-                new_group = child.addGroup(new_group_name)
-                assert new_group is not None
-                for layer_name, style_index in styles:
-                    new_map_layer = map_layer.clone()
-                    if new_map_layer is None:
-                        continue
+                new_map_layer = map_layer.clone()
+                if new_map_layer is None:
+                    continue
+                new_map_layer.setName(new_group_name)
+                renderer = new_map_layer.renderer()
+                if renderer is None:
+                    continue
 
-                    renderer = new_map_layer.renderer()
-                    if renderer is None:
-                        continue
+                assert isinstance(renderer, QgsVectorTileBasicRenderer)
 
-                    assert isinstance(renderer, QgsVectorTileBasicRenderer)
+                current_styles = renderer.styles()
+                renderer.setStyles(
+                    [current_styles[style_index] for style_index in styles]
+                )
 
-                    current_styles = renderer.styles()
-                    renderer.setStyles([current_styles[style_index]])
-                    new_map_layer.setName(layer_name)
-                    proj.addMapLayer(new_map_layer, False)
-
-                    new_group.addLayer(new_map_layer)
-
-                print()
-
-                for layer in get_layers_from_group(new_group):
-                    print(layer, layer.layer())
+                proj.addMapLayer(new_map_layer, False)
+                child.addLayer(new_map_layer)
 
 
 iterate_groups_and_layers(root)
