@@ -1,8 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QDialog, QHBoxLayout, QLineEdit, QPushButton, QVBoxLayout
-
-from ..core import generate_layers
+from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 
 
 class MainDialog(QDialog):  # type: ignore[misc]
@@ -14,36 +12,27 @@ class MainDialog(QDialog):  # type: ignore[misc]
         return QFont("Arial", 12)
 
     def init_ui(self) -> None:
-        self.setWindowTitle("Main Dialog")
-        self.resize(500, 300)
+        self.setWindowTitle("Prettier Maps")
+        self.resize(400, 100)
 
         layout = QVBoxLayout()
 
-        self.text_box = QLineEdit(self)
-        self.text_box.setPlaceholderText("Enter prompt")
-        self.text_box.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.text_box.setFixedHeight(100)
-        self.text_box.setFont(self.get_font())
-        layout.addWidget(self.text_box, 0)
+        instructions = QLabel(
+            "How to use:\n"
+            "1. Select a Map from Map Tiler, then run here to split layers into "
+            "manageable sections\n"
+            "2. Click 'Split Layers' below"
+        )
+        instructions.setFont(self.get_font())
+        instructions.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        layout.addWidget(instructions)
 
-        button_layout = QHBoxLayout()
-
-        self.add_button = QPushButton("Add to Existing Map", self)
-        self.add_button.setFont(self.get_font())
-        self.add_button.clicked.connect(self.add_to_existing_map)
-        button_layout.addWidget(self.add_button)
-
-        self.create_button = QPushButton("Create New Map", self)
-        self.create_button.setFont(self.get_font())
-        self.create_button.clicked.connect(self.create_new_map)
-        button_layout.addWidget(self.create_button)
-
-        layout.addLayout(button_layout)
+        self.split_button = QPushButton("Split Layers", self)
+        self.split_button.setFont(self.get_font())
+        self.split_button.clicked.connect(self.split_layers)
+        layout.addWidget(self.split_button, alignment=Qt.AlignmentFlag.AlignLeft)
 
         self.setLayout(layout)
 
-    def add_to_existing_map(self) -> None:
-        generate_layers(self.text_box.text(), False)
-
-    def create_new_map(self) -> None:
-        generate_layers(self.text_box.text(), True)
+    def split_layers(self) -> None:
+        pass
