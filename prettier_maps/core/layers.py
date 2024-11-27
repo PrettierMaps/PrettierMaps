@@ -1,24 +1,20 @@
 from collections import defaultdict
+from typing import TYPE_CHECKING
 
-from qgis.core import (
-    QgsLayerTree,
-    QgsLayerTreeGroup,
-    QgsLayerTreeLayer,
-    QgsProject,
-    QgsVectorTileBasicRenderer,
-    QgsVectorTileBasicRendererStyle,
-    QgsVectorTileLayer,
-)
-
-instance = QgsProject.instance()
-assert instance is not None
-root = instance.layerTreeRoot()
-assert root is not None
+if TYPE_CHECKING:
+    from qgis.core import (
+        QgsLayerTreeGroup,
+        QgsLayerTreeLayer,
+        QgsVectorTileBasicRendererStyle,
+        QgsVectorTileLayer,
+    )
 
 
 def get_styles_from_vector_tile_layer(
-    layer: QgsVectorTileLayer,
-) -> list[QgsVectorTileBasicRendererStyle]:
+    layer: "QgsVectorTileLayer",
+) -> list["QgsVectorTileBasicRendererStyle"]:
+    from qgis.core import QgsVectorTileBasicRenderer
+
     renderer = layer.renderer()
     if renderer is None:
         return []
@@ -29,15 +25,24 @@ def get_styles_from_vector_tile_layer(
     return styles  # type: ignore[no-any-return]
 
 
-def get_layers_from_group(group: QgsLayerTreeGroup) -> list[QgsLayerTreeLayer]:
+def get_layers_from_group(group: "QgsLayerTreeGroup") -> list["QgsLayerTreeLayer"]:
+    from qgis.core import QgsLayerTreeLayer
+
     return [layer for layer in group.children() if isinstance(layer, QgsLayerTreeLayer)]
 
 
-GroupName = str
-LayerName = str
+def iterate_layers_and_split_layers():
+    from qgis.core import (
+        QgsLayerTreeGroup,
+        QgsProject,
+        QgsVectorTileBasicRenderer,
+        QgsVectorTileLayer,
+    )
 
-
-def iterate_groups_and_layers(root: QgsLayerTree):
+    instance = QgsProject.instance()
+    assert instance is not None
+    root = instance.layerTreeRoot()
+    assert root is not None
     proj = QgsProject().instance()
     assert proj is not None
 
@@ -47,9 +52,8 @@ def iterate_groups_and_layers(root: QgsLayerTree):
 
         vector_tile_layers = get_layers_from_group(child)
         for layer in vector_tile_layers:
-            layer_mapping: dict[GroupName, list[int]] = defaultdict(list)
+            layer_mapping: dict[str, list[int]] = defaultdict(list)
             map_layer = layer.layer()
-            print(f"{layer!r}, {map_layer!r}")
             if not isinstance(map_layer, QgsVectorTileLayer):
                 continue
 
@@ -79,6 +83,3 @@ def iterate_groups_and_layers(root: QgsLayerTree):
 
                 proj.addMapLayer(new_map_layer, False)
                 child.addLayer(new_map_layer)
-
-
-iterate_groups_and_layers(root)

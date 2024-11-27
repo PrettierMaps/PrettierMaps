@@ -2,6 +2,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 
+from ..core import iterate_layers_and_split_layers
+
 
 class MainDialog(QDialog):  # type: ignore[misc]
     def __init__(self) -> None:
@@ -29,10 +31,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         self.split_button = QPushButton("Split Layers", self)
         self.split_button.setFont(self.get_font())
-        self.split_button.clicked.connect(self.split_layers)
+        self.split_button.clicked.connect(iterate_layers_and_split_layers)
         layout.addWidget(self.split_button, alignment=Qt.AlignmentFlag.AlignLeft)
 
         self.setLayout(layout)
-
-    def split_layers(self) -> None:
-        pass

@@ -35,6 +35,7 @@ mypy:
 
 .PHONY: zip_plugin
 zip_plugin:
+	rm -f prettier_maps.zip
 	zip -r prettier_maps.zip prettier_maps
 
 .PHONY: docs
