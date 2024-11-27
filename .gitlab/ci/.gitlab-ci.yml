@@ -2,6 +2,7 @@ stages:
   - lint
   - build_docs
   - deploy
+  - test
 
 before_script:
   - make venv
@@ -10,31 +11,46 @@ ruff:
   stage: lint
   image: python:3.12
   script:
-    - make ruff
-  only:
-    changes:
-      - tests/**/*
-      - prettier_maps/**/*
+    - uv run ruff check .
+    - uv run ruff format .
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - tests/**/*
+        - prettier_maps/**/*
 
 mypy:
   stage: lint
   image: python:3.12
   script:
-    - make mypy
-  only:
-    changes:
-      - tests/**/*
-      - prettier_maps/**/*
+    - uv run mypy .
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - tests/**/*
+        - prettier_maps/**/*
 
 isort:
   stage: lint
   image: python:3.12
   script:
-    - make isort
-  only:
-    changes:
-      - tests/**/*
-      - prettier_maps/**/*
+    - uv run isort .
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - tests/**/*
+        - prettier_maps/**/*
+
+test:
+  stage: test
+  image: python:3.12
+  script:
+    - uv run pytest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - tests/**/*
+        - prettier_maps/**/*
 
 build_docs:
   stage: build_docs

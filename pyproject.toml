@@ -3,28 +3,30 @@ name = "prettier_maps"
 version = "0.1.0"
 description="Style Maps Easily in GQIS"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pyqt5>=5.15.11",
+    "setuptools>=75.6.0",
+]
 authors = [
     {name = "Matthew McKee"},
 ]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.7.4",
+    "ruff>=0.8.0",
     "mypy>=1.13.0",
     "pre-commit>=4.0.1",
     "isort>=5.13.2",
 ]
 test = [
-    "hypothesis>=6.119.3",
+    "hypothesis>=6.119.4",
     "pytest-only>=2.1.2",
     "pytest>=8.3.3",
     "pytest-randomly>=3.16.0",
     "pytest-xdist>=3.6.1",
-    "setuptools"
 ]
 docs = [
-    "mkdocs-material>=9.5.44",
+    "mkdocs-material>=9.5.46",
     "mkdocs>=1.6.1",
 ]
 

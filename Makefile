@@ -9,7 +9,6 @@ venv:
 	pip install uv
 	uv sync --all-groups
 	$(ACTIVATE) && pre-commit install
-
 .PHONY: clean
 clean:
 	rm -rf .venv
@@ -17,20 +16,22 @@ clean:
 	rm -rf .hypothesis
 	rm -rf .mypy_cache
 	rm -rf .ruff_cache
+	rm -rf build/
+	rm -rf prettier_maps.egg-info/
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 
 .PHONY: isort
 isort:
-	$(ACTIVATE) && isort .
+	uv run isort .
 
 .PHONY: ruff
 ruff:
-	$(ACTIVATE) && ruff check .
-	$(ACTIVATE) && ruff format .
+	uv run ruff check .
+	uv run ruff format .
 
 .PHONY: mypy
 mypy:
-	$(ACTIVATE) && mypy .
+	uv run mypy .
 
 .PHONY: zip_plugin
 zip_plugin:
@@ -38,4 +39,4 @@ zip_plugin:
 
 .PHONY: docs
 docs:
-	$(ACTIVATE) && mkdocs build
+	uv run mkdocs build
