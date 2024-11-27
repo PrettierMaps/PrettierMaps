@@ -24,6 +24,7 @@ test = [
     "pytest>=8.3.3",
     "pytest-randomly>=3.16.0",
     "pytest-xdist>=3.6.1",
+    "setuptools"
 ]
 docs = [
     "mkdocs-material>=9.5.46",
