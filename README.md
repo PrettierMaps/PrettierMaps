@@ -7,7 +7,7 @@
 1. Install the plugin dependencies to your QGIS Python environment:
 
 ```bash
-pip install -r requirements.txt
+uv sync --all-groups
 ```
 
 2. Create the QGIS zip file:
@@ -23,7 +23,7 @@ make zip_plugin
 1. Install the plugin dependencies to your Python environment:
 
 ```bash
-pip install -r requirements.txt
+uv sync --all-groups
 ```
 
 2. Run the `main.py` file.
