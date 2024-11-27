@@ -18,9 +18,12 @@ jobs:
               with:
                   python-version: 3.12.4
 
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+
             - name: Install dependencies
               run: |
-                  pip install -r requirements-docs.txt
+                  uv sync --all-groups
 
             - name: Build docs
               run: mkdocs build

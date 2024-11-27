@@ -7,8 +7,7 @@ endif
 .PHONY: venv
 venv:
 	pip install uv
-	uv venv
-	$(ACTIVATE) && uv pip install -r requirements.txt -r requirements-test.txt -r requirements-dev.txt -r requirements-docs.txt
+	uv sync --all-groups
 	$(ACTIVATE) && pre-commit install
 
 .PHONY: clean
