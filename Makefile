@@ -7,11 +7,8 @@ endif
 .PHONY: venv
 venv:
 	pip install uv
-	uv venv
-	$(ACTIVATE) && uv pip install setuptools
-	$(ACTIVATE) && uv pip install -e .[test,dev,docs] --no-build-isolation
+	uv sync --all-groups
 	$(ACTIVATE) && pre-commit install
-
 .PHONY: clean
 clean:
 	rm -rf .venv
@@ -42,4 +39,4 @@ zip_plugin:
 
 .PHONY: docs
 docs:
-	$(ACTIVATE) && mkdocs build
+	uv run mkdocs build
