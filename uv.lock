@@ -1,18 +1,5 @@
 version = 1
 requires-python = ">=3.12"
-resolution-markers = [
-    "python_full_version < '3.13'",
-    "python_full_version >= '3.13'",
-]
-
-[[package]]
-name = "annotated-types"
-version = "0.7.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ee/67/531ea369ba64dcff5ec9c3402f9f51bf748cec26dde048a2f973a4eea7f5/annotated_types-0.7.0.tar.gz", hash = "sha256:aff07c09a53a08bc8cfccb9c85b05f1aa9a2a6f23728d790723543408344ce89", size = 16081 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/78/b6/6307fbef88d9b5ee7421e68d78a9f162e0da4900bc5f5793f6d3d0e34fb8/annotated_types-0.7.0-py3-none-any.whl", hash = "sha256:1f02e8b43a8fbbc3f3e0d4f0f4bfc8131bcb4eebe8849b8e5c773f3a1c582a53", size = 13643 },
-]
 
 [[package]]
 name = "attrs"
@@ -164,11 +151,11 @@ wheels = [
 
 [[package]]
 name = "identify"
-version = "2.6.2"
+version = "2.6.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/02/79/7a520fc5011e02ca3f3285b5f6820eaf80443eb73e3733f73c02fb42ba0b/identify-2.6.2.tar.gz", hash = "sha256:fab5c716c24d7a789775228823797296a2994b075fb6080ac83a102772a98cbd", size = 99113 }
+sdist = { url = "https://files.pythonhosted.org/packages/1a/5f/05f0d167be94585d502b4adf8c7af31f1dc0b1c7e14f9938a88fdbbcf4a7/identify-2.6.3.tar.gz", hash = "sha256:62f5dae9b5fef52c84cc188514e9ea4f3f636b1d8799ab5ebc475471f9e47a02", size = 99179 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e0/86/c4395700f3c5475424fb5c41e20c16be28d10c904aee4d005ba3217fc8e7/identify-2.6.2-py2.py3-none-any.whl", hash = "sha256:c097384259f49e372f4ea00a19719d95ae27dd5ff0fd77ad630aa891306b82f3", size = 98982 },
+    { url = "https://files.pythonhosted.org/packages/c9/f5/09644a3ad803fae9eca8efa17e1f2aef380c7f0b02f7ec4e8d446e51d64a/identify-2.6.3-py2.py3-none-any.whl", hash = "sha256:9edba65473324c2ea9684b1f944fe3191db3345e50b6d04571d10ed164f8d7bd", size = 99049 },
 ]
 
 [[package]]
@@ -442,8 +429,8 @@ name = "prettier-maps"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "pydantic" },
     { name = "pyqt5" },
+    { name = "setuptools" },
 ]
 
 [package.dev-dependencies]
@@ -463,13 +450,12 @@ test = [
     { name = "pytest-only" },
     { name = "pytest-randomly" },
     { name = "pytest-xdist" },
-    { name = "setuptools" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "pydantic", specifier = ">=2.10.2" },
     { name = "pyqt5", specifier = ">=5.15.11" },
+    { name = "setuptools", specifier = ">=75.6.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -489,7 +475,6 @@ test = [
     { name = "pytest-only", specifier = ">=2.1.2" },
     { name = "pytest-randomly", specifier = ">=3.16.0" },
     { name = "pytest-xdist", specifier = ">=3.6.1" },
-    { name = "setuptools" },
 ]
 
 [[package]]
@@ -743,15 +728,6 @@ wheels = [
 ]
 
 [[package]]
-name = "setuptools"
-version = "75.6.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/43/54/292f26c208734e9a7f067aea4a7e282c080750c4546559b58e2e45413ca0/setuptools-75.6.0.tar.gz", hash = "sha256:8199222558df7c86216af4f84c30e9b34a61d8ba19366cc914424cdbd28252f6", size = 1337429 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/55/21/47d163f615df1d30c094f6c8bbb353619274edccf0327b185cc2493c2c33/setuptools-75.6.0-py3-none-any.whl", hash = "sha256:ce74b49e8f7110f9bf04883b730f4765b774ef3ef28f722cce7c273d253aaf7d", size = 1224032 },
-]
-
-[[package]]
 name = "six"
 version = "1.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -789,16 +765,16 @@ wheels = [
 
 [[package]]
 name = "virtualenv"
-version = "20.27.1"
+version = "20.28.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "distlib" },
     { name = "filelock" },
     { name = "platformdirs" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8c/b3/7b6a79c5c8cf6d90ea681310e169cf2db2884f4d583d16c6e1d5a75a4e04/virtualenv-20.27.1.tar.gz", hash = "sha256:142c6be10212543b32c6c45d3d3893dff89112cc588b7d0879ae5a1ec03a47ba", size = 6491145 }
+sdist = { url = "https://files.pythonhosted.org/packages/bf/75/53316a5a8050069228a2f6d11f32046cfa94fbb6cc3f08703f59b873de2e/virtualenv-20.28.0.tar.gz", hash = "sha256:2c9c3262bb8e7b87ea801d715fae4495e6032450c71d2309be9550e7364049aa", size = 7650368 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ae/92/78324ff89391e00c8f4cf6b8526c41c6ef36b4ea2d2c132250b1a6fc2b8d/virtualenv-20.27.1-py3-none-any.whl", hash = "sha256:f11f1b8a29525562925f745563bfd48b189450f61fb34c4f9cc79dd5aa32a1f4", size = 3117838 },
+    { url = "https://files.pythonhosted.org/packages/10/f9/0919cf6f1432a8c4baa62511f8f8da8225432d22e83e3476f5be1a1edc6e/virtualenv-20.28.0-py3-none-any.whl", hash = "sha256:23eae1b4516ecd610481eda647f3a7c09aea295055337331bb4e6892ecce47b0", size = 4276702 },
 ]
 
 [[package]]
