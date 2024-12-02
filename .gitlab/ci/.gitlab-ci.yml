@@ -70,8 +70,8 @@ deploy:
   stage: deploy
   image: python:3.12
   script:
-    - pip install qgis-plugin-ci
-    - qgis-plugin-ci release "$RELEASE_VERSION" \
+    - uv pip install qgis-plugin-ci
+    - uv run qgis-plugin-ci release "$RELEASE_VERSION" \
       --osgeo-username "$OSGEO_USERNAME" \
       --osgeo-password "$OSGEO_PASSWORD" \
       --create-plugin-repo
