@@ -73,8 +73,7 @@ deploy:
     - uv pip install qgis-plugin-ci
     - uv run qgis-plugin-ci release "$RELEASE_VERSION" \
       --osgeo-username "$OSGEO_USERNAME" \
-      --osgeo-password "$OSGEO_PASSWORD" \
-      --create-plugin-repo
+      --osgeo-password "$OSGEO_PASSWORD"
   artifacts:
     paths:
       - release.md
