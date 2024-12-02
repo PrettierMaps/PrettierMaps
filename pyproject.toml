@@ -32,8 +32,8 @@ docs = [
 
 [tool.qgis-plugin-ci]
 plugin_path = "prettier_maps"
-github_organization_slug = "prettiermaps"
-project_slug = "prettier-maps"
+github_organization_slug = "PrettierMaps"
+project_slug = "PrettierMaps"
 
 
 [tool.isort]
