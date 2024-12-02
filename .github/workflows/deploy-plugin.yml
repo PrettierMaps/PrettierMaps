@@ -19,7 +19,7 @@ jobs:
               uses: astral-sh/setup-uv@v4
 
             - name: Install Python requirements
-              run: uv pip install qgis-plugin-ci
+              run: uv venv && uv pip install qgis-plugin-ci
 
             - name: Package and deploy the zip
               run: >-
