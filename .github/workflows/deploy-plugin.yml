@@ -11,7 +11,7 @@ jobs:
 
         steps:
             - name: Set env
-              run: echo "RELEASE_VERSION=$(git describe --tags)" >> $GITHUB_ENV
+              run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
             - uses: actions/checkout@v2
 
@@ -23,7 +23,7 @@ jobs:
 
             - name: Package and deploy the zip
               run: >-
-                  uv run qgis-plugin-ci release ${{ env.RELEASE_VERSION }}
+                  uv run qgis-plugin-ci release ${{ env.TAG }}
                   --github-token ${{ secrets.GITHUB_TOKEN }}
                   --osgeo-username ${{ secrets.OSGEO_USERNAME }}
                   --osgeo-password ${{ secrets.OSGEO_PASSWORD }}
