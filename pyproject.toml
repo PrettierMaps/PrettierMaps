@@ -30,6 +30,11 @@ docs = [
     "mkdocs>=1.6.1",
 ]
 
+[tool.qgis-plugin-ci]
+plugin_path = "prettier_maps"
+github_organization_slug = "prettiermaps"
+project_slug = "prettier-maps"
+
 
 [tool.isort]
 profile = "black"
