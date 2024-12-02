@@ -1,10 +1,6 @@
-from typing import TYPE_CHECKING
-
+from .interfaces import IQgisInterface
 from .plugin import PrettierMapsPlugin
 
-if TYPE_CHECKING:
-    from qgis.gui import QgisInterface
 
-
-def classFactory(iface: "QgisInterface") -> PrettierMapsPlugin:
+def classFactory(iface: IQgisInterface) -> PrettierMapsPlugin:
     return PrettierMapsPlugin(iface)

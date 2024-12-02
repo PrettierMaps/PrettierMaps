@@ -7,10 +7,8 @@ endif
 .PHONY: venv
 venv:
 	pip install uv
-	uv venv
-	$(ACTIVATE) && uv pip install -r requirements.txt -r requirements-test.txt -r requirements-dev.txt
+	uv sync --all-groups
 	$(ACTIVATE) && pre-commit install
-
 .PHONY: clean
 clean:
 	rm -rf .venv
@@ -18,21 +16,28 @@ clean:
 	rm -rf .hypothesis
 	rm -rf .mypy_cache
 	rm -rf .ruff_cache
+	rm -rf build/
+	rm -rf prettier_maps.egg-info/
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 
 .PHONY: isort
 isort:
-	$(ACTIVATE) && isort .
+	uv run isort .
 
 .PHONY: ruff
 ruff:
-	$(ACTIVATE) && ruff check .
-	$(ACTIVATE) && ruff format .
+	uv run ruff check .
+	uv run ruff format .
 
 .PHONY: mypy
 mypy:
-	$(ACTIVATE) && mypy .
+	uv run mypy .
 
 .PHONY: zip_plugin
 zip_plugin:
+	rm -f prettier_maps.zip
 	zip -r prettier_maps.zip prettier_maps
+
+.PHONY: docs
+docs:
+	uv run mkdocs build

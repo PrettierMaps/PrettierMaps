@@ -1,23 +1,17 @@
-from typing import TYPE_CHECKING
-
 from PyQt5.QtGui import QIcon, QPainter
 from PyQt5.QtWidgets import QAction
 
 from .config import LOGO_PATH
+from .interfaces import IQgisInterface
 from .ui import MainDialog
-
-if TYPE_CHECKING:
-    from qgis.gui import QgisInterface
 
 
 class PrettierMapsPlugin:
-    def __init__(self, iface: "QgisInterface"):
+    def __init__(self, iface: IQgisInterface) -> None:
         self.iface = iface
-
         self.action: QAction | None = None
 
     def initGui(self) -> None:
-        # TODO: Add icon
         icon = QIcon(str(LOGO_PATH))
 
         self.action = QAction(icon, "PrettierMaps", self.iface.mainWindow())

@@ -1,10 +1,15 @@
 {
     "cSpell.words": [
+        "color",
+        "fontawesome",
         "isort",
         "mypy",
+        "osgeo",
         "pyproject",
         "Qgis",
-        "testplug"
+        "refs",
+        "testplug",
+        "venv"
     ],
     "python.analysis.diagnosticSeverityOverrides": {
     "reportMissingTypeStubs": "none",
