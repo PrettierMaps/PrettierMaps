@@ -22,7 +22,7 @@ jobs:
               run: uv venv && uv pip install qgis-plugin-ci six
 
             - name: Get current changelog
-              run: qgis-plugin-ci changelog ${{ env.TAG }} >> release.md
+              run: uv run qgis-plugin-ci changelog ${{ env.TAG }} >> release.md
 
             - name: Create release on GitHub
               uses: ncipollo/release-action@v1.10.0
