@@ -1,0 +1,32 @@
+name: Release Plugin
+
+on:
+    push:
+        tags:
+            - "*"
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Set env
+              run: echo "RELEASE_VERSION=$(git describe --tags)" >> $GITHUB_ENV
+
+            - uses: actions/checkout@v2
+
+            - name: Set up Python 3.10
+              uses: actions/setup-python@v3
+              with:
+                  python-version: "3.10"
+
+            - name: Install Python requirements
+              run: uv pip install qgis-plugin-ci
+
+            - name: Package and deploy the zip
+              run: >-
+                  uv run qgis-plugin-ci release ${{ env.RELEASE_VERSION }}
+                  --github-token ${{ secrets.GITHUB_TOKEN }}
+                  --osgeo-username ${{ secrets.OSGEO_USERNAME }}
+                  --osgeo-password ${{ secrets.OSGEO_PASSWORD }}
+                  --create-plugin-repo
