@@ -21,9 +21,6 @@ jobs:
             - name: Install Python requirements
               run: uv venv && uv pip install qgis-plugin-ci six
 
-            - name: Setup Plugin Package
-              run: mv LICENCE prettier_maps/
-
             - name: Create release on GitHub
               uses: ncipollo/release-action@v1.10.0
               with:
