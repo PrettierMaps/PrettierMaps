@@ -13,4 +13,5 @@ repository=https://github.com/PrettierMaps/PrettierMaps
 icon=:assets/icon.png
 homepage=https://prettiermaps.github.io/PrettierMaps/
 
-plugin_dependencies = QuickOSM
+plugin_dependencies = MapTiler
+tracker = https://github.com/PrettierMaps/PrettierMaps/issues
