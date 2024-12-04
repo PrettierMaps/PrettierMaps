@@ -1,6 +1,3 @@
----
-title: "Bug: [Provide a concise title for the bug]"
----
 ## Description:
 <!-- Write a short summary of the bug. -->
 ## Reproduction method:
@@ -13,3 +10,4 @@ title: "Bug: [Provide a concise title for the bug]"
 <!-- Explain what work needs to be done, or write N/A if you do not know. -->
 
 /label ~Bug
+/title Bug:
