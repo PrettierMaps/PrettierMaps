@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout, QCheckBox
+from PyQt5.QtWidgets import QCheckBox, QDialog, QLabel, QPushButton, QVBoxLayout
 
 from ..core import iterate_layers_and_split_layers
 
@@ -26,14 +26,13 @@ class MainDialog(QDialog):  # type: ignore[misc]
             "2. Click 'Split Layers' below"
         )
 
-        deleteOrDeselect = QCheckBox("")
-
         instructions.setFont(self.get_font())
         instructions.setAlignment(Qt.AlignmentFlag.AlignLeft)
         layout.addWidget(instructions)
 
         self.checkbox = QCheckBox(
-            "Do you want the MapTiler to be hidden? Check this box for yes, or it will be deleted upon layering."
+            "Do you want the MapTiler to be hidden? Check this box for yes, or it will "
+            "be deleted upon layering."
         )
         self.checkbox.setFont(self.get_font())
         self.checkbox.stateChanged.connect(self.toggle_del_or_hide)
