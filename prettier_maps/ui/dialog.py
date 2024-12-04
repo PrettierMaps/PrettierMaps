@@ -21,8 +21,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         instructions = QLabel(
             "How to use:\n"
-            "1. Select a Map from Map Tiler, then run here to split layers into "
-            "manageable sections\n"
+            "1. Select a Map from Map Tiler\n"
             "2. Click 'Split Layers' below"
         )
         instructions.setFont(self.get_font())
