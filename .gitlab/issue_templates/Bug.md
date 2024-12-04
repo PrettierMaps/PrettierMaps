@@ -10,4 +10,3 @@
 <!-- Explain what work needs to be done, or write N/A if you do not know. -->
 
 /label ~Bug
-/title Bug:
