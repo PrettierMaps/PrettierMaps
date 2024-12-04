@@ -31,7 +31,7 @@ def get_layers_from_group(group: "QgsLayerTreeGroup") -> list["QgsLayerTreeLayer
     return [layer for layer in group.children() if isinstance(layer, QgsLayerTreeLayer)]
 
 
-def iterate_layers_and_split_layers():
+def iterate_layers_and_split_layers(delete_or_hide_pre_existing_layers : bool):
     from qgis.core import (
         QgsLayerTreeGroup,
         QgsProject,
@@ -83,3 +83,11 @@ def iterate_layers_and_split_layers():
 
                 proj.addMapLayer(new_map_layer, False)
                 child.addLayer(new_map_layer)
+    
+        if delete_or_hide_pre_existing_layers == True:
+            for layer in vector_tile_layers:
+                layer.setItemVisibilityChecked(False)
+                #print(f"Toggled visibility of layer: {layer.name()}")
+        else:
+            for layer in vector_tile_layers:
+                child.removeChildNode(layer)
