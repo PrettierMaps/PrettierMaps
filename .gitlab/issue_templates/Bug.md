@@ -1,3 +1,6 @@
+---
+title: "Bug: [Provide a concise title for the bug]"
+---
 ## Description:
 <!-- Write a short summary of the bug. -->
 ## Reproduction method:
