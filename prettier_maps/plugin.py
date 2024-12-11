@@ -4,12 +4,13 @@ from PyQt5.QtWidgets import QAction
 from .config import LOGO_PATH
 from .interfaces import IQgisInterface
 from .ui import MainDialog
+from typing import Union
 
 
 class PrettierMapsPlugin:
     def __init__(self, iface: IQgisInterface) -> None:
         self.iface = iface
-        self.action: QAction | None = None
+        self.action: Union[QAction, None] = None
 
     def initGui(self) -> None:
         icon = QIcon(str(LOGO_PATH))

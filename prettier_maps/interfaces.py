@@ -4,15 +4,16 @@ from typing import Any, Protocol, runtime_checkable
 
 from PyQt5.QtCore import QObject
 from PyQt5.QtWidgets import QAction, QWidget
+from typing import Union
 
 
 class IQgisInterface(QObject):  # type: ignore[misc]
     @abstractmethod
-    def mainWindow(self) -> QWidget | None: ...
+    def mainWindow(self) -> Union[QWidget, None]: ...
     @abstractmethod
-    def addWebToolBarIcon(self, qAction: QAction | None) -> int: ...  # noqa: N803
+    def addWebToolBarIcon(self, qAction: Union[QAction, None]) -> int: ...  # noqa: N803
     @abstractmethod
-    def removeWebToolBarIcon(self, qAction: QAction | None) -> None: ...  # noqa: N803
+    def removeWebToolBarIcon(self, qAction: Union[QAction, None]) -> None: ...  # noqa: N803
 
 
 @unique
@@ -39,21 +40,21 @@ class Format(Enum):
 class ProcessQuickQueryProtocol(Protocol):
     def __call__(
         self,
-        description: str | None = None,
-        type_multi_request: list[Any] | None = None,
-        query_type: QueryType | None = None,
-        key: str | list[str] | None = None,
-        value: str | list[str] | None = None,
-        area: str | None = None,
-        distance: int | None = None,
-        osm_objects: list[OsmType] | None = None,
+        description: Union[str, None] = None,
+        type_multi_request: Union[list[Any], None] = None,
+        query_type: Union[QueryType, None] = None,
+        key: Union[str, list[str], None] = None,
+        value: Union[str, list[str], None] = None,
+        area: Union[str, None] = None,
+        distance: Union[int, None] = None,
+        osm_objects: Union[list[OsmType], None] = None,
         metadata: str = "body",
         timeout: int = 25,
-        output_directory: str | None = None,
-        output_format: Format | None = None,
-        prefix_file: str | None = None,
-        layer_name: str | None = None,
-        white_list_values: dict[Any, Any] | None = None,
-        output_geometry_types: list[Any] | None = None,
-        config_outputs: dict[Any, Any] | None = None,
+        output_directory: Union[str, None] = None,
+        output_format: Union[Format, None] = None,
+        prefix_file: Union[str, None] = None,
+        layer_name: Union[str, None] = None,
+        white_list_values: Union[dict[Any, Any], None] = None,
+        output_geometry_types: Union[list[Any], None] = None,
+        config_outputs: Union[dict[Any, Any], None] = None,
     ) -> int: ...
