@@ -23,10 +23,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         instructions = QLabel(
             "How to use:\n"
             "1. Select a Map from Map Tiler\n"
-            "2. Click 'Split Layers' below\n"
-            "or\n"
-            "1. Get a QuickOSM output\n"
-            "2. Click 'Style QuickOSM Layer' below"
+            "2. Click 'Split Layers' below"
         )
 
         instructions.setFont(self.get_font())
@@ -46,19 +43,11 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.split_button.clicked.connect(self.split_layers)
         layout.addWidget(self.split_button, alignment=Qt.AlignmentFlag.AlignLeft)
 
-        self.style_button = QPushButton("Style QuickOSM Layer", self)
-        self.style_button.setFont(self.get_font())
-        self.style_button.clicked.connect(self.style_QuickOSM_layers)
-        layout.addWidget(self.style_button, alignment=Qt.AlignmentFlag.AlignLeft)
-
         self.setLayout(layout)
 
     def split_layers(self):
         iterate_layers_and_split_layers(self.del_or_hide)
         self.close()
-
-    def style_QuickOSM_layers(self):
-        pass
 
     def toggle_del_or_hide(self, state: int) -> None:
         """Toggle delOrHide based on the checkbox state."""
