@@ -90,5 +90,31 @@ def iterate_layers_and_split_layers(delete_or_hide_pre_existing_layers: bool):
             else:
                 child.removeChildNode(layer)
 
-def apply_style_QuickOSM_layer(self):
-    pass
+def apply_style_QuickOSM_layer():
+    from qgis.core import (
+        QgsLayerTreeGroup,
+        QgsProject,
+        QgsVectorTileBasicRenderer,
+        QgsVectorTileLayer,
+    )
+
+    instance = QgsProject.instance()
+    assert instance is not None
+    root = instance.layerTreeRoot()
+    assert root is not None
+
+    for child in root.children():
+        if not isinstance(child, QgsLayerTreeLayer):
+            continue
+        layer = child.layer()
+
+        variable_names = layer.customProperty("variableNames")
+        if variable_names is None:
+            continue
+        if "quickosm_query" not in variable_names:
+            print(layer.name(), "invalid")
+            continue
+        
+        print(layer.name(), "valid")
+
+apply_style_QuickOSM_layer()
