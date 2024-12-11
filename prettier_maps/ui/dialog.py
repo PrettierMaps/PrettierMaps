@@ -2,8 +2,10 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QCheckBox, QDialog, QLabel, QPushButton, QVBoxLayout
 
-from ..core import iterate_layers_and_split_layers
-
+from ..core import (
+    apply_style_QuickOSM_layer,
+    iterate_layers_and_split_layers
+)
 
 class MainDialog(QDialog):  # type: ignore[misc]
     def __init__(self) -> None:
@@ -58,7 +60,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.close()
 
     def style_QuickOSM_layers(self):
-        pass
+        apply_style_QuickOSM_layer()
+        self.close()
 
     def toggle_del_or_hide(self, state: int) -> None:
         """Toggle delOrHide based on the checkbox state."""

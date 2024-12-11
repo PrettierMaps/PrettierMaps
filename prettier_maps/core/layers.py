@@ -89,3 +89,6 @@ def iterate_layers_and_split_layers(delete_or_hide_pre_existing_layers: bool):
                 layer.setItemVisibilityChecked(False)
             else:
                 child.removeChildNode(layer)
+
+def apply_style_QuickOSM_layer(self):
+    pass
