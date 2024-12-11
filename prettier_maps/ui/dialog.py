@@ -47,6 +47,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
     def split_layers(self):
         iterate_layers_and_split_layers(self.del_or_hide)
+        self.close()
 
     def toggle_del_or_hide(self, state: int) -> None:
         """Toggle delOrHide based on the checkbox state."""
