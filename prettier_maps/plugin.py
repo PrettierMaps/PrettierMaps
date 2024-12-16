@@ -1,10 +1,11 @@
+from typing import Union
+
 from PyQt5.QtGui import QIcon, QPainter
 from PyQt5.QtWidgets import QAction
 
 from .config import LOGO_PATH
 from .interfaces import IQgisInterface
 from .ui import MainDialog
-from typing import Union
 
 
 class PrettierMapsPlugin:

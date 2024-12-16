@@ -6,9 +6,9 @@ endif
 
 .PHONY: venv
 venv:
-	pip install uv
 	uv sync --all-groups
-	$(ACTIVATE) && pre-commit install
+	uv run pre-commit install
+
 .PHONY: clean
 clean:
 	rm -rf .venv
@@ -26,7 +26,7 @@ isort:
 
 .PHONY: ruff
 ruff:
-	uv run ruff check .
+	uv run ruff check . --fix
 	uv run ruff format .
 
 .PHONY: mypy
