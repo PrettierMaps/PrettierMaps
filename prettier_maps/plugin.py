@@ -1,3 +1,5 @@
+from typing import Optional
+
 from PyQt5.QtGui import QIcon, QPainter
 from PyQt5.QtWidgets import QAction
 
@@ -9,7 +11,7 @@ from .ui import MainDialog
 class PrettierMapsPlugin:
     def __init__(self, iface: IQgisInterface) -> None:
         self.iface = iface
-        self.action: QAction | None = None
+        self.action: Optional[QAction] = None
 
     def initGui(self) -> None:
         icon = QIcon(str(LOGO_PATH))
