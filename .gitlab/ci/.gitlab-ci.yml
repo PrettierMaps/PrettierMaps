@@ -9,7 +9,10 @@ before_script:
 
 ruff:
   stage: lint
-  image: python:3.12
+  image: "python:$VERSION"
+  parallel:
+    matrix:
+      - VERSION: ["3.9", "3.10", "3.11", "3.12", "3.13"]
   script:
     - uv run ruff check .
     - uv run ruff format .
@@ -21,7 +24,10 @@ ruff:
 
 mypy:
   stage: lint
-  image: python:3.12
+  image: "python:$VERSION"
+  parallel:
+    matrix:
+      - VERSION: ["3.9", "3.10", "3.11", "3.12", "3.13"]
   script:
     - uv run mypy .
   rules:
@@ -30,20 +36,12 @@ mypy:
         - tests/**/*
         - prettier_maps/**/*
 
-isort:
-  stage: lint
-  image: python:3.12
-  script:
-    - uv run isort .
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - tests/**/*
-        - prettier_maps/**/*
-
 test:
   stage: test
-  image: python:3.12
+  image: "python:$VERSION"
+  parallel:
+    matrix:
+      - VERSION: ["3.9", "3.10", "3.11", "3.12", "3.13"]
   script:
     - uv run pytest
   rules:
