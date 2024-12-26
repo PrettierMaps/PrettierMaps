@@ -33,7 +33,7 @@ test:
 
 .PHONY: test-in-docker
 test-in-docker:
-	docker build -t my-qgis-app -f .devcontainer/Dockerfile .
+	docker build -t my-qgis-app -f .devcontainer/Dockerfile.test .
 	docker run --rm -it my-qgis-app
 
 .PHONY: zip_plugin
