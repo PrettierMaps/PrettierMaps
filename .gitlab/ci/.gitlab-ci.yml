@@ -21,6 +21,7 @@ ruff:
       changes:
         - tests/**/*
         - prettier_maps/**/*
+        - .gitlab/**/*
 
 mypy:
   stage: lint
@@ -35,6 +36,7 @@ mypy:
       changes:
         - tests/**/*
         - prettier_maps/**/*
+        - .gitlab/**/*
 
 test:
   stage: test
@@ -49,6 +51,7 @@ test:
       changes:
         - tests/**/*
         - prettier_maps/**/*
+        - .gitlab/**/*
 
 build_docs:
   stage: build_docs
