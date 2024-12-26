@@ -4,9 +4,6 @@ stages:
   - deploy
   - test
 
-before_script:
-  - make venv
-
 ruff:
   stage: lint
   image: "python:$VERSION"
@@ -14,6 +11,7 @@ ruff:
     matrix:
       - VERSION: ["3.9", "3.10", "3.11", "3.12", "3.13"]
   script:
+    - make venv
     - uv run ruff check .
     - uv run ruff format .
   rules:
@@ -30,6 +28,7 @@ mypy:
     matrix:
       - VERSION: ["3.9", "3.10", "3.11", "3.12", "3.13"]
   script:
+    - make venv
     - uv run mypy .
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -40,12 +39,10 @@ mypy:
 
 test:
   stage: test
-  image: "python:$VERSION"
-  parallel:
-    matrix:
-      - VERSION: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+  image: qgis/qgis:latest
   script:
-    - uv run pytest
+    - pip install --break-system-packages -e '.[test]' --no-deps || true
+    - pytest
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
@@ -57,6 +54,7 @@ build_docs:
   stage: build_docs
   image: python:3.12
   script:
+    - make venv
     - make docs
   rules:
     - if: '$CI_COMMIT_REF_NAME == "main"'
