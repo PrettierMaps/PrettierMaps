@@ -5,6 +5,7 @@ stages:
   - test
 
 before_script:
+  - pip install uv
   - make venv
 
 ruff:
