@@ -13,20 +13,20 @@ authors = [
 
 [dependency-groups]
 dev = [
-    "ruff>=0.8.3",
-    "mypy>=1.13.0",
+    "ruff>=0.9.1",
+    "mypy>=1.14.1",
     "pre-commit>=4.0.1",
     "isort>=5.13.2",
 ]
 test = [
-    "hypothesis>=6.122.3",
+    "hypothesis>=6.123.3",
     "pytest-only>=2.1.2",
     "pytest>=8.3.4",
     "pytest-randomly>=3.16.0",
     "pytest-xdist>=3.6.1",
 ]
 docs = [
-    "mkdocs-material>=9.5.46",
+    "mkdocs-material>=9.5.49",
     "mkdocs>=1.6.1",
 ]
 

@@ -1,26 +1,17 @@
-from collections import defaultdict
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from qgis.core import (
         QgsLayerTreeGroup,
         QgsLayerTreeLayer,
+        QgsVectorTileBasicRenderer,
         QgsVectorTileBasicRendererStyle,
-        QgsVectorTileLayer,
     )
 
 
 def get_styles_from_vector_tile_layer(
-    layer: "QgsVectorTileLayer",
+    renderer: "QgsVectorTileBasicRenderer",
 ) -> list["QgsVectorTileBasicRendererStyle"]:
-    from qgis.core import QgsVectorTileBasicRenderer
-
-    renderer = layer.renderer()
-    if renderer is None:
-        return []
-
-    assert isinstance(renderer, QgsVectorTileBasicRenderer)
-
     styles = renderer.styles()
     return styles  # type: ignore[no-any-return]
 
@@ -31,7 +22,7 @@ def get_layers_from_group(group: "QgsLayerTreeGroup") -> list["QgsLayerTreeLayer
     return [layer for layer in group.children() if isinstance(layer, QgsLayerTreeLayer)]
 
 
-def iterate_layers_and_split_layers(delete_or_hide_pre_existing_layers: bool):
+def filter_layers(layers_to_turn_on: set[str]):
     from qgis.core import (
         QgsLayerTreeGroup,
         QgsProject,
@@ -43,8 +34,6 @@ def iterate_layers_and_split_layers(delete_or_hide_pre_existing_layers: bool):
     assert instance is not None
     root = instance.layerTreeRoot()
     assert root is not None
-    proj = QgsProject().instance()
-    assert proj is not None
 
     for child in root.children():
         if not isinstance(child, QgsLayerTreeGroup):
@@ -52,40 +41,24 @@ def iterate_layers_and_split_layers(delete_or_hide_pre_existing_layers: bool):
 
         vector_tile_layers = get_layers_from_group(child)
         for layer in vector_tile_layers:
-            layer_mapping: dict[str, list[int]] = defaultdict(list)
             map_layer = layer.layer()
             if not isinstance(map_layer, QgsVectorTileLayer):
                 continue
 
-            styles = get_styles_from_vector_tile_layer(map_layer)
+            renderer = map_layer.renderer()
+            assert renderer is not None
 
-            for i, style in enumerate(styles):
-                symbol = style.symbol()
-                if symbol is None:
-                    continue
-                layer_mapping[style.layerName()].append(i)
+            assert isinstance(renderer, QgsVectorTileBasicRenderer)
 
-            for new_group_name, styles in layer_mapping.items():
-                new_map_layer = map_layer.clone()
-                if new_map_layer is None:
-                    continue
-                new_map_layer.setName(new_group_name)
-                renderer = new_map_layer.renderer()
-                if renderer is None:
-                    continue
-
-                assert isinstance(renderer, QgsVectorTileBasicRenderer)
-
-                current_styles = renderer.styles()
-                renderer.setStyles(
-                    [current_styles[style_index] for style_index in styles]
-                )
-
-                proj.addMapLayer(new_map_layer, False)
-                child.addLayer(new_map_layer)
-
-        for layer in vector_tile_layers:
-            if delete_or_hide_pre_existing_layers:
-                layer.setItemVisibilityChecked(False)
-            else:
-                child.removeChildNode(layer)
+            styles = get_styles_from_vector_tile_layer(renderer)
+            new_styles: list[QgsVectorTileBasicRendererStyle] = []
+            for style in styles:
+                if style.layerName() in layers_to_turn_on:
+                    style.setEnabled(True)
+                else:
+                    style.setEnabled(False)
+                new_styles.append(style)
+            renderer.setStyles(new_styles)
+            map_layer.setRenderer(renderer.clone())
+            map_layer.setBlendMode(map_layer.blendMode())
+            map_layer.setOpacity(map_layer.opacity())
