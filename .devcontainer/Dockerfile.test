@@ -1,0 +1,9 @@
+FROM qgis/qgis:latest
+
+WORKDIR /app
+
+COPY . /app
+
+RUN pip install --break-system-packages -e '.[test]' --no-deps
+
+CMD ["pytest", "-s", "-v"]

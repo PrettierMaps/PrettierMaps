@@ -4,16 +4,11 @@ if TYPE_CHECKING:
     from qgis.core import (
         QgsLayerTreeGroup,
         QgsLayerTreeLayer,
+        QgsProject,
         QgsVectorTileBasicRenderer,
         QgsVectorTileBasicRendererStyle,
+        QgsVectorTileLayer,
     )
-
-
-def get_styles_from_vector_tile_layer(
-    renderer: "QgsVectorTileBasicRenderer",
-) -> list["QgsVectorTileBasicRendererStyle"]:
-    styles = renderer.styles()
-    return styles  # type: ignore[no-any-return]
 
 
 def get_layers_from_group(group: "QgsLayerTreeGroup") -> list["QgsLayerTreeLayer"]:
@@ -22,15 +17,26 @@ def get_layers_from_group(group: "QgsLayerTreeGroup") -> list["QgsLayerTreeLayer
     return [layer for layer in group.children() if isinstance(layer, QgsLayerTreeLayer)]
 
 
-def filter_layers(layers_to_turn_on: set[str]):
+def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRenderer"):
+    layer.setRenderer(renderer.clone())
+    layer.setBlendMode(layer.blendMode())
+    layer.setOpacity(layer.opacity())
+
+
+def _get_qgis_project() -> "QgsProject | None":
+    return QgsProject.instance()
+
+
+def filter_layers(
+    layers_to_turn_on: set[str], instance_to_filter: "QgsProject | None" = None
+):
     from qgis.core import (
         QgsLayerTreeGroup,
-        QgsProject,
         QgsVectorTileBasicRenderer,
         QgsVectorTileLayer,
     )
 
-    instance = QgsProject.instance()
+    instance = instance_to_filter or _get_qgis_project()
     assert instance is not None
     root = instance.layerTreeRoot()
     assert root is not None
@@ -50,7 +56,7 @@ def filter_layers(layers_to_turn_on: set[str]):
 
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
 
-            styles = get_styles_from_vector_tile_layer(renderer)
+            styles = renderer.styles()
             new_styles: list[QgsVectorTileBasicRendererStyle] = []
             for style in styles:
                 if style.layerName() in layers_to_turn_on:
@@ -58,7 +64,6 @@ def filter_layers(layers_to_turn_on: set[str]):
                 else:
                     style.setEnabled(False)
                 new_styles.append(style)
+
             renderer.setStyles(new_styles)
-            map_layer.setRenderer(renderer.clone())
-            map_layer.setBlendMode(map_layer.blendMode())
-            map_layer.setOpacity(map_layer.opacity())
+            refresh_layer(map_layer, renderer)
