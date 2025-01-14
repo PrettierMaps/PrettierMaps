@@ -9,7 +9,7 @@ ruff:
   image: "python:$VERSION"
   parallel:
     matrix:
-      - VERSION: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+      - VERSION: ["3.9", "3.13"]
   script:
     - pip install uv
     - make venv
@@ -27,7 +27,7 @@ mypy:
   image: "python:$VERSION"
   parallel:
     matrix:
-      - VERSION: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+      - VERSION: ["3.9", "3.13"]
   script:
     - pip install uv
     - make venv
