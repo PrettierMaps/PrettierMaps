@@ -1,9 +1,3 @@
-ifeq ($(OS),Windows_NT)
-    ACTIVATE=.venv\Scripts\activate
-else
-    ACTIVATE=. .venv/bin/activate
-endif
-
 .PHONY: venv
 venv:
 	uv sync --all-groups
@@ -32,6 +26,15 @@ ruff:
 .PHONY: mypy
 mypy:
 	uv run mypy .
+
+.PHONY: test
+test:
+	uv run pytest
+
+.PHONY: test-in-docker
+test-in-docker:
+	docker build -t my-qgis-app -f .devcontainer/Dockerfile.test .
+	docker run --rm -it my-qgis-app
 
 .PHONY: zip_plugin
 zip_plugin:

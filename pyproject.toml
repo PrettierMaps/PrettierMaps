@@ -4,8 +4,8 @@ version = "0.1.0"
 description="Style Maps Easily in GQIS"
 requires-python = ">=3.9"
 dependencies = [
-    "pyqt5>=5.15.11",
-    "setuptools>=75.6.0",
+    "pyqt5",
+    "setuptools",
 ]
 authors = [
     {name = "Matthew McKee"},
@@ -35,6 +35,8 @@ plugin_path = "prettier_maps"
 github_organization_slug = "PrettierMaps"
 project_slug = "PrettierMaps"
 
+[tool.setuptools]
+packages = { find = { where = ["prettier_maps"] } }
 
 [tool.isort]
 profile = "black"
