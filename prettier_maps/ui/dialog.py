@@ -43,17 +43,22 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.checkbox.stateChanged.connect(self.toggle_del_or_hide)
         layout.addWidget(self.checkbox)
 
+        self.add_split_button()
+        self.add_style_button()
+
+        self.setLayout(layout)
+
+    def add_split_button(self):
         self.split_button = QPushButton("Split Layers", self)
         self.split_button.setFont(self.get_font())
         self.split_button.clicked.connect(self.split_layers)
         layout.addWidget(self.split_button, alignment=Qt.AlignmentFlag.AlignLeft)
 
+    def add_style_button(self):
         self.style_button = QPushButton("Style QuickOSM Layer", self)
         self.style_button.setFont(self.get_font())
         self.style_button.clicked.connect(self.style_QuickOSM_layers)
         layout.addWidget(self.style_button, alignment=Qt.AlignmentFlag.AlignLeft)
-
-        self.setLayout(layout)
 
     def split_layers(self):
         iterate_layers_and_split_layers(self.del_or_hide)
