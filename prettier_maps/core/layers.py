@@ -107,14 +107,18 @@ def apply_style_QuickOSM_layer():
         if not isinstance(child, QgsLayerTreeLayer):
             continue
         layer = child.layer()
-
+        
         variable_names = layer.customProperty("variableNames")
         if variable_names is None:
+            print(layer.name(), "invalid")
             continue
         if "quickosm_query" not in variable_names:
             print(layer.name(), "invalid")
             continue
         
         print(layer.name(), "valid")
-
-apply_style_QuickOSM_layer()
+        symbol_renderer = layer.renderer()
+        symbol = symbol_renderer.symbol()
+        symbol.setColor(QColor.fromRgb(155,0,155))
+        layer.triggerRepaint()
+        iface.layerTreeView().refreshLayerSymbology(layer.id())
