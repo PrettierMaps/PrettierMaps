@@ -10,5 +10,13 @@ POSSIBLE_LAYERS = set(
         "landuse",
         "place",
         "globallandcover",
+        "landcover",
+        "poi",
+        "mountain_peak",
+        "transport_name",
+        "trail",
+        "outdoor_poi",
+        "contour",
+        "aerodrome_label",
     ]
 )
