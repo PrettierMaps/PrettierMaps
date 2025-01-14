@@ -90,7 +90,7 @@ def iterate_layers_and_split_layers(delete_or_hide_pre_existing_layers: bool):
             else:
                 child.removeChildNode(layer)
 
-def apply_style_QuickOSM_layer():
+def apply_style_to_QuickOSM_layers():
     from qgis.core import (
         QgsLayerTreeGroup,
         QgsProject,
@@ -117,7 +117,7 @@ def apply_style_QuickOSM_layer():
             continue
         
         print(layer.name(), "valid")
-        
+
         style_single_layer(layer)
         update_styled_layer(layer)
         
@@ -130,6 +130,3 @@ def style_single_layer(layer: "QgsVectorLayer"):
 def update_styled_layer(layer: "QgsVectorLayer")
     layer.triggerRepaint()
     iface.layerTreeView().refreshLayerSymbology(layer.id())
-
-
-apply_style_QuickOSM_layer()

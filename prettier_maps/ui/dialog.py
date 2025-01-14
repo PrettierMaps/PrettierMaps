@@ -60,7 +60,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.close()
 
     def style_QuickOSM_layers(self):
-        apply_style_QuickOSM_layer()
+        apply_style_to_QuickOSM_layers()
         self.close()
 
     def toggle_del_or_hide(self, state: int) -> None:
