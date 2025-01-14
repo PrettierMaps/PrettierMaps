@@ -117,8 +117,19 @@ def apply_style_QuickOSM_layer():
             continue
         
         print(layer.name(), "valid")
-        symbol_renderer = layer.renderer()
-        symbol = symbol_renderer.symbol()
-        symbol.setColor(QColor.fromRgb(155,0,155))
-        layer.triggerRepaint()
-        iface.layerTreeView().refreshLayerSymbology(layer.id())
+        
+        style_single_layer(layer)
+        update_styled_layer(layer)
+        
+
+def style_single_layer(layer: "QgsVectorLayer"):
+    symbol_renderer = layer.renderer()
+    symbol = symbol_renderer.symbol()
+    symbol.setColor(QColor.fromRgb(155,0,155))
+
+def update_styled_layer(layer: "QgsVectorLayer")
+    layer.triggerRepaint()
+    iface.layerTreeView().refreshLayerSymbology(layer.id())
+
+
+apply_style_QuickOSM_layer()
