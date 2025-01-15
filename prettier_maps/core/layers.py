@@ -75,7 +75,7 @@ def filter_layers(
 def apply_style_to_QuickOSM_layers():
     from qgis.core import (
         QgsLayerTreeLayer,
-        QgsProject,
+        QgsProject
     )
 
     instance = QgsProject.instance()
@@ -99,12 +99,31 @@ def apply_style_to_QuickOSM_layers():
 
 
 def style_single_layer(layer: "QgsVectorLayer"):
+    from qgis.core import (
+        QgsFillSymbol,
+        QgsLineSymbol,
+        QgsMarkerSymbol
+    )
+    
     symbol_renderer = layer.renderer()
-    symbol = symbol_renderer.symbol()
+    cur_symbol = symbol_renderer.symbol()
+    match type(cur_symbol):
+        case "QgsFillSymbol":
+            symbol = QgsFillSymbol.createSimple()
+        case "QgsLineSymbol":
+            symbol = QgsLineSymbol.createSimple()
+        case "QgsMarkerSymbol":
+            symbol = QgsMarkerSymbol.createSimple()
+        case _:
+            symbol = cur_symbol
     symbol.setColor(QColor.fromRgb(155, 0, 155))
+    symbol_renderer.setSymbol(symbol)
 
 
 def update_styled_layer(layer: "QgsVectorLayer"):
     from qgis.utils import iface
+    
     layer.triggerRepaint()
     iface.layerTreeView().refreshLayerSymbology(layer.id())
+
+apply_style_to_QuickOSM_layers()
