@@ -3,7 +3,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QCheckBox, QDialog, QLabel, QPushButton, QVBoxLayout
 
 from ..core import (
-    apply_style_QuickOSM_layer,
+    apply_style_to_QuickOSM_layers,
     iterate_layers_and_split_layers
 )
 
@@ -43,18 +43,18 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.checkbox.stateChanged.connect(self.toggle_del_or_hide)
         layout.addWidget(self.checkbox)
 
-        self.add_split_button()
-        self.add_style_button()
+        self.add_split_button(layout)
+        self.add_style_button(layout)
 
         self.setLayout(layout)
 
-    def add_split_button(self):
+    def add_split_button(self, layout):
         self.split_button = QPushButton("Split Layers", self)
         self.split_button.setFont(self.get_font())
         self.split_button.clicked.connect(self.split_layers)
         layout.addWidget(self.split_button, alignment=Qt.AlignmentFlag.AlignLeft)
 
-    def add_style_button(self):
+    def add_style_button(self, layout):
         self.style_button = QPushButton("Style QuickOSM Layer", self)
         self.style_button.setFont(self.get_font())
         self.style_button.clicked.connect(self.style_QuickOSM_layers)

@@ -1,5 +1,6 @@
 from collections import defaultdict
 from typing import TYPE_CHECKING
+from PyQt5.QtGui import QColor
 
 if TYPE_CHECKING:
     from qgis.core import (
@@ -90,12 +91,11 @@ def iterate_layers_and_split_layers(delete_or_hide_pre_existing_layers: bool):
             else:
                 child.removeChildNode(layer)
 
+
 def apply_style_to_QuickOSM_layers():
     from qgis.core import (
-        QgsLayerTreeGroup,
+        QgsLayerTreeLayer,
         QgsProject,
-        QgsVectorTileBasicRenderer,
-        QgsVectorTileLayer,
     )
 
     instance = QgsProject.instance()
@@ -107,26 +107,24 @@ def apply_style_to_QuickOSM_layers():
         if not isinstance(child, QgsLayerTreeLayer):
             continue
         layer = child.layer()
-        
+
         variable_names = layer.customProperty("variableNames")
         if variable_names is None:
-            print(layer.name(), "invalid")
             continue
         if "quickosm_query" not in variable_names:
-            print(layer.name(), "invalid")
             continue
-        
-        print(layer.name(), "valid")
 
         style_single_layer(layer)
         update_styled_layer(layer)
-        
+
 
 def style_single_layer(layer: "QgsVectorLayer"):
     symbol_renderer = layer.renderer()
     symbol = symbol_renderer.symbol()
-    symbol.setColor(QColor.fromRgb(155,0,155))
+    symbol.setColor(QColor.fromRgb(155, 0, 155))
 
-def update_styled_layer(layer: "QgsVectorLayer")
+
+def update_styled_layer(layer: "QgsVectorLayer"):
+    from qgis.utils import iface
     layer.triggerRepaint()
     iface.layerTreeView().refreshLayerSymbology(layer.id())
