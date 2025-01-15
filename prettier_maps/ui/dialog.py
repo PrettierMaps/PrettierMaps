@@ -1,74 +1,93 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QCheckBox, QDialog, QLabel, QPushButton, QVBoxLayout
-
-from ..core import (
-    apply_style_to_QuickOSM_layers,
-    iterate_layers_and_split_layers
+from PyQt5.QtWidgets import (
+    QCheckBox,
+    QDialog,
+    QLabel,
+    QPushButton,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
 )
+
+
+from prettier_maps.config.layers import POSSIBLE_LAYERS
+from prettier_maps.core import filter_layers, apply_style_to_QuickOSM_layers
+
 
 class MainDialog(QDialog):  # type: ignore[misc]
     def __init__(self) -> None:
         super().__init__()
         self.del_or_hide = False
+        self.layer_checkboxes: dict[str, QCheckBox] = {}
         self.init_ui()
+        filter_layers(POSSIBLE_LAYERS)
 
     def get_font(self) -> QFont:
         return QFont("Arial", 12)
 
     def init_ui(self) -> None:
         self.setWindowTitle("Prettier Maps")
-        self.resize(400, 100)
+        self.resize(500, 700)
 
         layout = QVBoxLayout()
-
-        instructions = QLabel(
-            "How to use:\n"
-            "1. Select a Map from Map Tiler\n"
-            "2. Click 'Split Layers' below\n"
-            "or\n"
-            "1. Get a QuickOSM output\n"
-            "2. Click 'Style QuickOSM Layer' below"
-        )
+        layout.setContentsMargins(20, 20, 20, 20)
+        instructions = QLabel("Select Layers")
 
         instructions.setFont(self.get_font())
         instructions.setAlignment(Qt.AlignmentFlag.AlignLeft)
         layout.addWidget(instructions)
 
-        self.checkbox = QCheckBox(
-            "Do you want the MapTiler to be hidden? Check this box for yes, or it will "
-            "be deleted upon layering."
-        )
-        self.checkbox.setFont(self.get_font())
-        self.checkbox.stateChanged.connect(self.toggle_del_or_hide)
-        layout.addWidget(self.checkbox)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setContentsMargins(0, 0, 0, 0)
 
-        self.add_split_button(layout)
+        layer_layout = QVBoxLayout()
+        layer_layout.setSpacing(30)
+        layer_layout.setContentsMargins(20, 20, 20, 20)
+
+        for layer in sorted(POSSIBLE_LAYERS):
+            checkbox = QCheckBox(layer.title())
+            checkbox.setFont(self.get_font())
+            checkbox.setChecked(True)
+            checkbox.stateChanged.connect(self.on_checkbox_changed)
+            self.layer_checkboxes[layer] = checkbox
+            layer_layout.addWidget(checkbox)
+
+        scroll_widget = QWidget()
+        scroll_widget.setLayout(layer_layout)
+        scroll.setWidget(scroll_widget)
+        layout.addWidget(scroll)
+        
         self.add_style_button(layout)
 
+        close_button = QPushButton("Close")
+        close_button.setFont(self.get_font())
+        close_button.clicked.connect(self.close_dialog)
+        layout.addWidget(close_button)
+
         self.setLayout(layout)
-
-    def add_split_button(self, layout):
-        self.split_button = QPushButton("Split Layers", self)
-        self.split_button.setFont(self.get_font())
-        self.split_button.clicked.connect(self.split_layers)
-        layout.addWidget(self.split_button, alignment=Qt.AlignmentFlag.AlignLeft)
-
+        
     def add_style_button(self, layout):
-        self.style_button = QPushButton("Style QuickOSM Layer", self)
-        self.style_button.setFont(self.get_font())
-        self.style_button.clicked.connect(self.style_QuickOSM_layers)
+        style_button = QPushButton("Style QuickOSM Layer", self)
+        style_button.setFont(self.get_font())
+        style_button.clicked.connect(self.style_QuickOSM_layers)
         layout.addWidget(self.style_button, alignment=Qt.AlignmentFlag.AlignLeft)
 
-    def split_layers(self):
-        iterate_layers_and_split_layers(self.del_or_hide)
-        self.close()
-
+    def get_selected_layers(self) -> set[str]:
+        return {
+            layer
+            for layer, checkbox in self.layer_checkboxes.items()
+            if checkbox.isChecked()
+        }
+        
     def style_QuickOSM_layers(self):
         apply_style_to_QuickOSM_layers()
         self.close()
 
-    def toggle_del_or_hide(self, state: int) -> None:
-        """Toggle delOrHide based on the checkbox state."""
-        self.del_or_hide = state == Qt.CheckState.Checked
-        print(f"delOrHide is now: {self.del_or_hide}")
+    def on_checkbox_changed(self, state: int) -> None:
+        selected = self.get_selected_layers()
+        filter_layers(selected)
+
+    def close_dialog(self) -> None:
+        self.close()

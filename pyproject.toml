@@ -2,10 +2,10 @@
 name = "prettier_maps"
 version = "0.1.0"
 description="Style Maps Easily in GQIS"
-requires-python = ">=3.12"
+requires-python = ">=3.9"
 dependencies = [
-    "pyqt5>=5.15.11",
-    "setuptools>=75.6.0",
+    "pyqt5",
+    "setuptools",
 ]
 authors = [
     {name = "Matthew McKee"},
@@ -13,20 +13,20 @@ authors = [
 
 [dependency-groups]
 dev = [
-    "ruff>=0.8.0",
-    "mypy>=1.13.0",
+    "ruff>=0.9.1",
+    "mypy>=1.14.1",
     "pre-commit>=4.0.1",
     "isort>=5.13.2",
 ]
 test = [
-    "hypothesis>=6.119.4",
+    "hypothesis>=6.123.3",
     "pytest-only>=2.1.2",
-    "pytest>=8.3.3",
+    "pytest>=8.3.4",
     "pytest-randomly>=3.16.0",
     "pytest-xdist>=3.6.1",
 ]
 docs = [
-    "mkdocs-material>=9.5.46",
+    "mkdocs-material>=9.5.49",
     "mkdocs>=1.6.1",
 ]
 
@@ -35,6 +35,8 @@ plugin_path = "prettier_maps"
 github_organization_slug = "PrettierMaps"
 project_slug = "PrettierMaps"
 
+[tool.setuptools]
+packages = { find = { where = ["prettier_maps"] } }
 
 [tool.isort]
 profile = "black"
@@ -76,7 +78,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "W", "I", "N", "UP", "RUF", "PERF", "ERA", "PTH"]
-ignore = ["D203", "D213", "RUF005", "N999", "N802"]
+ignore = ["D203", "D213", "RUF005", "N999", "N802", "UP007"]
 
 fixable = ["ALL"]
 unfixable = []

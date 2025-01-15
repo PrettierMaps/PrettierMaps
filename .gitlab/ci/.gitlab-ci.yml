@@ -4,13 +4,15 @@ stages:
   - deploy
   - test
 
-before_script:
-  - make venv
-
 ruff:
   stage: lint
-  image: python:3.12
+  image: "python:$VERSION"
+  parallel:
+    matrix:
+      - VERSION: ["3.9", "3.13"]
   script:
+    - pip install uv
+    - make venv
     - uv run ruff check .
     - uv run ruff format .
   rules:
@@ -18,44 +20,44 @@ ruff:
       changes:
         - tests/**/*
         - prettier_maps/**/*
+        - .gitlab/**/*
 
 mypy:
   stage: lint
-  image: python:3.12
+  image: "python:$VERSION"
+  parallel:
+    matrix:
+      - VERSION: ["3.9", "3.13"]
   script:
+    - pip install uv
+    - make venv
     - uv run mypy .
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
         - tests/**/*
         - prettier_maps/**/*
-
-isort:
-  stage: lint
-  image: python:3.12
-  script:
-    - uv run isort .
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - tests/**/*
-        - prettier_maps/**/*
+        - .gitlab/**/*
 
 test:
   stage: test
-  image: python:3.12
+  image: qgis/qgis:latest
   script:
-    - uv run pytest
+    - pip install --break-system-packages -e '.[test]' --no-deps || true
+    - pytest
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
         - tests/**/*
         - prettier_maps/**/*
+        - .gitlab/**/*
 
 build_docs:
   stage: build_docs
   image: python:3.12
   script:
+    - pip install uv
+    - make venv
     - make docs
   rules:
     - if: '$CI_COMMIT_REF_NAME == "main"'
