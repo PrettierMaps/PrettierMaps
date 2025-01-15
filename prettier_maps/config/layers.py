@@ -1,0 +1,22 @@
+POSSIBLE_LAYERS = set(
+    [
+        "boundary",
+        "transportation",
+        "aeroway",
+        "building",
+        "water",
+        "waterway",
+        "park",
+        "landuse",
+        "place",
+        "globallandcover",
+        "landcover",
+        "poi",
+        "mountain_peak",
+        "transport_name",
+        "trail",
+        "outdoor_poi",
+        "contour",
+        "aerodrome_label",
+    ]
+)

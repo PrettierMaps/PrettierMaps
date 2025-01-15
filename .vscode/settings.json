@@ -1,8 +1,11 @@
 {
     "cSpell.words": [
+        "aeroway",
         "color",
         "fontawesome",
+        "globallandcover",
         "isort",
+        "landuse",
         "mypy",
         "osgeo",
         "pyproject",
@@ -12,12 +15,17 @@
         "venv"
     ],
     "python.analysis.diagnosticSeverityOverrides": {
-    "reportMissingTypeStubs": "none",
-    "reportWildcardImportFromLibrary": "none"
-},
+        "reportMissingTypeStubs": "none",
+        "reportWildcardImportFromLibrary": "none"
+    },
     "mypy-type-checker.args": [
         "--strict",
-        "--ignore-missing-imports",
         "--config-file=pyproject.toml"
-    ]
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "always",
+        "source.organizeImports": "always"
+    },
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "charliermarsh.ruff"
 }

@@ -9,8 +9,9 @@ ruff:
   image: "python:$VERSION"
   parallel:
     matrix:
-      - VERSION: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+      - VERSION: ["3.9", "3.13"]
   script:
+    - pip install uv
     - make venv
     - uv run ruff check .
     - uv run ruff format .
@@ -26,8 +27,9 @@ mypy:
   image: "python:$VERSION"
   parallel:
     matrix:
-      - VERSION: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+      - VERSION: ["3.9", "3.13"]
   script:
+    - pip install uv
     - make venv
     - uv run mypy .
   rules:
@@ -54,6 +56,7 @@ build_docs:
   stage: build_docs
   image: python:3.12
   script:
+    - pip install uv
     - make venv
     - make docs
   rules:
