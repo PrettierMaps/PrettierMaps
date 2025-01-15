@@ -72,7 +72,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         style_button = QPushButton("Style QuickOSM Layer", self)
         style_button.setFont(self.get_font())
         style_button.clicked.connect(self.style_QuickOSM_layers)
-        layout.addWidget(self.style_button, alignment=Qt.AlignmentFlag.AlignLeft)
+        layout.addWidget(style_button, alignment=Qt.AlignmentFlag.AlignLeft)
 
     def get_selected_layers(self) -> set[str]:
         return {
