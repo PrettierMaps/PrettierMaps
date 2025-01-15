@@ -24,6 +24,8 @@ def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRend
 
 
 def _get_qgis_project() -> "QgsProject | None":
+    from qgis.core import QgsProject
+
     return QgsProject.instance()
 
 
