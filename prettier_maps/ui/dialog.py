@@ -46,7 +46,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         layer_layout.setContentsMargins(20, 20, 20, 20)
 
         for layer in sorted(POSSIBLE_LAYERS):
-            checkbox = QCheckBox(layer)
+            checkbox = QCheckBox(layer.title())
             checkbox.setFont(self.get_font())
             checkbox.setChecked(True)
             checkbox.stateChanged.connect(self.on_checkbox_changed)
