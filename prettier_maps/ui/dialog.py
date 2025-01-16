@@ -84,7 +84,9 @@ class MainDialog(QDialog):  # type: ignore[misc]
         if dialog.exec_():
             folder_path = dialog.selectedFiles()[0]
             save_quick_osm_layers(folder_path)
-            QMessageBox.information(self, "Layers Saved", "All OSM layers have been saved successfully.")
+            QMessageBox.information(
+                self, "Layers Saved", "All OSM layers have been saved successfully."
+            )
 
     def get_selected_layers(self) -> set[str]:
         return {
