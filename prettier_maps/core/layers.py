@@ -121,6 +121,3 @@ def update_styled_layer(layer: "QgsVectorLayer"):
 
     layer.triggerRepaint()
     iface.layerTreeView().refreshLayerSymbology(layer.id())
-
-
-apply_style_to_QuickOSM_layers()
