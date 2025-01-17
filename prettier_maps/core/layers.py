@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING
+
 from PyQt5.QtGui import QColor
 
 if TYPE_CHECKING:
@@ -70,13 +71,10 @@ def filter_layers(
 
             renderer.setStyles(new_styles)
             refresh_layer(map_layer, renderer)
-            
+
 
 def apply_style_to_QuickOSM_layers():
-    from qgis.core import (
-        QgsLayerTreeLayer,
-        QgsProject
-    )
+    from qgis.core import QgsLayerTreeLayer, QgsProject
 
     instance = QgsProject.instance()
     assert instance is not None
@@ -99,31 +97,30 @@ def apply_style_to_QuickOSM_layers():
 
 
 def style_single_layer(layer: "QgsVectorLayer"):
-    from qgis.core import (
-        QgsFillSymbol,
-        QgsLineSymbol,
-        QgsMarkerSymbol
-    )
-    
+    from qgis.core import QgsFillSymbol, QgsLineSymbol, QgsMarkerSymbol
+
     symbol_renderer = layer.renderer()
     cur_symbol = symbol_renderer.symbol()
-    match type(cur_symbol):
-        case "QgsFillSymbol":
-            symbol = QgsFillSymbol.createSimple()
-        case "QgsLineSymbol":
-            symbol = QgsLineSymbol.createSimple()
-        case "QgsMarkerSymbol":
-            symbol = QgsMarkerSymbol.createSimple()
-        case _:
-            symbol = cur_symbol
+
+    basic_symbols = (QgsFillSymbol, QgsLineSymbol, QgsMarkerSymbol)
+    symbol = None
+
+    for symbol_type in basic_symbols:
+        if type(cur_symbol) is symbol_type:
+            symbol = symbol_type.createSimple({})
+    # If we can't overwrite with a simple, just change the colour
+    if symbol is None:
+        symbol = cur_symbol
+
     symbol.setColor(QColor.fromRgb(155, 0, 155))
     symbol_renderer.setSymbol(symbol)
 
 
 def update_styled_layer(layer: "QgsVectorLayer"):
     from qgis.utils import iface
-    
+
     layer.triggerRepaint()
     iface.layerTreeView().refreshLayerSymbology(layer.id())
+
 
 apply_style_to_QuickOSM_layers()
