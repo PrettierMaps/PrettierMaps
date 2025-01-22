@@ -13,3 +13,5 @@ tracker=https://github.com/PrettierMaps/PrettierMaps/issues
 repository=https://github.com/PrettierMaps/PrettierMaps
 
 icon=assets/icon.png
+category=Vector
+plugin_dependencies=MapTiler
