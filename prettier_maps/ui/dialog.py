@@ -10,7 +10,6 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-
 from prettier_maps.config.layers import POSSIBLE_LAYERS
 from prettier_maps.core import filter_layers, apply_style_to_QuickOSM_layers
 

@@ -1,6 +1,6 @@
 [project]
 name = "prettier_maps"
-version = "0.1.0"
+version = "0.2.0"
 description="Style Maps Easily in GQIS"
 requires-python = ">=3.9"
 dependencies = [

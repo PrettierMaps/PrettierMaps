@@ -8,6 +8,8 @@ if TYPE_CHECKING:
         QgsLayerTreeLayer,
         QgsProject,
         QgsVectorTileBasicRenderer,
+        QgsProject,
+        QgsVectorTileBasicRenderer,
         QgsVectorTileBasicRendererStyle,
         QgsVectorTileLayer,
     )
@@ -34,12 +36,28 @@ def _get_qgis_project() -> "QgsProject | None":
 def filter_layers(
     layers_to_turn_on: set[str], instance_to_filter: "QgsProject | None" = None
 ):
+def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRenderer"):
+    layer.setRenderer(renderer.clone())
+    layer.setBlendMode(layer.blendMode())
+    layer.setOpacity(layer.opacity())
+
+
+def _get_qgis_project() -> "QgsProject | None":
+    from qgis.core import QgsProject
+
+    return QgsProject.instance()
+
+
+def filter_layers(
+    layers_to_turn_on: set[str], instance_to_filter: "QgsProject | None" = None
+):
     from qgis.core import (
         QgsLayerTreeGroup,
         QgsVectorTileBasicRenderer,
         QgsVectorTileLayer,
     )
 
+    instance = instance_to_filter or _get_qgis_project()
     instance = instance_to_filter or _get_qgis_project()
     assert instance is not None
     root = instance.layerTreeRoot()
@@ -57,7 +75,10 @@ def filter_layers(
 
             renderer = map_layer.renderer()
             assert renderer is not None
+            renderer = map_layer.renderer()
+            assert renderer is not None
 
+            assert isinstance(renderer, QgsVectorTileBasicRenderer)
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
 
             styles = renderer.styles()
