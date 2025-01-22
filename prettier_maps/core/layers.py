@@ -166,7 +166,7 @@ def style_single_layer(layer: "QgsVectorLayer"):
     symbol = None
 
     for symbol_type in basic_symbols:
-        if type(cur_symbol) is symbol_type:
+        if isinstance(cur_symbol, symbol_type):
             symbol = symbol_type.createSimple({})
     # If we can't overwrite with a simple, just change the colour
     if symbol is None:
