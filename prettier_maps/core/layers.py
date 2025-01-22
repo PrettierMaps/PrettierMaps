@@ -9,6 +9,7 @@ if TYPE_CHECKING:
         QgsProject,
         QgsVectorTileBasicRenderer,
         QgsProject,
+        QgsVectorLayer,
         QgsVectorTileBasicRenderer,
         QgsVectorTileBasicRendererStyle,
         QgsVectorTileLayer,
