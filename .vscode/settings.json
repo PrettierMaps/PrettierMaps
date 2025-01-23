@@ -4,6 +4,7 @@
         "color",
         "fontawesome",
         "globallandcover",
+        "gpkg",
         "isort",
         "landuse",
         "mypy",

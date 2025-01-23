@@ -3,7 +3,10 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QCheckBox,
     QDialog,
+    QFileDialog,
+    QHBoxLayout,
     QLabel,
+    QMessageBox,
     QPushButton,
     QScrollArea,
     QVBoxLayout,
@@ -12,6 +15,7 @@ from PyQt5.QtWidgets import (
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
 from prettier_maps.core import filter_layers
+from prettier_maps.core.save_osm_layer import save_quick_osm_layers
 
 
 class MainDialog(QDialog):  # type: ignore[misc]
@@ -27,7 +31,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
     def init_ui(self) -> None:
         self.setWindowTitle("Prettier Maps")
-        self.resize(500, 700)
+        self.resize(500, 600)
 
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
@@ -40,6 +44,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setContentsMargins(0, 0, 0, 0)
+        scroll.setMaximumHeight(500)
 
         layer_layout = QVBoxLayout()
         layer_layout.setSpacing(30)
@@ -58,12 +63,30 @@ class MainDialog(QDialog):  # type: ignore[misc]
         scroll.setWidget(scroll_widget)
         layout.addWidget(scroll)
 
+        file_layout = QHBoxLayout()
+        save_button = QPushButton("Save Quick OSM Layers")
+        save_button.setFont(self.get_font())
+        save_button.clicked.connect(self.save_layers_dialog)
+        file_layout.addWidget(save_button)
+        layout.addLayout(file_layout)
+
         close_button = QPushButton("Close")
         close_button.setFont(self.get_font())
         close_button.clicked.connect(self.close_dialog)
         layout.addWidget(close_button)
 
         self.setLayout(layout)
+
+    def save_layers_dialog(self) -> None:
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.FileMode.Directory)
+        dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
+        if dialog.exec_():
+            folder_path = dialog.selectedFiles()[0]
+            save_quick_osm_layers(folder_path)
+            QMessageBox.information(
+                self, "Layers Saved", "All OSM layers have been saved successfully."
+            )
 
     def get_selected_layers(self) -> set[str]:
         return {
