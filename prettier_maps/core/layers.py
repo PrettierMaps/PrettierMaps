@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from PyQt5.QtGui import QColor
@@ -14,26 +16,26 @@ if TYPE_CHECKING:
     )
 
 
-def get_layers_from_group(group: "QgsLayerTreeGroup") -> list["QgsLayerTreeLayer"]:
+def get_layers_from_group(group: QgsLayerTreeGroup) -> list[QgsLayerTreeLayer]:
     from qgis.core import QgsLayerTreeLayer
 
     return [layer for layer in group.children() if isinstance(layer, QgsLayerTreeLayer)]
 
 
-def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRenderer"):
+def refresh_layer(layer: QgsVectorTileLayer, renderer: QgsVectorTileBasicRenderer):
     layer.setRenderer(renderer.clone())
     layer.setBlendMode(layer.blendMode())
     layer.setOpacity(layer.opacity())
 
 
-def _get_qgis_project() -> "QgsProject | None":
+def _get_qgis_project() -> QgsProject | None:
     from qgis.core import QgsProject
 
     return QgsProject.instance()
 
 
 def filter_layers(
-    layers_to_turn_on: set[str], instance_to_filter: "QgsProject | None" = None
+    layers_to_turn_on: set[str], instance_to_filter: QgsProject | None = None
 ):
     from qgis.core import (
         QgsLayerTreeGroup,
@@ -101,7 +103,7 @@ def apply_style_to_quick_osm_layers() -> None:
         update_styled_layer(layer)
 
 
-def style_single_layer(layer: "QgsVectorLayer"):
+def style_single_layer(layer: QgsVectorLayer):
     from qgis.core import QgsFillSymbol, QgsLineSymbol, QgsMarkerSymbol
 
     symbol_renderer = layer.renderer()
@@ -121,7 +123,7 @@ def style_single_layer(layer: "QgsVectorLayer"):
     symbol_renderer.setSymbol(symbol)
 
 
-def update_styled_layer(layer: "QgsVectorLayer"):
+def update_styled_layer(layer: QgsVectorLayer):
     from qgis.utils import iface
 
     layer.triggerRepaint()
