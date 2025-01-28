@@ -1,23 +1,13 @@
 [project]
 name = "prettier_maps"
 version = "0.2.0"
-description="Style Maps Easily in GQIS"
+description = "Style Maps Easily in GQIS"
 requires-python = ">=3.9"
-dependencies = [
-    "pyqt5",
-    "setuptools",
-]
-authors = [
-    {name = "Matthew McKee"},
-]
+dependencies = ["pyqt5", "setuptools"]
+authors = [{ name = "Matthew McKee" }]
 
 [dependency-groups]
-dev = [
-    "ruff>=0.9.1",
-    "mypy>=1.14.1",
-    "pre-commit>=4.0.1",
-    "isort>=5.13.2",
-]
+dev = ["ruff>=0.9.1", "mypy>=1.14.1", "pre-commit>=4.0.1"]
 test = [
     "hypothesis>=6.123.3",
     "pytest-only>=2.1.2",
@@ -25,10 +15,7 @@ test = [
     "pytest-randomly>=3.16.0",
     "pytest-xdist>=3.6.1",
 ]
-docs = [
-    "mkdocs-material>=9.5.49",
-    "mkdocs>=1.6.1",
-]
+docs = ["mkdocs-material>=9.5.49", "mkdocs>=1.6.1"]
 
 [tool.qgis-plugin-ci]
 plugin_path = "prettier_maps"
@@ -37,9 +24,6 @@ project_slug = "PrettierMaps"
 
 [tool.setuptools]
 packages = { find = { where = ["prettier_maps"] } }
-
-[tool.isort]
-profile = "black"
 
 [tool.ruff]
 exclude = [
@@ -96,5 +80,3 @@ disable_error_code = ["call-arg", "no-untyped-def", "unused-ignore"]
 disallow_untyped_defs = false
 disallow_untyped_decorators = false
 ignore_missing_imports = true
-
-

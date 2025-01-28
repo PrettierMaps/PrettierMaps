@@ -14,9 +14,6 @@ clean:
 	rm -rf prettier_maps.egg-info/
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 
-.PHONY: isort
-isort:
-	uv run isort .
 
 .PHONY: ruff
 ruff:

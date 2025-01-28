@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import (
 )
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
-from prettier_maps.core import filter_layers, apply_style_to_QuickOSM_layers
+from prettier_maps.core import apply_style_to_quick_osm_layers, filter_layers
 
 
 class MainDialog(QDialog):  # type: ignore[misc]
@@ -57,7 +57,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         scroll_widget.setLayout(layer_layout)
         scroll.setWidget(scroll_widget)
         layout.addWidget(scroll)
-        
+
         self.add_style_button(layout)
 
         close_button = QPushButton("Close")
@@ -66,8 +66,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
         layout.addWidget(close_button)
 
         self.setLayout(layout)
-        
-    def add_style_button(self, layout):
+
+    def add_style_button(self, layout: QVBoxLayout):
         style_button = QPushButton("Style QuickOSM Layer", self)
         style_button.setFont(self.get_font())
         style_button.clicked.connect(self.style_QuickOSM_layers)
@@ -79,9 +79,9 @@ class MainDialog(QDialog):  # type: ignore[misc]
             for layer, checkbox in self.layer_checkboxes.items()
             if checkbox.isChecked()
         }
-        
-    def style_QuickOSM_layers(self):
-        apply_style_to_QuickOSM_layers()
+
+    def style_QuickOSM_layers(self) -> None:
+        apply_style_to_quick_osm_layers()
         self.close()
 
     def on_checkbox_changed(self, state: int) -> None:

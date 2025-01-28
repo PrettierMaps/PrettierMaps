@@ -4,7 +4,6 @@
         "color",
         "fontawesome",
         "globallandcover",
-        "isort",
         "landuse",
         "mypy",
         "osgeo",
@@ -14,18 +13,18 @@
         "testplug",
         "venv"
     ],
-    "python.analysis.diagnosticSeverityOverrides": {
-        "reportMissingTypeStubs": "none",
-        "reportWildcardImportFromLibrary": "none"
-    },
-    "mypy-type-checker.args": [
-        "--strict",
-        "--config-file=pyproject.toml"
-    ],
     "editor.codeActionsOnSave": {
         "source.fixAll": "always",
         "source.organizeImports": "always"
     },
+    "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "charliermarsh.ruff"
+    "mypy-type-checker.args": [
+        "--strict",
+        "--config-file=pyproject.toml"
+    ],
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingTypeStubs": "none",
+        "reportWildcardImportFromLibrary": "none"
+    }
 }
