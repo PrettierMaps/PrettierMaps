@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import (
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
 from prettier_maps.core import filter_layers
-from prettier_maps.core.save_osm_layer import save_quick_osm_layers
+from prettier_maps.core.save_osm_layer import has_layers, save_quick_osm_layers
 
 
 class MainDialog(QDialog):  # type: ignore[misc]
@@ -78,15 +78,22 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.setLayout(layout)
 
     def save_layers_dialog(self) -> None:
+        if not has_layers():
+            QMessageBox.warning(self, "No Layers", "No layers found to save.")
+            return
+
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.FileMode.Directory)
         dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
+
         if dialog.exec_():
             folder_path = dialog.selectedFiles()[0]
-            save_quick_osm_layers(folder_path)
-            QMessageBox.information(
-                self, "Layers Saved", "All OSM layers have been saved successfully."
-            )
+            if save_quick_osm_layers(folder_path):
+                QMessageBox.information(
+                    self, "Layers Saved", "All OSM layers have been saved successfully."
+                )
+            else:
+                QMessageBox.warning(self, "Save Failed", "No layers were saved.")
 
     def get_selected_layers(self) -> set[str]:
         return {
