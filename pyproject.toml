@@ -58,11 +58,11 @@ exclude = [
 line-length = 88
 indent-width = 4
 
-target-version = "py312"
+target-version = "py39"
 
 [tool.ruff.lint]
 select = ["E", "W", "I", "N", "UP", "RUF", "PERF", "ERA", "PTH"]
-ignore = ["D203", "D213", "RUF005", "N999", "N802", "UP007"]
+ignore = ["D203", "D213", "RUF005", "N999", "N802", "UP007", "UP006", "UP035"]
 
 fixable = ["ALL"]
 unfixable = []

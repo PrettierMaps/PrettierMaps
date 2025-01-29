@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from qgis.core import QgsProject, QgsVectorFileWriter, QgsVectorLayer
-
 
 def save_quick_osm_layers(output_directory: str):
+    from qgis.core import QgsProject, QgsVectorFileWriter, QgsVectorLayer
+
     instance = QgsProject.instance()
     assert instance is not None
 
