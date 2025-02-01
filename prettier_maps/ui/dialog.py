@@ -123,7 +123,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.select_all_checkbox.blockSignals(False)
 
     def select_all_changed(self, state: int) -> None:
-        if state == Qt.Checked:
+        if state == Qt.Checked:  # type: ignore[attr-defined]
             new_state = True
         else:
             new_state = False
