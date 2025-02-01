@@ -123,7 +123,10 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.select_all_checkbox.blockSignals(False)
 
     def select_all_changed(self, state: int) -> None:
-        new_state = state == Qt.Checked
+        if state == Qt.Checked:
+            new_state = True
+        else:
+            new_state = False
 
         # Update all layer checkboxes
         for checkbox in self.checkboxes:
