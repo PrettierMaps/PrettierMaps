@@ -42,9 +42,9 @@ class MainDialog(QDialog):  # type: ignore[misc]
         layout.addWidget(instructions)
 
         # Add the "Select All" checkbox
-        self.select_all_checkbox = QCheckBox("Select / Deselect All")
+        self.select_all_checkbox = QCheckBox("Select All")
         self.select_all_checkbox.setFont(self.get_font())
-        self.select_all_checkbox.setChecked(True)
+        self.select_all_checkbox.setChecked(True)  # Initially checked
         self.select_all_checkbox.stateChanged.connect(self.select_all_changed)
         layout.addWidget(self.select_all_checkbox)
 
@@ -57,8 +57,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
         layer_layout.setSpacing(30)
         layer_layout.setContentsMargins(20, 20, 20, 20)
 
-        self.checkboxes = []  # List to hold checkbox references
-
         for layer in sorted(POSSIBLE_LAYERS):
             checkbox = QCheckBox(layer.title())
             checkbox.setFont(self.get_font())
@@ -66,7 +64,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
             checkbox.stateChanged.connect(self.on_checkbox_changed)
             self.layer_checkboxes[layer] = checkbox
             layer_layout.addWidget(checkbox)
-            self.checkboxes.append(checkbox)  # Add checkbox to the list
 
         scroll_widget = QWidget()
         scroll_widget.setLayout(layer_layout)
@@ -114,22 +111,19 @@ class MainDialog(QDialog):  # type: ignore[misc]
     def on_checkbox_changed(self, state: int) -> None:
         selected = self.get_selected_layers()
         filter_layers(selected)
-
-        # Update the "Select All" checkbox state
-        all_checked = all(checkbox.isChecked() for checkbox in self.checkboxes)
+        all_checked = all(
+            checkbox.isChecked() for checkbox in self.layer_checkboxes.values()
+        )
 
         self.select_all_checkbox.blockSignals(True)
         self.select_all_checkbox.setChecked(all_checked)
         self.select_all_checkbox.blockSignals(False)
 
     def select_all_changed(self, state: int) -> None:
-        if state == Qt.Checked:  # type: ignore[attr-defined]
-            new_state = True
-        else:
-            new_state = False
+        new_state = state == Qt.CheckState.Checked
 
         # Update all layer checkboxes
-        for checkbox in self.checkboxes:
+        for checkbox in self.layer_checkboxes.values():
             checkbox.setChecked(new_state)
 
         # Update the filtered layers
