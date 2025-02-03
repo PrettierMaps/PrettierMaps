@@ -4,13 +4,14 @@ from PyQt5.QtWidgets import (
     QCheckBox,
     QDialog,
     QFileDialog,
-    QHBoxLayout,
     QLabel,
     QMessageBox,
     QPushButton,
     QScrollArea,
     QVBoxLayout,
-    QWidget,
+    QTreeWidget,
+    QTreeWidgetItem,
+
 )
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
@@ -46,29 +47,19 @@ class MainDialog(QDialog):  # type: ignore[misc]
         scroll.setContentsMargins(0, 0, 0, 0)
         scroll.setMaximumHeight(500)
 
-        layer_layout = QVBoxLayout()
-        layer_layout.setSpacing(30)
-        layer_layout.setContentsMargins(20, 20, 20, 20)
+        self.layer_tree = QTreeWidget()
+        self.layer_tree.setHeaderHidden(True)
+        self.layer_tree.setFont(self.get_font())
+        #self.layer_tree.itemChanged.connect(self.on_tree_item_changed)
+        layout.addWidget(self.layer_tree)
 
-        for layer in sorted(POSSIBLE_LAYERS):
-            checkbox = QCheckBox(layer.title())
-            checkbox.setFont(self.get_font())
-            checkbox.setChecked(True)
-            checkbox.stateChanged.connect(self.on_checkbox_changed)
-            self.layer_checkboxes[layer] = checkbox
-            layer_layout.addWidget(checkbox)
+        self.populate_layers()
 
-        scroll_widget = QWidget()
-        scroll_widget.setLayout(layer_layout)
-        scroll.setWidget(scroll_widget)
-        layout.addWidget(scroll)
 
-        file_layout = QHBoxLayout()
         save_button = QPushButton("Save Quick OSM Layers")
         save_button.setFont(self.get_font())
         save_button.clicked.connect(self.save_layers_dialog)
-        file_layout.addWidget(save_button)
-        layout.addLayout(file_layout)
+        layout.addWidget(save_button)
 
         close_button = QPushButton("Close")
         close_button.setFont(self.get_font())
@@ -76,6 +67,18 @@ class MainDialog(QDialog):  # type: ignore[misc]
         layout.addWidget(close_button)
 
         self.setLayout(layout)
+
+    def populate_layers(self):
+        for layer in sorted(POSSIBLE_LAYERS):
+            parent_item = QTreeWidgetItem(self.layer_tree)
+            parent_item.setText(0, layer.title())
+            parent_item.setFlags(parent_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+            parent_item.setCheckState(0, Qt.Checked)
+            
+            self.layer_checkboxes[layer] = parent_item
+
+
+
 
     def save_layers_dialog(self) -> None:
         dialog = QFileDialog()
