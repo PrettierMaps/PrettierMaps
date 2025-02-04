@@ -84,7 +84,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
         maptiler_planet_layer = maptiler_group.children()[0] if maptiler_group.children() else None
 
         mp_layer = maptiler_planet_layer.layer()
-
         renderer = mp_layer.renderer()
 
         if isinstance(maptiler_planet_layer, QgsLayerTreeLayer):
@@ -95,38 +94,27 @@ class MainDialog(QDialog):  # type: ignore[misc]
             sublayer_parents = {}
 
             for style in styles:
-                style_name = style.layerName()
-                print(f"Checking style: {style_name}")
-                print(style.styleName())
+                label_name = style.styleName()
+                associated_layer = style.layerName()
 
-                symbol = style.symbol()
-                for i in range(symbol.symbolLayerCount()):
-                    symbol_layer = symbol.symbolLayer(i)
-                    props = symbol_layer.properties()
-                    #print(f"Properties for {style_name} (Layer {i}): {props}")
+                if associated_layer in POSSIBLE_LAYERS:
+                    if associated_layer not in sublayer_parents:
+                        parent_item = QTreeWidgetItem(self.tree_widget)
+                        parent_item.setText(0, associated_layer)
+                        parent_item.setFlags(parent_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+                        parent_item.setCheckState(0, Qt.Checked)
+                        self.layer_checkboxes[associated_layer] = parent_item
+                        sublayer_parents[associated_layer] = parent_item
 
-                    if "text" in props or "label" in props:
-                        print(f"Label Field for {style_name}: {props.get('text', 'UNKNOWN')}")
-                #print(sublayer_name)
-                #feature_name = sublayer_name
-                #print(feature_name)
+                        
+                    print(f"Adding {associated_layer} to layer tree")
+                    parent_item = self.layer_checkboxes[associated_layer]
+                    child_item = QTreeWidgetItem(parent_item)
+                    child_item.setText(0, label_name)
+                    child_item.setFlags(child_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+                    child_item.setCheckState(0, Qt.Checked)
+                    self.layer_checkboxes[f"{associated_layer}:{label_name}"] = child_item
 
-                # if feature_name in sublayer_parents:
-                #     parent_item = sublayer_parents[feature_name]
-                #     child_item = QTreeWidgetItem(parent_item)
-                #     child_item.setText(0, sublayer_name)
-                #     child_item.setFlags(child_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-                #     child_item.setCheckState(0, Qt.Checked)
-                #     self.layer_checkboxes[f"{feature_name}:{sublayer_name}"] = child_item
-                # else:
-                #     parent_item = QTreeWidgetItem(self.tree_widget)
-                #     parent_item.setText(0, sublayer_name)
-                #     parent_item.setFlags(parent_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-                #     parent_item.setCheckState(0, Qt.Checked)
-                #     sublayer_parents[sublayer_name] = parent_item
-                #     self.layer_checkboxes[sublayer_name] = parent_item
-                    
-                #     sublayer_parents[sublayer_name] = parent_item
 
 
 
