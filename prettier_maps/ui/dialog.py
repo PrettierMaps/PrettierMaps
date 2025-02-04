@@ -87,7 +87,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
         renderer = mp_layer.renderer()
 
         if isinstance(maptiler_planet_layer, QgsLayerTreeLayer):
-            print(f"Entering MapTiler Layer: {maptiler_planet_layer.name()}")
 
             styles = renderer.styles()
             
@@ -106,17 +105,12 @@ class MainDialog(QDialog):  # type: ignore[misc]
                         self.layer_checkboxes[associated_layer] = parent_item
                         sublayer_parents[associated_layer] = parent_item
 
-                        
-                    print(f"Adding {associated_layer} to layer tree")
                     parent_item = self.layer_checkboxes[associated_layer]
                     child_item = QTreeWidgetItem(parent_item)
                     child_item.setText(0, label_name)
                     child_item.setFlags(child_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
                     child_item.setCheckState(0, Qt.Checked)
                     self.layer_checkboxes[f"{associated_layer}:{label_name}"] = child_item
-
-
-
 
 
     def get_selected_layers(self) -> set[str]:
