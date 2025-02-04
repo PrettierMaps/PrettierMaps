@@ -100,7 +100,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
                     if associated_layer not in sublayer_parents:
                         parent_item = QTreeWidgetItem(self.tree_widget)
                         parent_item.setText(0, associated_layer)
-                        parent_item.setFlags(parent_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+                        parent_item.setFlags(parent_item.flags() | Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsTristate | Qt.ItemFlag.ItemIsSelectable)
                         parent_item.setCheckState(0, Qt.Checked)
                         self.layer_checkboxes[associated_layer] = parent_item
                         sublayer_parents[associated_layer] = parent_item
@@ -108,7 +108,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
                     parent_item = self.layer_checkboxes[associated_layer]
                     child_item = QTreeWidgetItem(parent_item)
                     child_item.setText(0, label_name)
-                    child_item.setFlags(child_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+                    child_item.setFlags(child_item.flags() | Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsSelectable)
                     child_item.setCheckState(0, Qt.Checked)
                     self.layer_checkboxes[f"{associated_layer}:{label_name}"] = child_item
 
@@ -126,6 +126,10 @@ class MainDialog(QDialog):  # type: ignore[misc]
         return selected_layers
 
     def on_item_changed(self, item:QTreeWidgetItem, column: int) -> None:
+
+        if column != item.checkState(0):
+            return
+
         state = item.checkState(0)
 
         if item.parent() is None:
@@ -136,7 +140,10 @@ class MainDialog(QDialog):  # type: ignore[misc]
             checked_children = sum(
                 parent.child(i).checkState(0) == Qt.Checked for i in range(parent.childCount())
             )
-            if checked_children == 0:
+            unchecked_children = sum(
+                parent.child(i).checkState(0) == Qt.Unchecked for i in range(parent.childCount())
+            )
+            if unchecked_children == parent.childCount():
                 parent.setCheckState(0, Qt.Unchecked)
             elif checked_children == parent.childCount():
                 parent.setCheckState(0, Qt.Checked)
