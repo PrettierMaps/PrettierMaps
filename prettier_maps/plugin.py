@@ -38,6 +38,3 @@ class PrettierMapsPlugin:
 
         dialog = MainDialog()
         dialog.exec_()
-
-    def renderTest(self, painter: QPainter) -> None:
-        print("PrettierMapsPlugin: renderTest called!")
