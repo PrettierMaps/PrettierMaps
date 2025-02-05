@@ -8,14 +8,14 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QPushButton,
     QScrollArea,
-    QVBoxLayout,
     QTreeWidget,
     QTreeWidgetItem,
+    QVBoxLayout,
 )
-
-import json
-
-from qgis.core import QgsProject, QgsVectorTileLayer, QgsLayerTreeGroup, QgsLayerTreeLayer
+from qgis.core import (
+    QgsLayerTreeLayer,
+    QgsProject,
+)
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
 from prettier_maps.core import filter_layers
@@ -75,43 +75,58 @@ class MainDialog(QDialog):  # type: ignore[misc]
     def populate_layers(self):
         project = QgsProject.instance()
         root = project.layerTreeRoot()
-        
+
         if not root:
             print("no layers found")
             return
-        
-        maptiler_group = root.children()[0] if root.children() else None
-        maptiler_planet_layer = maptiler_group.children()[0] if maptiler_group.children() else None
+
+        if not root.children():
+            raise ValueError("No map open")
+        maptiler_group = root.children()[0]
+
+        if not maptiler_group.children():
+            raise ValueError("No map open")
+        maptiler_planet_layer = maptiler_group.children()[0]
+
+        if not isinstance(maptiler_planet_layer, QgsLayerTreeLayer):
+            raise ValueError("No map open")
 
         mp_layer = maptiler_planet_layer.layer()
         renderer = mp_layer.renderer()
+        styles = renderer.styles()
 
-        if isinstance(maptiler_planet_layer, QgsLayerTreeLayer):
+        sublayer_parents = {}
 
-            styles = renderer.styles()
-            
-            sublayer_parents = {}
+        for style in styles:
+            label_name = style.styleName()
+            associated_layer = style.layerName()
 
-            for style in styles:
-                label_name = style.styleName()
-                associated_layer = style.layerName()
+            if associated_layer not in POSSIBLE_LAYERS:
+                continue
 
-                if associated_layer in POSSIBLE_LAYERS:
-                    if associated_layer not in sublayer_parents:
-                        parent_item = QTreeWidgetItem(self.tree_widget)
-                        parent_item.setText(0, associated_layer)
-                        parent_item.setFlags(parent_item.flags() | Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsTristate | Qt.ItemFlag.ItemIsSelectable)
-                        parent_item.setCheckState(0, Qt.Checked)
-                        self.layer_checkboxes[associated_layer] = parent_item
-                        sublayer_parents[associated_layer] = parent_item
+            if associated_layer not in sublayer_parents:
+                parent_item = QTreeWidgetItem(self.tree_widget)
+                parent_item.setText(0, associated_layer)
+                parent_item.setFlags(
+                    parent_item.flags()
+                    | Qt.ItemFlag.ItemIsUserCheckable
+                    | Qt.ItemFlag.ItemIsTristate
+                    | Qt.ItemFlag.ItemIsSelectable
+                )
+                parent_item.setCheckState(0, Qt.Checked)
+                self.layer_checkboxes[associated_layer] = parent_item
+                sublayer_parents[associated_layer] = parent_item
 
-                    parent_item = self.layer_checkboxes[associated_layer]
-                    child_item = QTreeWidgetItem(parent_item)
-                    child_item.setText(0, label_name)
-                    child_item.setFlags(child_item.flags() | Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsSelectable)
-                    child_item.setCheckState(0, Qt.Checked)
-                    self.layer_checkboxes[f"{associated_layer}:{label_name}"] = child_item
-
+            parent_item = self.layer_checkboxes[associated_layer]
+            child_item = QTreeWidgetItem(parent_item)
+            child_item.setText(0, label_name)
+            child_item.setFlags(
+                child_item.flags()
+                | Qt.ItemFlag.ItemIsUserCheckable
+                | Qt.ItemFlag.ItemIsSelectable
+            )
+            child_item.setCheckState(0, Qt.Checked)
+            self.layer_checkboxes[f"{associated_layer}:{label_name}"] = child_item
 
     def get_selected_layers(self) -> set[str]:
         selected_layers = set()
@@ -125,8 +140,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
                     selected_layers.add(f"{layer_item.text(0)}:{sublayer_item.text(0)}")
         return selected_layers
 
-    def on_item_changed(self, item:QTreeWidgetItem, column: int) -> None:
-
+    def on_item_changed(self, item: QTreeWidgetItem, column: int) -> None:
         if column != item.checkState(0):
             return
 
@@ -138,11 +152,14 @@ class MainDialog(QDialog):  # type: ignore[misc]
         else:
             parent = item.parent()
             checked_children = sum(
-                parent.child(i).checkState(0) == Qt.Checked for i in range(parent.childCount())
+                parent.child(i).checkState(0) == Qt.Checked
+                for i in range(parent.childCount())
             )
             unchecked_children = sum(
-                parent.child(i).checkState(0) == Qt.Unchecked for i in range(parent.childCount())
+                parent.child(i).checkState(0) == Qt.Unchecked
+                for i in range(parent.childCount())
             )
+
             if unchecked_children == parent.childCount():
                 parent.setCheckState(0, Qt.Unchecked)
             elif checked_children == parent.childCount():
@@ -150,8 +167,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
             else:
                 parent.setCheckState(0, Qt.PartiallyChecked)
 
-        filter_layers(self.get_selected_layers() )
-
+        filter_layers(self.get_selected_layers())
 
     def save_layers_dialog(self) -> None:
         dialog = QFileDialog()
@@ -162,8 +178,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
             save_quick_osm_layers(folder_path)
             QMessageBox.information(
                 self, "Layers Saved", "All OSM layers have been saved successfully."
-            )        
-
+            )
 
     def close_dialog(self) -> None:
         self.close()
