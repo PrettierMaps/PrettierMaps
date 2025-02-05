@@ -150,6 +150,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
             else:
                 parent.setCheckState(0, Qt.PartiallyChecked)
 
+        filter_layers(self.get_selected_layers() )
+
 
     def save_layers_dialog(self) -> None:
         dialog = QFileDialog()
