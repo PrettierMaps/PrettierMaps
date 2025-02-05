@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import (
     QTreeWidget,
     QTreeWidgetItem,
     QVBoxLayout,
+    QHBoxLayout,
 )
 from qgis.core import (
     QgsLayerTreeLayer,
@@ -18,8 +19,8 @@ from qgis.core import (
 )
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
-from prettier_maps.core import filter_layers
-from prettier_maps.core.save_osm_layer import has_layers, save_quick_osm_layers
+from prettier_maps.core import apply_style_to_quick_osm_layers, filter_layers
+from prettier_maps.core.save_osm_layer import save_quick_osm_layers
 
 
 class MainDialog(QDialog):  # type: ignore[misc]
@@ -45,6 +46,13 @@ class MainDialog(QDialog):  # type: ignore[misc]
         instructions.setAlignment(Qt.AlignmentFlag.AlignLeft)
         layout.addWidget(instructions)
 
+        # Add the "Select All" checkbox
+        self.select_all_checkbox = QCheckBox("Select All")
+        self.select_all_checkbox.setFont(self.get_font())
+        self.select_all_checkbox.setChecked(True)  # Initially checked
+        self.select_all_checkbox.stateChanged.connect(self.select_all_changed)
+        layout.addWidget(self.select_all_checkbox)
+
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setContentsMargins(0, 0, 0, 0)
@@ -60,10 +68,15 @@ class MainDialog(QDialog):  # type: ignore[misc]
         scroll.setWidget(self.tree_widget)
         layout.addWidget(scroll)
 
+        # File layout for save button
+        file_layout = QHBoxLayout()
         save_button = QPushButton("Save Quick OSM Layers")
         save_button.setFont(self.get_font())
         save_button.clicked.connect(self.save_layers_dialog)
-        layout.addWidget(save_button)
+        file_layout.addWidget(save_button)
+        layout.addLayout(file_layout)
+
+        self.add_style_button(layout)
 
         close_button = QPushButton("Close")
         close_button.setFont(self.get_font())
@@ -144,10 +157,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
         filter_layers(self.get_selected_layers())
 
     def save_layers_dialog(self) -> None:
-        if not has_layers():
-            QMessageBox.warning(self, "No Layers", "No layers found to save.")
-            return
-
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.FileMode.Directory)
         dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
@@ -156,9 +165,47 @@ class MainDialog(QDialog):  # type: ignore[misc]
             folder_path = dialog.selectedFiles()[0]
             save_quick_osm_layers(folder_path)
             QMessageBox.information(
-                self, "Layers Saved",
-                "All OSM layers have been saved successfully."
+                self, "Layers Saved", "All OSM layers have been saved successfully."
             )
+
+    def add_style_button(self, layout: QVBoxLayout):
+        style_button = QPushButton("Style QuickOSM Layer", self)
+        style_button.setFont(self.get_font())
+        style_button.clicked.connect(self.style_QuickOSM_layers)
+        layout.addWidget(style_button)
+
+    def get_selected_layers(self) -> set[str]:
+        return {
+            layer
+            for layer, checkbox in self.layer_checkboxes.items()
+            if checkbox.isChecked()
+        }
+
+    def style_QuickOSM_layers(self) -> None:
+        apply_style_to_quick_osm_layers()
+        self.close()
+
+    def on_checkbox_changed(self, state: int) -> None:
+        selected = self.get_selected_layers()
+        filter_layers(selected)
+        all_checked = all(
+            checkbox.isChecked() for checkbox in self.layer_checkboxes.values()
+        )
+
+        self.select_all_checkbox.blockSignals(True)
+        self.select_all_checkbox.setChecked(all_checked)
+        self.select_all_checkbox.blockSignals(False)
+
+    def select_all_changed(self, state: int) -> None:
+        new_state = state == Qt.CheckState.Checked
+
+        # Update all layer checkboxes
+        for checkbox in self.layer_checkboxes.values():
+            checkbox.setChecked(new_state)
+
+        # Update the filtered layers
+        selected = self.get_selected_layers()
+        filter_layers(selected)
 
     def close_dialog(self) -> None:
         self.close()
