@@ -3,6 +3,10 @@ from pathlib import Path
 from qgis.core import QgsProject, QgsVectorFileWriter, QgsVectorLayer
 
 
+def has_layers() -> bool:
+    return bool(QgsProject.instance().mapLayers())
+
+
 def save_quick_osm_layers(output_directory: str):
     instance = QgsProject.instance()
     assert instance is not None
@@ -23,6 +27,10 @@ def save_quick_osm_layers(output_directory: str):
             layer.setName(new_layer_name)
             output_file = str(Path(output_directory) / f"{new_layer_name}.gpkg")
 
+            # Export the layer's style to a QML file
+            qml_file = Path(output_directory) / f"{new_layer_name}.qml"
+            layer.saveNamedStyle(str(qml_file))
+
             # Save the temporary layer to a GeoPackage
             QgsVectorFileWriter.writeAsVectorFormat(
                 layer,
@@ -39,5 +47,11 @@ def save_quick_osm_layers(output_directory: str):
             )
             QgsProject.instance().addMapLayer(permanent_layer)
 
+            # Load the style from the QML file into the new layer
+            permanent_layer.loadNamedStyle(str(qml_file))
+
             # Optionally, remove the temporary layer from the project
             QgsProject.instance().removeMapLayer(layer.id())
+
+            # Delete the QML file to save storage space
+            qml_file.unlink()
