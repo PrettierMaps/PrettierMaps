@@ -14,8 +14,8 @@ from PyQt5.QtWidgets import (
 )
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
-from prettier_maps.core import filter_layers
-from prettier_maps.core.save_osm_layer import has_layers, save_quick_osm_layers
+from prettier_maps.core import apply_style_to_quick_osm_layers, filter_layers
+from prettier_maps.core.save_osm_layer import save_quick_osm_layers
 
 
 class MainDialog(QDialog):  # type: ignore[misc]
@@ -41,6 +41,21 @@ class MainDialog(QDialog):  # type: ignore[misc]
         """
 
         # Create the scroll area
+        layout = QVBoxLayout()
+        layout.setContentsMargins(20, 20, 20, 20)
+
+        instructions = QLabel("Select Layers")
+        instructions.setFont(self.get_font())
+        instructions.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        layout.addWidget(instructions)
+
+        # Add the "Select All" checkbox
+        self.select_all_checkbox = QCheckBox("Select All")
+        self.select_all_checkbox.setFont(self.get_font())
+        self.select_all_checkbox.setChecked(True)  # Initially checked
+        self.select_all_checkbox.stateChanged.connect(self.select_all_changed)
+        layout.addWidget(self.select_all_checkbox)
+
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setContentsMargins(0, 0, 0, 0)
@@ -91,6 +106,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         save_button.clicked.connect(self.save_layers_dialog)
         file_layout.addWidget(save_button)
         layout.addLayout(file_layout)
+        self.add_style_button(layout)
 
         # Add the close button
         close_button = QPushButton("Close")
@@ -122,6 +138,12 @@ class MainDialog(QDialog):  # type: ignore[misc]
                 self, "Layers Saved", "All OSM layers have been saved successfully."
             )
 
+    def add_style_button(self, layout: QVBoxLayout):
+        style_button = QPushButton("Style QuickOSM Layer", self)
+        style_button.setFont(self.get_font())
+        style_button.clicked.connect(self.style_QuickOSM_layers)
+        layout.addWidget(style_button)
+
     def get_selected_layers(self) -> set[str]:
         """Gets the layers whose checkbox is enabled
 
@@ -134,12 +156,34 @@ class MainDialog(QDialog):  # type: ignore[misc]
             if checkbox.isChecked()
         }
 
+    def style_QuickOSM_layers(self) -> None:
+        apply_style_to_quick_osm_layers()
+        self.close()
+
     def on_checkbox_changed(self, state: int) -> None:
         """Reapplies the changes whenever a checkbox changes states
 
         :param state: the new state of the checkbox. Argument is ignored
         """
 
+        selected = self.get_selected_layers()
+        filter_layers(selected)
+        all_checked = all(
+            checkbox.isChecked() for checkbox in self.layer_checkboxes.values()
+        )
+
+        self.select_all_checkbox.blockSignals(True)
+        self.select_all_checkbox.setChecked(all_checked)
+        self.select_all_checkbox.blockSignals(False)
+
+    def select_all_changed(self, state: int) -> None:
+        new_state = state == Qt.CheckState.Checked
+
+        # Update all layer checkboxes
+        for checkbox in self.layer_checkboxes.values():
+            checkbox.setChecked(new_state)
+
+        # Update the filtered layers
         selected = self.get_selected_layers()
         filter_layers(selected)
 
