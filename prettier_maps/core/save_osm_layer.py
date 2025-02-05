@@ -3,10 +3,6 @@ from pathlib import Path
 from qgis.core import QgsProject, QgsVectorFileWriter, QgsVectorLayer
 
 
-def has_layers() -> bool:
-    return bool(QgsProject.instance().mapLayers())
-
-
 def save_quick_osm_layers(output_directory: str):
     instance = QgsProject.instance()
     assert instance is not None

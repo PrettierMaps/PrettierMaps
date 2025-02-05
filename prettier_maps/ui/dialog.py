@@ -14,8 +14,8 @@ from PyQt5.QtWidgets import (
 )
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
-from prettier_maps.core import filter_layers
-from prettier_maps.core.save_osm_layer import has_layers, save_quick_osm_layers
+from prettier_maps.core import apply_style_to_quick_osm_layers, filter_layers
+from prettier_maps.core.save_osm_layer import save_quick_osm_layers
 
 
 class MainDialog(QDialog):  # type: ignore[misc]
@@ -70,6 +70,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
         file_layout.addWidget(save_button)
         layout.addLayout(file_layout)
 
+        self.add_style_button(layout)
+
         close_button = QPushButton("Close")
         close_button.setFont(self.get_font())
         close_button.clicked.connect(self.close_dialog)
@@ -78,10 +80,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.setLayout(layout)
 
     def save_layers_dialog(self) -> None:
-        if not has_layers():
-            QMessageBox.warning(self, "No Layers", "No layers found to save.")
-            return
-
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.FileMode.Directory)
         dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
@@ -90,9 +88,14 @@ class MainDialog(QDialog):  # type: ignore[misc]
             folder_path = dialog.selectedFiles()[0]
             save_quick_osm_layers(folder_path)
             QMessageBox.information(
-                self, "Layers Saved",
-                "All OSM layers have been saved successfully."
+                self, "Layers Saved", "All OSM layers have been saved successfully."
             )
+
+    def add_style_button(self, layout: QVBoxLayout):
+        style_button = QPushButton("Style QuickOSM Layer", self)
+        style_button.setFont(self.get_font())
+        style_button.clicked.connect(self.style_QuickOSM_layers)
+        layout.addWidget(style_button)
 
     def get_selected_layers(self) -> set[str]:
         return {
@@ -100,6 +103,10 @@ class MainDialog(QDialog):  # type: ignore[misc]
             for layer, checkbox in self.layer_checkboxes.items()
             if checkbox.isChecked()
         }
+
+    def style_QuickOSM_layers(self) -> None:
+        apply_style_to_quick_osm_layers()
+        self.close()
 
     def on_checkbox_changed(self, state: int) -> None:
         selected = self.get_selected_layers()
