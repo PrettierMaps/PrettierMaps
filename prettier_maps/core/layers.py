@@ -1,3 +1,5 @@
+from typing import Optional
+
 from qgis.core import (
     QgsFillSymbol,
     QgsLayerTreeGroup,
@@ -5,6 +7,7 @@ from qgis.core import (
     QgsLineSymbol,
     QgsMarkerSymbol,
     QgsProject,
+    QgsVectorLayer,
     QgsVectorTileBasicRenderer,
     QgsVectorTileBasicRendererStyle,
     QgsVectorTileLayer,

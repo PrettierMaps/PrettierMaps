@@ -4,7 +4,6 @@ from qgis.core import QgsProject, QgsVectorFileWriter, QgsVectorLayer
 
 
 def has_layers() -> bool:
-<<<<<<< HEAD
     """Returns whether or not the current Project has any layers
 
     :return: True if the current QGIS Project has one or more layers, False otherwise.
@@ -24,12 +23,6 @@ def save_quick_osm_layers(output_directory: str) -> None:
     :param output_directory: Output directory to save the layers to
     """
 
-=======
-    return bool(QgsProject.instance().mapLayers())
-
-
-def save_quick_osm_layers(output_directory: str):
->>>>>>> 75b41ec34bc55535857adc48887e1a69eeb30665
     instance = QgsProject.instance()
     assert instance is not None
 
