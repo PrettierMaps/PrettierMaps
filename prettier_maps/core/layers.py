@@ -1,19 +1,14 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from qgis.core import (
-        QgsLayerTreeGroup,
-        QgsLayerTreeLayer,
-        QgsProject,
-        QgsVectorTileBasicRenderer,
-        QgsVectorTileBasicRendererStyle,
-        QgsVectorTileLayer,
-    )
+from qgis.core import (
+    QgsLayerTreeGroup,
+    QgsLayerTreeLayer,
+    QgsProject,
+    QgsVectorTileBasicRenderer,
+    QgsVectorTileBasicRendererStyle,
+    QgsVectorTileLayer,
+)
 
 
 def get_layers_from_group(group: "QgsLayerTreeGroup") -> list["QgsLayerTreeLayer"]:
-    from qgis.core import QgsLayerTreeLayer
-
     return [layer for layer in group.children() if isinstance(layer, QgsLayerTreeLayer)]
 
 
@@ -24,20 +19,12 @@ def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRend
 
 
 def _get_qgis_project() -> "QgsProject | None":
-    from qgis.core import QgsProject
-
     return QgsProject.instance()
 
 
 def filter_layers(
     layers_to_turn_on: set[str], instance_to_filter: "QgsProject | None" = None
 ):
-    from qgis.core import (
-        QgsLayerTreeGroup,
-        QgsVectorTileBasicRenderer,
-        QgsVectorTileLayer,
-    )
-
     instance = instance_to_filter or _get_qgis_project()
     assert instance is not None
     root = instance.layerTreeRoot()
