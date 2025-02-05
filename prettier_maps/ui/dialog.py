@@ -26,8 +26,7 @@ from prettier_maps.core.save_osm_layer import save_quick_osm_layers
 class MainDialog(QDialog):  # type: ignore[misc]
     def __init__(self) -> None:
         super().__init__()
-        self.layer_tree: dict[str, QTreeWidgetItem] = {}
-        self.layer_checkboxes: dict[str, QCheckBox] = {}
+        self.layer_checkboxes: dict[str, QTreeWidgetItem] = {}
         self.init_ui()
         filter_layers(POSSIBLE_LAYERS)
 
@@ -125,7 +124,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
                     | Qt.ItemFlag.ItemIsTristate
                     | Qt.ItemFlag.ItemIsSelectable
                 )
-                parent_item.setCheckState(0, Qt.Checked)
+                parent_item.setCheckState(0, Qt.CheckState.Checked)
                 self.layer_checkboxes[associated_layer] = parent_item
                 sublayer_parents[associated_layer] = parent_item
 
@@ -137,7 +136,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
                 | Qt.ItemFlag.ItemIsUserCheckable
                 | Qt.ItemFlag.ItemIsSelectable
             )
-            child_item.setCheckState(0, Qt.Checked)
+            child_item.setCheckState(0, Qt.CheckState.Checked)
             self.layer_checkboxes[f"{associated_layer}:{label_name}"] = child_item
 
     def get_selected_layers(self) -> set[str]:
