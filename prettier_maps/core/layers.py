@@ -63,7 +63,6 @@ def filter_layers(
             assert renderer is not None
 
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
-            assert isinstance(renderer, QgsVectorTileBasicRenderer)
 
             styles = renderer.styles()
             new_styles: list[QgsVectorTileBasicRendererStyle] = []
