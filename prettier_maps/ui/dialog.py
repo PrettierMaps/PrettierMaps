@@ -35,11 +35,18 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
-        instructions = QLabel("Select Layers")
 
+        instructions = QLabel("Select Layers")
         instructions.setFont(self.get_font())
         instructions.setAlignment(Qt.AlignmentFlag.AlignLeft)
         layout.addWidget(instructions)
+
+        # Add the "Select All" checkbox
+        self.select_all_checkbox = QCheckBox("Select All")
+        self.select_all_checkbox.setFont(self.get_font())
+        self.select_all_checkbox.setChecked(True)  # Initially checked
+        self.select_all_checkbox.stateChanged.connect(self.select_all_changed)
+        layout.addWidget(self.select_all_checkbox)
 
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
@@ -63,6 +70,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         scroll.setWidget(scroll_widget)
         layout.addWidget(scroll)
 
+        # File layout for save button
         file_layout = QHBoxLayout()
         save_button = QPushButton("Save Quick OSM Layers")
         save_button.setFont(self.get_font())
@@ -109,6 +117,24 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.close()
 
     def on_checkbox_changed(self, state: int) -> None:
+        selected = self.get_selected_layers()
+        filter_layers(selected)
+        all_checked = all(
+            checkbox.isChecked() for checkbox in self.layer_checkboxes.values()
+        )
+
+        self.select_all_checkbox.blockSignals(True)
+        self.select_all_checkbox.setChecked(all_checked)
+        self.select_all_checkbox.blockSignals(False)
+
+    def select_all_changed(self, state: int) -> None:
+        new_state = state == Qt.CheckState.Checked
+
+        # Update all layer checkboxes
+        for checkbox in self.layer_checkboxes.values():
+            checkbox.setChecked(new_state)
+
+        # Update the filtered layers
         selected = self.get_selected_layers()
         filter_layers(selected)
 
