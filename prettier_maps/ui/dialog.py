@@ -84,7 +84,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         self.setLayout(layout)
 
-    def populate_layers(self):
+    def populate_layers(self) -> None:
         project = QgsProject.instance()
         root = project.layerTreeRoot()
 
@@ -142,14 +142,21 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
     def get_selected_layers(self) -> set[str]:
         selected_layers = set()
+
         for i in range(self.tree_widget.topLevelItemCount()):
             layer_item = self.tree_widget.topLevelItem(i)
-            if layer_item.checkState(0) == Qt.Checked:
+            assert layer_item is not None
+
+            if layer_item.checkState(0) == Qt.CheckState.Checked:
                 selected_layers.add(layer_item.text(0))
+
             for j in range(layer_item.childCount()):
                 sublayer_item = layer_item.child(j)
-                if sublayer_item.checkState(0) == Qt.Checked:
+                assert sublayer_item is not None
+
+                if sublayer_item.checkState(0) == Qt.CheckState.Checked:
                     selected_layers.add(f"{layer_item.text(0)}:{sublayer_item.text(0)}")
+
         return selected_layers
 
     def on_item_changed(self, item: QTreeWidgetItem) -> None:
@@ -157,7 +164,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         all_checked = True
         for checkbox in self.layer_checkboxes.values():
-            if checkbox.checkState(0) != Qt.Checked:
+            if checkbox.checkState(0) != Qt.CheckState.Checked:
                 all_checked = False
                 break
 
@@ -177,7 +184,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
                 self, "Layers Saved", "All OSM layers have been saved successfully."
             )
 
-    def add_style_button(self, layout: QVBoxLayout):
+    def add_style_button(self, layout: QVBoxLayout) -> None:
         style_button = QPushButton("Style QuickOSM Layer", self)
         style_button.setFont(self.get_font())
         style_button.clicked.connect(self.style_QuickOSM_layers)
