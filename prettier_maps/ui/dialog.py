@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import (
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
 from prettier_maps.core import apply_style_to_quick_osm_layers, filter_layers
-from prettier_maps.core.save_osm_layer import has_layers, save_quick_osm_layers
+from prettier_maps.core.save_osm_layer import save_quick_osm_layers
 
 
 class MainDialog(QDialog):  # type: ignore[misc]
