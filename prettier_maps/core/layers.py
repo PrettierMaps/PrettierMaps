@@ -1,5 +1,6 @@
 from typing import Optional
 
+from PyQt5.QtGui import QColor
 from qgis.core import (
     QgsFillSymbol,
     QgsLayerTreeGroup,
