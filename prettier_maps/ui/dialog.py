@@ -80,10 +80,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.setLayout(layout)
 
     def save_layers_dialog(self) -> None:
-        if not has_layers():
-            QMessageBox.warning(self, "No Layers", "No layers found to save.")
-            return
-
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.FileMode.Directory)
         dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
