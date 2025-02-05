@@ -138,7 +138,12 @@ class MainDialog(QDialog):  # type: ignore[misc]
                 self, "Layers Saved", "All OSM layers have been saved successfully."
             )
 
-    def add_style_button(self, layout: QVBoxLayout):
+    def add_style_button(self, layout: QVBoxLayout) -> None:
+        """Adds the Style QuickOSM Layer button
+
+        :param layout: layout to add the button to
+        """
+
         style_button = QPushButton("Style QuickOSM Layer", self)
         style_button.setFont(self.get_font())
         style_button.clicked.connect(self.style_QuickOSM_layers)
@@ -157,6 +162,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
         }
 
     def style_QuickOSM_layers(self) -> None:
+        """Styles the layers, called on the Style button being pressed"""
+
         apply_style_to_quick_osm_layers()
         self.close()
 
@@ -177,6 +184,10 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.select_all_checkbox.blockSignals(False)
 
     def select_all_changed(self, state: int) -> None:
+        """Selects or deselects all
+
+        :param state: new state of the Select all checkbox
+        """
         new_state = state == Qt.CheckState.Checked
 
         # Update all layer checkboxes

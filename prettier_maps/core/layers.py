@@ -1,11 +1,15 @@
 from qgis.core import (
+    QgsFillSymbol,
     QgsLayerTreeGroup,
     QgsLayerTreeLayer,
+    QgsLineSymbol,
+    QgsMarkerSymbol,
     QgsProject,
     QgsVectorTileBasicRenderer,
     QgsVectorTileBasicRendererStyle,
     QgsVectorTileLayer,
 )
+from qgis.utils import iface
 
 
 def get_layers_from_group(group: QgsLayerTreeGroup) -> list[QgsLayerTreeLayer]:
@@ -53,7 +57,6 @@ def filter_layers(
 
     # Select the project instance
     instance = instance_to_filter or _get_qgis_project()
-    instance = instance_to_filter or _get_qgis_project()
     assert instance is not None
     root = instance.layerTreeRoot()
     assert root is not None
@@ -73,7 +76,6 @@ def filter_layers(
             renderer = map_layer.renderer()
             assert renderer is not None
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
-            assert isinstance(renderer, QgsVectorTileBasicRenderer)
 
             # Enable and disable the styles based on whether they're on the layers_to_turn_ on list
             styles = renderer.styles()
@@ -91,7 +93,7 @@ def filter_layers(
 
 
 def apply_style_to_quick_osm_layers() -> None:
-    from qgis.core import QgsLayerTreeLayer, QgsProject
+    """Applies a styling to the QuickOSM layers"""
 
     instance = QgsProject.instance()
     assert instance is not None
@@ -103,18 +105,23 @@ def apply_style_to_quick_osm_layers() -> None:
             continue
         layer = child.layer()
 
+        # Checks if a certain layer comes from a QuickOSM query
         variable_names = layer.customProperty("variableNames")
         if variable_names is None:
             continue
         if "quickosm_query" not in variable_names:
             continue
 
+        # Styles the layers
         style_single_layer(layer)
         update_styled_layer(layer)
 
 
-def style_single_layer(layer: "QgsVectorLayer"):
-    from qgis.core import QgsFillSymbol, QgsLineSymbol, QgsMarkerSymbol
+def style_single_layer(layer: QgsVectorLayer):
+    """Applies a styling to a certain layer
+
+    :param layer: layer to style
+    """
 
     symbol_renderer = layer.renderer()
     cur_symbol = symbol_renderer.symbol()
@@ -133,8 +140,11 @@ def style_single_layer(layer: "QgsVectorLayer"):
     symbol_renderer.setSymbol(symbol)
 
 
-def update_styled_layer(layer: "QgsVectorLayer"):
-    from qgis.utils import iface
+def update_styled_layer(layer: QgsVectorLayer):
+    """Refreshes a layer to reapply the changes.
+
+    :param layer: layer to update
+    """
 
     layer.triggerRepaint()
     iface.layerTreeView().refreshLayerSymbology(layer.id())
