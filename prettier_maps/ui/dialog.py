@@ -140,33 +140,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
                     selected_layers.add(f"{layer_item.text(0)}:{sublayer_item.text(0)}")
         return selected_layers
 
-    def on_item_changed(self, item: QTreeWidgetItem, column: int) -> None:
-        if column != item.checkState(0):
-            return
-
-        state = item.checkState(0)
-
-        if item.parent() is None:
-            for i in range(item.childCount()):
-                item.child(i).setCheckState(0, state)
-        else:
-            parent = item.parent()
-            checked_children = sum(
-                parent.child(i).checkState(0) == Qt.Checked
-                for i in range(parent.childCount())
-            )
-            unchecked_children = sum(
-                parent.child(i).checkState(0) == Qt.Unchecked
-                for i in range(parent.childCount())
-            )
-
-            if unchecked_children == parent.childCount():
-                parent.setCheckState(0, Qt.Unchecked)
-            elif checked_children == parent.childCount():
-                parent.setCheckState(0, Qt.Checked)
-            else:
-                parent.setCheckState(0, Qt.PartiallyChecked)
-
+    def on_item_changed(self, item: QTreeWidgetItem) -> None:
         filter_layers(self.get_selected_layers())
 
     def save_layers_dialog(self) -> None:
