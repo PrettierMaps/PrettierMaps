@@ -80,7 +80,8 @@ def filter_layers(
             assert renderer is not None
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
 
-            # Enable and disable the styles based on whether they're on the layers_to_turn_ on list
+            # Enable and disable the styles based on whether they're on the
+            # layers_to_turn_ on list
             styles = renderer.styles()
             new_styles: list[QgsVectorTileBasicRendererStyle] = []
             for style in styles:
