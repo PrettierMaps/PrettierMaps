@@ -1,7 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
-    QCheckBox,
     QDialog,
     QFileDialog,
     QHBoxLayout,
@@ -17,6 +16,8 @@ from qgis.core import (
     QgsLayerTreeGroup,
     QgsLayerTreeLayer,
     QgsProject,
+    QgsVectorTileBasicRenderer,
+    QgsVectorTileLayer,
 )
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
@@ -45,13 +46,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
         instructions.setFont(self.get_font())
         instructions.setAlignment(Qt.AlignmentFlag.AlignLeft)
         layout.addWidget(instructions)
-
-        # Add the "Select All" checkbox
-        self.select_all_checkbox = QCheckBox("Select All")
-        self.select_all_checkbox.setFont(self.get_font())
-        self.select_all_checkbox.setChecked(True)  # Initially checked
-        self.select_all_checkbox.stateChanged.connect(self.select_all_changed)
-        layout.addWidget(self.select_all_checkbox)
 
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
@@ -86,6 +80,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
     def populate_layers(self) -> None:
         project = QgsProject.instance()
+        assert project is not None
         root = project.layerTreeRoot()
 
         if not root:
@@ -109,7 +104,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         maptiler_planet_layer = None
         for layer in maptiler_group.children():
-            if (layer.name() == "MapTiler Planet" or layer.name() == "OpenMapTiles"):
+            if layer.name() == "MapTiler Planet" or layer.name() == "OpenMapTiles":
                 maptiler_planet_layer = layer
                 break
             elif maptiler_planet_layer is None:
@@ -118,9 +113,23 @@ class MainDialog(QDialog):  # type: ignore[misc]
         if not isinstance(maptiler_planet_layer, QgsLayerTreeLayer):
             raise ValueError("No map open")
 
-        mp_layer = maptiler_planet_layer.layer()
-        renderer = mp_layer.renderer()
+        map_layer = maptiler_planet_layer.layer()
+        assert map_layer is not None
+        assert isinstance(map_layer, QgsVectorTileLayer)
+        renderer = map_layer.renderer()
+        assert isinstance(renderer, QgsVectorTileBasicRenderer)
         styles = renderer.styles()
+
+        all_layers_item = QTreeWidgetItem(self.tree_widget)
+        all_layers_item.setText(0, "All Layers")
+        all_layers_item.setFlags(
+            all_layers_item.flags()
+            | Qt.ItemFlag.ItemIsUserCheckable
+            | Qt.ItemFlag.ItemIsTristate
+        )
+        all_layers_item.setExpanded(True)
+        all_layers_item.setCheckState(0, Qt.CheckState.Checked)
+        self.layer_checkboxes["All Layers"] = all_layers_item
 
         sublayer_parents = {}
 
@@ -132,13 +141,12 @@ class MainDialog(QDialog):  # type: ignore[misc]
                 continue
 
             if associated_layer not in sublayer_parents:
-                parent_item = QTreeWidgetItem(self.tree_widget)
+                parent_item = QTreeWidgetItem(all_layers_item)
                 parent_item.setText(0, associated_layer)
                 parent_item.setFlags(
                     parent_item.flags()
                     | Qt.ItemFlag.ItemIsUserCheckable
                     | Qt.ItemFlag.ItemIsTristate
-                    | Qt.ItemFlag.ItemIsSelectable
                 )
                 parent_item.setCheckState(0, Qt.CheckState.Checked)
                 self.layer_checkboxes[associated_layer] = parent_item
@@ -147,45 +155,23 @@ class MainDialog(QDialog):  # type: ignore[misc]
             parent_item = self.layer_checkboxes[associated_layer]
             child_item = QTreeWidgetItem(parent_item)
             child_item.setText(0, label_name)
-            child_item.setFlags(
-                child_item.flags()
-                | Qt.ItemFlag.ItemIsUserCheckable
-                | Qt.ItemFlag.ItemIsSelectable
-            )
+            child_item.setFlags(child_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
             child_item.setCheckState(0, Qt.CheckState.Checked)
             self.layer_checkboxes[f"{associated_layer}:{label_name}"] = child_item
 
     def get_selected_layers(self) -> set[str]:
-        selected_layers = set()
-
-        for i in range(self.tree_widget.topLevelItemCount()):
-            layer_item = self.tree_widget.topLevelItem(i)
-            assert layer_item is not None
-
-            if layer_item.checkState(0) == Qt.CheckState.Checked:
-                selected_layers.add(layer_item.text(0))
-
-            for j in range(layer_item.childCount()):
-                sublayer_item = layer_item.child(j)
-                assert sublayer_item is not None
-
-                if sublayer_item.checkState(0) == Qt.CheckState.Checked:
-                    selected_layers.add(f"{layer_item.text(0)}:{sublayer_item.text(0)}")
+        selected_layers = {
+            k
+            for k, v in self.layer_checkboxes.items()
+            if v.checkState(0) == Qt.CheckState.Checked
+        }
 
         return selected_layers
 
     def on_item_changed(self, item: QTreeWidgetItem) -> None:
+        if item.parent() is not None:
+            return
         filter_layers(self.get_selected_layers())
-
-        all_checked = True
-        for checkbox in self.layer_checkboxes.values():
-            if checkbox.checkState(0) != Qt.CheckState.Checked:
-                all_checked = False
-                break
-
-        self.select_all_checkbox.blockSignals(True)
-        self.select_all_checkbox.setChecked(all_checked)
-        self.select_all_checkbox.blockSignals(False)
 
     def save_layers_dialog(self) -> None:
         dialog = QFileDialog()
@@ -208,15 +194,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
     def style_QuickOSM_layers(self) -> None:
         apply_style_to_quick_osm_layers()
         self.close()
-
-    def select_all_changed(self, state: int) -> None:
-        new_state = self.select_all_checkbox.checkState()
-
-        for checkbox in self.layer_checkboxes.values():
-            checkbox.setCheckState(0, new_state)
-
-        selected = self.get_selected_layers()
-        filter_layers(selected)
 
     def close_dialog(self) -> None:
         self.close()
