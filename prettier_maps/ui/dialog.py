@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 from qgis.core import (
+    QgsLayerTreeGroup,
     QgsLayerTreeLayer,
     QgsProject,
 )
@@ -93,11 +94,26 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         if not root.children():
             raise ValueError("No map open")
-        maptiler_group = root.children()[0]
 
-        if not maptiler_group.children():
+        maptiler_group = None
+        for child in root.children():
+            if isinstance(child, QgsLayerTreeGroup):
+                maptiler_group = child
+                break
+            else:
+                maptiler_group = None
+
+        if not maptiler_group:
             raise ValueError("No map open")
-        maptiler_planet_layer = maptiler_group.children()[0]
+            return
+
+        maptiler_planet_layer = None
+        for layer in maptiler_group.children():
+            if (layer.name() == "MapTiler Planet" or layer.name() == "OpenMapTiles"):
+                maptiler_planet_layer = layer
+                break
+            elif maptiler_planet_layer is None:
+                raise ValueError("No MapTiler Planet or OpenMapTiles layer found")
 
         if not isinstance(maptiler_planet_layer, QgsLayerTreeLayer):
             raise ValueError("No map open")
