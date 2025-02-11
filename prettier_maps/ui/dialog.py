@@ -30,7 +30,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
         super().__init__()
         self.layer_checkboxes: dict[str, QTreeWidgetItem] = {}
         self.init_ui()
-        filter_layers(POSSIBLE_LAYERS)
 
     def get_font(self) -> QFont:
         return QFont("Arial", 12)
@@ -78,14 +77,14 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         self.setLayout(layout)
 
+
     def populate_layers(self) -> None:
         project = QgsProject.instance()
         assert project is not None
         root = project.layerTreeRoot()
 
         if not root:
-            print("no layers found")
-            return
+            raise ValueError("No map open")
 
         if not root.children():
             raise ValueError("No map open")
@@ -102,23 +101,18 @@ class MainDialog(QDialog):  # type: ignore[misc]
             raise ValueError("No map open")
             return
 
-        maptiler_planet_layer = None
-        for layer in maptiler_group.children():
-            if layer.name() == "MapTiler Planet" or layer.name() == "OpenMapTiles":
-                maptiler_planet_layer = layer
-                break
-            elif maptiler_planet_layer is None:
-                raise ValueError("No MapTiler Planet or OpenMapTiles layer found")
+        layer_tree_layers = [layer for layer in maptiler_group.children()]
 
-        if not isinstance(maptiler_planet_layer, QgsLayerTreeLayer):
+        if not all(isinstance(layer, QgsLayerTreeLayer)
+                   for layer in layer_tree_layers):
             raise ValueError("No map open")
 
-        map_layer = maptiler_planet_layer.layer()
-        assert map_layer is not None
-        assert isinstance(map_layer, QgsVectorTileLayer)
-        renderer = map_layer.renderer()
-        assert isinstance(renderer, QgsVectorTileBasicRenderer)
-        styles = renderer.styles()
+        vector_tile_layers = [layer.layer() for layer in layer_tree_layers
+                      if isinstance(layer.layer(), QgsVectorTileLayer)]
+
+        assert vector_tile_layers is not None
+        for layer in vector_tile_layers:
+            assert isinstance(layer, QgsVectorTileLayer)
 
         all_layers_item = QTreeWidgetItem(self.tree_widget)
         all_layers_item.setText(0, "All Layers")
@@ -131,33 +125,53 @@ class MainDialog(QDialog):  # type: ignore[misc]
         all_layers_item.setCheckState(0, Qt.CheckState.Checked)
         self.layer_checkboxes["All Layers"] = all_layers_item
 
-        sublayer_parents = {}
+        for layer in vector_tile_layers:
+            parent_item = QTreeWidgetItem(all_layers_item)
+            parent_item.setText(0, layer.name())
+            parent_item.setFlags(
+                parent_item.flags()
+                | Qt.ItemFlag.ItemIsUserCheckable
+                | Qt.ItemFlag.ItemIsTristate
+            )
+            parent_item.setCheckState(0, Qt.CheckState.Checked)
+            self.layer_checkboxes[layer.name()] = parent_item
 
-        for style in styles:
-            label_name = style.styleName()
-            associated_layer = style.layerName()
+            renderer = layer.renderer()
+            assert isinstance(renderer, QgsVectorTileBasicRenderer)
+            styles = renderer.styles()
 
-            if associated_layer not in POSSIBLE_LAYERS:
-                continue
+            sublayer_parents = {}
 
-            if associated_layer not in sublayer_parents:
-                parent_item = QTreeWidgetItem(all_layers_item)
-                parent_item.setText(0, associated_layer)
-                parent_item.setFlags(
-                    parent_item.flags()
-                    | Qt.ItemFlag.ItemIsUserCheckable
-                    | Qt.ItemFlag.ItemIsTristate
-                )
-                parent_item.setCheckState(0, Qt.CheckState.Checked)
-                self.layer_checkboxes[associated_layer] = parent_item
-                sublayer_parents[associated_layer] = parent_item
+            for style in styles:
+                label_name = style.styleName()
+                associated_layer = style.layerName()
 
-            parent_item = self.layer_checkboxes[associated_layer]
-            child_item = QTreeWidgetItem(parent_item)
-            child_item.setText(0, label_name)
-            child_item.setFlags(child_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-            child_item.setCheckState(0, Qt.CheckState.Checked)
-            self.layer_checkboxes[f"{associated_layer}:{label_name}"] = child_item
+                if associated_layer not in POSSIBLE_LAYERS:
+                    continue
+
+                if associated_layer not in sublayer_parents:
+                    child_item = QTreeWidgetItem(parent_item)
+                    child_item.setText(0, associated_layer)
+                    child_item.setFlags(
+                        child_item.flags()
+                        | Qt.ItemFlag.ItemIsUserCheckable
+                        | Qt.ItemFlag.ItemIsTristate
+                    )
+                    child_item.setCheckState(0, Qt.CheckState.Checked)
+                    self.layer_checkboxes[associated_layer] = child_item
+                    sublayer_parents[associated_layer] = child_item
+
+                child_item = sublayer_parents[associated_layer]
+
+                grandchild_item = QTreeWidgetItem(child_item)
+                grandchild_item.setText(0, label_name)
+                grandchild_item.setFlags(grandchild_item.flags()
+                                         | Qt.ItemFlag.ItemIsUserCheckable)
+                grandchild_item.setCheckState(0, Qt.CheckState.Checked)
+                self.layer_checkboxes[label_name] = grandchild_item
+
+        filter_layers(self.get_selected_layers())
+
 
     def get_selected_layers(self) -> set[str]:
         selected_layers = {
@@ -165,13 +179,14 @@ class MainDialog(QDialog):  # type: ignore[misc]
             for k, v in self.layer_checkboxes.items()
             if v.checkState(0) == Qt.CheckState.Checked
         }
-
         return selected_layers
+
 
     def on_item_changed(self, item: QTreeWidgetItem) -> None:
         if item.parent() is not None:
             return
         filter_layers(self.get_selected_layers())
+
 
     def save_layers_dialog(self) -> None:
         dialog = QFileDialog()
@@ -185,15 +200,18 @@ class MainDialog(QDialog):  # type: ignore[misc]
                 self, "Layers Saved", "All OSM layers have been saved successfully."
             )
 
+
     def add_style_button(self, layout: QVBoxLayout) -> None:
         style_button = QPushButton("Style QuickOSM Layer", self)
         style_button.setFont(self.get_font())
         style_button.clicked.connect(self.style_QuickOSM_layers)
         layout.addWidget(style_button)
 
+
     def style_QuickOSM_layers(self) -> None:
         apply_style_to_quick_osm_layers()
         self.close()
+
 
     def close_dialog(self) -> None:
         self.close()
