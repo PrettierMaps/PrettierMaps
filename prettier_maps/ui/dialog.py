@@ -78,42 +78,44 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         self.setLayout(layout)
 
-
     def populate_layers(self) -> None:
         project = QgsProject.instance()
-        assert project is not None
         root = project.layerTreeRoot()
 
-        if not root:
-            raise ValueError("No map open")
+        if not root or not root.children():
+            all_layers_item = QTreeWidgetItem(self.tree_widget)
+            all_layers_item.setText(0, "No map open")
+            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            return
 
-        if not root.children():
-            raise ValueError("No map open")
-
-        maptiler_group = None
-        for child in root.children():
-            if isinstance(child, QgsLayerTreeGroup):
-                maptiler_group = child
-                break
-            else:
-                maptiler_group = None
+        maptiler_group = next(
+            (
+                child
+                for child in root.children()
+                if isinstance(child, QgsLayerTreeGroup)
+            ),
+            None,
+        )
 
         if not maptiler_group:
-            raise ValueError("No map open")
+            all_layers_item = QTreeWidgetItem(self.tree_widget)
+            all_layers_item.setText(0, "No MapTiler Layers Found")
+            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
             return
 
         layer_tree_layers = [layer for layer in maptiler_group.children()]
 
-        if not all(isinstance(layer, QgsLayerTreeLayer)
-                   for layer in layer_tree_layers):
-            raise ValueError("No map open")
+        vector_tile_layers = [
+            layer.layer()
+            for layer in layer_tree_layers
+            if isinstance(layer.layer(), QgsVectorTileLayer)
+        ]
 
-        vector_tile_layers = [layer.layer() for layer in layer_tree_layers
-                      if isinstance(layer.layer(), QgsVectorTileLayer)]
-
-        assert vector_tile_layers is not None
-        for layer in vector_tile_layers:
-            assert isinstance(layer, QgsVectorTileLayer)
+        if not vector_tile_layers:
+            all_layers_item = QTreeWidgetItem(self.tree_widget)
+            all_layers_item.setText(0, "No MapTiler Layers Found")
+            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            return
 
         all_layers_item = QTreeWidgetItem(self.tree_widget)
         all_layers_item.setText(0, "All Layers")
@@ -166,11 +168,11 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
                 grandchild_item = QTreeWidgetItem(child_item)
                 grandchild_item.setText(0, label_name)
-                grandchild_item.setFlags(grandchild_item.flags()
-                                         | Qt.ItemFlag.ItemIsUserCheckable)
+                grandchild_item.setFlags(
+                    grandchild_item.flags() | Qt.ItemFlag.ItemIsUserCheckable
+                )
                 grandchild_item.setCheckState(0, Qt.CheckState.Checked)
                 self.layer_checkboxes[label_name] = grandchild_item
-
 
     def get_selected_layers(self) -> set[str]:
         selected_layers = {
@@ -180,12 +182,10 @@ class MainDialog(QDialog):  # type: ignore[misc]
         }
         return selected_layers
 
-
     def on_item_changed(self, item: QTreeWidgetItem) -> None:
         if item.parent() is not None:
             return
         filter_layers(self.get_selected_layers())
-
 
     def save_layers_dialog(self) -> None:
         dialog = QFileDialog()
@@ -199,18 +199,15 @@ class MainDialog(QDialog):  # type: ignore[misc]
                 self, "Layers Saved", "All OSM layers have been saved successfully."
             )
 
-
     def add_style_button(self, layout: QVBoxLayout) -> None:
         style_button = QPushButton("Style QuickOSM Layer", self)
         style_button.setFont(self.get_font())
         style_button.clicked.connect(self.style_QuickOSM_layers)
         layout.addWidget(style_button)
 
-
     def style_QuickOSM_layers(self) -> None:
         apply_style_to_quick_osm_layers()
         self.close()
-
 
     def close_dialog(self) -> None:
         self.close()
