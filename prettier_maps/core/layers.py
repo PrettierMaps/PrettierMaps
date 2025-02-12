@@ -27,14 +27,14 @@ def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRend
     layer.setOpacity(layer.opacity())
 
 
-def _get_qgis_project() -> "Union[QgsProject, None]":
+def _get_qgis_project() -> Union["QgsProject", None]:
     from qgis.core import QgsProject
 
     return QgsProject.instance()
 
 
 def filter_layers(
-    layers_to_turn_on: Set[str], instance_to_filter: "Union[QgsProject, None]" = None
+    layers_to_turn_on: Set[str], instance_to_filter: Union["QgsProject", None] = None
 ):
     from qgis.core import (
         QgsLayerTreeGroup,
