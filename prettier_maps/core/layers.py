@@ -44,7 +44,7 @@ def _get_current_qgis_project() -> Optional[QgsProject]:
     return QgsProject.instance()
 
 
-def _get_groups(project: Optional[QgsProject] = None):
+def _get_groups(project: Optional[QgsProject] = None) -> list[QgsLayerTreeNode]:
     instance = project or _get_qgis_project()
     assert instance is not None
     root = instance.layerTreeRoot()
@@ -106,7 +106,7 @@ def apply_style_to_quick_osm_layers() -> None:
         update_styled_layer(layer)
 
 
-def style_single_layer(layer: QgsVectorLayer):
+def style_single_layer(layer: QgsVectorLayer) -> None:
     """Applies a styling to a certain layer
 
     :param layer: layer to style
@@ -130,7 +130,7 @@ def style_single_layer(layer: QgsVectorLayer):
     symbol_renderer.setSymbol(symbol)
 
 
-def update_styled_layer(layer: QgsVectorLayer):
+def update_styled_layer(layer: QgsVectorLayer) -> None:
     """Refreshes a layer to reapply the changes.
 
     :param layer: layer to update
