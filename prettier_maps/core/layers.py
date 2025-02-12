@@ -40,13 +40,17 @@ def refresh_layer(
     layer.setOpacity(layer.opacity())
 
 
-def _get_qgis_project() -> Optional[QgsProject]:
-    """Returns the current QGIS project.
-
-    :return: The current QGIS project
-    """
-
+def _get_current_qgis_project() -> Optional[QgsProject]:
     return QgsProject.instance()
+
+
+def _get_groups(project: Optional[QgsProject] = None):
+    instance = project or _get_qgis_project()
+    assert instance is not None
+    root = instance.layerTreeRoot()
+    assert root is not None
+
+    return root.children()
 
 
 def filter_layers(
@@ -59,30 +63,19 @@ def filter_layers(
       on. If not provided, the current QGIS project is used instead.
     """
 
-    # Select the project instance
-    instance = instance_to_filter or _get_qgis_project()
-    assert instance is not None
-    root = instance.layerTreeRoot()
-    assert root is not None
-
-    for child in root.children():
+    for child in _get_groups(project=instance_to_filter):
         if not isinstance(child, QgsLayerTreeGroup):
             continue
 
-        # Get the layer elements
-        vector_tile_layers = get_layers_from_group(child)
-        for layer in vector_tile_layers:
+        for layer in get_layers_from_group(child):
             map_layer = layer.layer()
             if not isinstance(map_layer, QgsVectorTileLayer):
                 continue
 
-            # Get the layer renderer
             renderer = map_layer.renderer()
             assert renderer is not None
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
 
-            # Enable and disable the styles based on whether they're on the
-            # layers_to_turn_ on list
             styles = renderer.styles()
             new_styles: list[QgsVectorTileBasicRendererStyle] = []
             for style in styles:
@@ -93,19 +86,11 @@ def filter_layers(
                 new_styles.append(style)
 
             renderer.setStyles(new_styles)
-            # Lastly, refresh the layer
             refresh_layer(map_layer, renderer)
 
 
 def apply_style_to_quick_osm_layers() -> None:
-    """Applies a styling to the QuickOSM layers"""
-
-    instance = QgsProject.instance()
-    assert instance is not None
-    root = instance.layerTreeRoot()
-    assert root is not None
-
-    for child in root.children():
+    for child in _get_groups():
         if not isinstance(child, QgsLayerTreeLayer):
             continue
         layer = child.layer()
@@ -117,7 +102,6 @@ def apply_style_to_quick_osm_layers() -> None:
         if "quickosm_query" not in variable_names:
             continue
 
-        # Styles the layers
         style_single_layer(layer)
         update_styled_layer(layer)
 
@@ -137,6 +121,7 @@ def style_single_layer(layer: QgsVectorLayer):
     for symbol_type in basic_symbols:
         if isinstance(cur_symbol, symbol_type):
             symbol = symbol_type.createSimple({})
+
     # If we can't overwrite with a simple, just change the colour
     if symbol is None:
         symbol = cur_symbol
