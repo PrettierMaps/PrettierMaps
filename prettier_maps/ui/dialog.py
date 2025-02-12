@@ -1,6 +1,5 @@
 from PyQt5.QtCore import (
     Qt,
-    QSettings,
     )
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
@@ -20,7 +19,7 @@ from qgis.core import (
     QgsLayerTreeLayer,
     QgsProject,
     QgsVectorTileBasicRenderer,
-    QgsVectorTileLayer,
+    QgsVectorTileLayer ,
 )
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
@@ -32,7 +31,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
     def __init__(self) -> None:
         super().__init__()
         self.layer_checkboxes: dict[str, QTreeWidgetItem] = {}
-        self.settings = QSettings("PrettierMaps","LayerSelection")
         self.init_ui()
 
     def get_font(self) -> QFont:
@@ -129,9 +127,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
         all_layers_item.setCheckState(0, Qt.CheckState.Checked)
         self.layer_checkboxes["All Layers"] = all_layers_item
 
-        # all_checked = self.settings.value("All Layers", True, type = bool)
-        # all_layers_item.setCheckState(0, Qt.CheckState.Checked if all_checked else Qt.CheckState.Unchecked)
-
         for layer in vector_tile_layers:
             parent_item = QTreeWidgetItem(all_layers_item)
             parent_item.setText(0, layer.name())
@@ -142,9 +137,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
             )
             parent_item.setCheckState(0, Qt.CheckState.Checked)
             self.layer_checkboxes[layer.name()] = parent_item
-
-            # checked = self.settings.value(layer.name(), True, type=bool)
-            # parent_item.setCheckState(0,Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
 
             renderer = layer.renderer()
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
@@ -171,8 +163,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
                     self.layer_checkboxes[associated_layer] = child_item
                     sublayer_parents[associated_layer] = child_item
 
-                    # checked = self.settings.value(associated_layer, True, type=bool)
-                    # child_item.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
 
                 child_item = sublayer_parents[associated_layer]
 
@@ -183,8 +173,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
                 grandchild_item.setCheckState(0, Qt.CheckState.Checked if style.isEnabled() else Qt.CheckState.Unchecked)
                 self.layer_checkboxes[label_name] = grandchild_item
 
-                # checked = self.settings.value(label_name, True, type=bool)
-                # grandchild_item.setCheckState(0, Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
 
         filter_layers(self.get_selected_layers())
 
@@ -201,7 +189,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
     def on_item_changed(self, item: QTreeWidgetItem) -> None:
         if item.parent() is not None:
             return
-        self.save_checkbox_states()
         filter_layers(self.get_selected_layers())
 
 
@@ -233,6 +220,3 @@ class MainDialog(QDialog):  # type: ignore[misc]
     def close_dialog(self) -> None:
         self.close()
 
-    def save_checkbox_states(self) -> None:
-        for name, item in self.layer_checkboxes.items():
-            self.settings.setValue(name, item.checkState(0) == Qt.CheckState.Checked)
