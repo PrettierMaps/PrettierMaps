@@ -40,12 +40,8 @@ def refresh_layer(
     layer.setOpacity(layer.opacity())
 
 
-def _get_current_qgis_project() -> Optional[QgsProject]:
-    return QgsProject.instance()
-
-
 def _get_groups(project: Optional[QgsProject] = None) -> list[QgsLayerTreeNode]:
-    instance = project or _get_qgis_project()
+    instance = project or QgsProject.instance()
     assert instance is not None
     root = instance.layerTreeRoot()
     assert root is not None
