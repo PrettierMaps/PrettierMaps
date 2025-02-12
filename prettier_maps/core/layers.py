@@ -5,6 +5,7 @@ from qgis.core import (
     QgsFillSymbol,
     QgsLayerTreeGroup,
     QgsLayerTreeLayer,
+    QgsLayerTreeNode,
     QgsLineSymbol,
     QgsMarkerSymbol,
     QgsProject,
