@@ -30,6 +30,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         super().__init__()
         self.layer_checkboxes: dict[str, QTreeWidgetItem] = {}
         self.init_ui()
+        filter_layers(self.get_selected_layers())
 
     def get_font(self) -> QFont:
         return QFont("Arial", 12)
@@ -169,8 +170,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
                                          | Qt.ItemFlag.ItemIsUserCheckable)
                 grandchild_item.setCheckState(0, Qt.CheckState.Checked)
                 self.layer_checkboxes[label_name] = grandchild_item
-
-        filter_layers(self.get_selected_layers())
 
 
     def get_selected_layers(self) -> set[str]:

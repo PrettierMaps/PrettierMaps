@@ -2,8 +2,10 @@ def test_get_layers_from_group() -> None:
     from qgis.core import QgsLayerTreeGroup, QgsLayerTreeLayer, QgsVectorTileLayer
 
     group = QgsLayerTreeGroup("test_group")
-    layer1 = QgsVectorTileLayer(None, "layer1")
-    layer2 = QgsVectorTileLayer(None, "layer2")
+    v1 = QgsVectorTileLayer(None, "vector_tile_1").id()
+    layer1 = QgsLayerTreeLayer(v1, "layer1", )
+    v2 = QgsVectorTileLayer(None, "vector_tile_2").id()
+    layer2 = QgsLayerTreeLayer(v2, "layer2")
     non_layer = QgsLayerTreeLayer("non_layer")
 
     group.addChildNode(layer1)
@@ -43,9 +45,9 @@ def test_filter_layers() -> None:
 
     renderer = QgsVectorTileBasicRenderer()
     style1 = QgsVectorTileBasicRendererStyle()
-    style1.setLayerName("water")
+    style1.setStyleName("water")
     style2 = QgsVectorTileBasicRendererStyle()
-    style2.setLayerName("building")
+    style2.setStyleName("building")
     renderer.setStyles([style1, style2])
     layer.setRenderer(renderer)
 
