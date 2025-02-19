@@ -42,33 +42,31 @@ def filter_layers(
     )
 
     instance = instance_to_filter or _get_qgis_project()
-    instance = instance_to_filter or _get_qgis_project()
     assert instance is not None
     root = instance.layerTreeRoot()
     assert root is not None
 
-    for child in root.children():
-        if not isinstance(child, QgsLayerTreeGroup):
+    for parent in root.children():
+        if not isinstance(parent, QgsLayerTreeGroup):
             continue
 
-        vector_tile_layers = get_layers_from_group(child)
+        vector_tile_layers = get_layers_from_group(parent)
+
         for layer in vector_tile_layers:
             map_layer = layer.layer()
             if not isinstance(map_layer, QgsVectorTileLayer):
                 continue
-
             renderer = map_layer.renderer()
             assert renderer is not None
             renderer = map_layer.renderer()
             assert renderer is not None
 
-            assert isinstance(renderer, QgsVectorTileBasicRenderer)
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
 
             styles = renderer.styles()
             new_styles: list[QgsVectorTileBasicRendererStyle] = []
             for style in styles:
-                if style.layerName() in layers_to_turn_on:
+                if style.styleName() in layers_to_turn_on:
                     style.setEnabled(True)
                 else:
                     style.setEnabled(False)
