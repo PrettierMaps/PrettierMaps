@@ -1,4 +1,4 @@
-# JH02 Main - Prettier Maps
+# JH02 Main - Prettier Maps 0.2.0
 
 ## Developing the plugin locally
 
