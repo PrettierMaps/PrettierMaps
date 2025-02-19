@@ -1,4 +1,6 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import (
+    Qt,
+)
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QDialog,
@@ -170,7 +172,12 @@ class MainDialog(QDialog):  # type: ignore[misc]
                 grandchild_item.setFlags(
                     grandchild_item.flags() | Qt.ItemFlag.ItemIsUserCheckable
                 )
-                grandchild_item.setCheckState(0, Qt.CheckState.Checked)
+                grandchild_item.setCheckState(
+                    0,
+                    Qt.CheckState.Checked
+                    if style.isEnabled()
+                    else Qt.CheckState.Unchecked,
+                )
                 self.layer_checkboxes[label_name] = grandchild_item
         if all_layers_item is not None:
             self.update_parent_check_state(all_layers_item)
