@@ -172,8 +172,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
                 )
                 grandchild_item.setCheckState(0, Qt.CheckState.Checked)
                 self.layer_checkboxes[label_name] = grandchild_item
-
-        self.update_parent_check_state(all_layers_item)
+        if all_layers_item is not None:
+            self.update_parent_check_state(all_layers_item)
 
     def update_parent_check_state(self, item: QTreeWidgetItem) -> None:
         if item is None:
