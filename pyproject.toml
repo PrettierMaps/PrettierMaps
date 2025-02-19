@@ -90,9 +90,6 @@ src = "README.md"
 src = "pyproject.toml"
 
 [[tool.tbump.file]]
-src = "uv.lock"
-
-[[tool.tbump.file]]
 src = "prettier_maps/metadata.txt"
 
 [[tool.tbump.file]]
