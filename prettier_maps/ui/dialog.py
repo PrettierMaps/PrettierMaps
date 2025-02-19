@@ -184,6 +184,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         for i in range(item.childCount()):
             child = item.child(i)
+            if not isinstance(child, QTreeWidgetItem):
+                continue
             if child.checkState(0) == Qt.CheckState.Checked:
                 all_unchecked = False
             elif child.checkState(0) == Qt.CheckState.Unchecked:
