@@ -57,7 +57,6 @@ def filter_layers(
         vector_tile_layers = get_layers_from_group(parent)
 
         for layer in vector_tile_layers:
-            print(layer)
             if not isinstance(layer, QgsVectorTileLayer):
                 continue
 

@@ -208,12 +208,12 @@ class MainDialog(QDialog):  # type: ignore[misc]
             for k, v in self.layer_checkboxes.items()
             if v.checkState(0) == Qt.CheckState.Checked
         }
-        print("Selected layers:", selected_layers)
         return selected_layers
 
     def on_item_changed(self, item: QTreeWidgetItem) -> None:
         if item.parent() is not None:
             self.update_parent_check_state(item.parent())
+            return
 
         filter_layers(self.get_selected_layers())
 
