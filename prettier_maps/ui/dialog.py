@@ -203,8 +203,9 @@ class MainDialog(QDialog):  # type: ignore[misc]
             item.setCheckState(0, Qt.CheckState.PartiallyChecked)
 
         # Recursively update parent items
-        if item.parent() is not None:
-            self.update_parent_check_state(item.parent())
+        parent = item.parent()
+        if parent is not None:
+            self.update_parent_check_state(parent)
 
     def get_selected_layers(self) -> set[str]:
         selected_layers = {
@@ -215,8 +216,9 @@ class MainDialog(QDialog):  # type: ignore[misc]
         return selected_layers
 
     def on_item_changed(self, item: QTreeWidgetItem) -> None:
-        if item.parent() is not None:
-            self.update_parent_check_state(item.parent())
+        parent = item.parent()
+        if parent is not None:
+            self.update_parent_check_state(parent)
             return
 
         filter_layers(self.get_selected_layers())
