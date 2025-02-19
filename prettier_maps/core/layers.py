@@ -15,10 +15,9 @@ if TYPE_CHECKING:
 
 
 def get_layers_from_group(group: "QgsLayerTreeGroup") -> List["QgsLayerTreeLayer"]:
-    from qgis.core import QgsVectorTileLayer
+    from qgis.core import QgsLayerTreeLayer
 
-    return [layer.layer() for layer in group.children()
-    if isinstance(layer.layer(), QgsVectorTileLayer)]
+    return [layer for layer in group.children() if isinstance(layer, QgsLayerTreeLayer)]
 
 
 def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRenderer"):
@@ -54,10 +53,12 @@ def filter_layers(
         vector_tile_layers = get_layers_from_group(parent)
 
         for layer in vector_tile_layers:
-            if not isinstance(layer, QgsVectorTileLayer):
+            map_layer = layer.layer()
+            if not isinstance(map_layer, QgsVectorTileLayer):
                 continue
-
-            renderer = layer.renderer()
+            renderer = map_layer.renderer()
+            assert renderer is not None
+            renderer = map_layer.renderer()
             assert renderer is not None
 
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
@@ -72,7 +73,7 @@ def filter_layers(
                 new_styles.append(style)
 
             renderer.setStyles(new_styles)
-            refresh_layer(layer, renderer)
+            refresh_layer(map_layer, renderer)
 
 
 def apply_style_to_quick_osm_layers() -> None:

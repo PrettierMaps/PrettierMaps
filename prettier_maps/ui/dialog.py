@@ -32,6 +32,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         super().__init__()
         self.layer_checkboxes: dict[str, QTreeWidgetItem] = {}
         self.init_ui()
+        filter_layers(self.get_selected_layers())
 
     def get_font(self) -> QFont:
         return QFont("Arial", 12)
@@ -81,31 +82,30 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
     def populate_layers(self) -> None:
         project = QgsProject.instance()
-        assert project is not None
         root = project.layerTreeRoot()
 
-        if not root:
-            raise ValueError("No map open")
+        if not root or not root.children():
+            all_layers_item = QTreeWidgetItem(self.tree_widget)
+            all_layers_item.setText(0, "No map open")
+            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            return
 
-        if not root.children():
-            raise ValueError("No map open")
-
-        maptiler_group = None
-        for child in root.children():
-            if isinstance(child, QgsLayerTreeGroup):
-                maptiler_group = child
-                break
-            else:
-                maptiler_group = None
+        maptiler_group = next(
+            (
+                child
+                for child in root.children()
+                if isinstance(child, QgsLayerTreeGroup)
+            ),
+            None,
+        )
 
         if not maptiler_group:
-            raise ValueError("No map open")
+            all_layers_item = QTreeWidgetItem(self.tree_widget)
+            all_layers_item.setText(0, "No MapTiler Layers Found")
+            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
             return
 
         layer_tree_layers = [layer for layer in maptiler_group.children()]
-
-        if not all(isinstance(layer, QgsLayerTreeLayer) for layer in layer_tree_layers):
-            raise ValueError("No map open")
 
         vector_tile_layers = [
             layer.layer()
@@ -113,9 +113,11 @@ class MainDialog(QDialog):  # type: ignore[misc]
             if isinstance(layer.layer(), QgsVectorTileLayer)
         ]
 
-        assert vector_tile_layers is not None
-        for layer in vector_tile_layers:
-            assert isinstance(layer, QgsVectorTileLayer)
+        if not vector_tile_layers:
+            all_layers_item = QTreeWidgetItem(self.tree_widget)
+            all_layers_item.setText(0, "No MapTiler Layers Found")
+            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            return
 
         all_layers_item = QTreeWidgetItem(self.tree_widget)
         all_layers_item.setText(0, "All Layers")
@@ -138,7 +140,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
             )
             parent_item.setCheckState(0, Qt.CheckState.Checked)
             self.layer_checkboxes[layer.name()] = parent_item
-
             renderer = layer.renderer()
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
             styles = renderer.styles()
@@ -178,8 +179,40 @@ class MainDialog(QDialog):  # type: ignore[misc]
                     else Qt.CheckState.Unchecked,
                 )
                 self.layer_checkboxes[label_name] = grandchild_item
+        if all_layers_item is not None:
+            self.update_parent_check_state(all_layers_item)
 
-        filter_layers(self.get_selected_layers())
+    def update_parent_check_state(self, item: QTreeWidgetItem) -> None:
+        if item is None:
+            return
+        if item.childCount() == 0:
+            return
+
+        all_checked = True
+        all_unchecked = True
+
+        for i in range(item.childCount()):
+            child = item.child(i)
+            if not isinstance(child, QTreeWidgetItem):
+                continue
+            if child.checkState(0) == Qt.CheckState.Checked:
+                all_unchecked = False
+            elif child.checkState(0) == Qt.CheckState.Unchecked:
+                all_checked = False
+            else:
+                all_checked = all_unchecked = False
+
+        if all_checked:
+            item.setCheckState(0, Qt.CheckState.Checked)
+        elif all_unchecked:
+            item.setCheckState(0, Qt.CheckState.Unchecked)
+        else:
+            item.setCheckState(0, Qt.CheckState.PartiallyChecked)
+
+        # Recursively update parent items
+        parent = item.parent()
+        if parent is not None:
+            self.update_parent_check_state(parent)
 
     def get_selected_layers(self) -> set[str]:
         selected_layers = {
@@ -190,8 +223,11 @@ class MainDialog(QDialog):  # type: ignore[misc]
         return selected_layers
 
     def on_item_changed(self, item: QTreeWidgetItem) -> None:
-        if item.parent() is not None:
+        parent = item.parent()
+        if parent is not None:
+            self.update_parent_check_state(parent)
             return
+
         filter_layers(self.get_selected_layers())
 
     def save_layers_dialog(self) -> None:
