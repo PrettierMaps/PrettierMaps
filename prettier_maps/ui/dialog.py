@@ -176,6 +176,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.update_parent_check_state(all_layers_item)
 
     def update_parent_check_state(self, item: QTreeWidgetItem) -> None:
+        if item is None:
+            return
         if item.childCount() == 0:
             return
 
