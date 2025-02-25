@@ -1,9 +1,14 @@
 def test_get_layers_from_group() -> None:
     from qgis.core import QgsLayerTreeGroup, QgsLayerTreeLayer, QgsVectorTileLayer
 
+    from prettier_maps.core.layers import get_layers_from_group
+
     group = QgsLayerTreeGroup("test_group")
     v1 = QgsVectorTileLayer(None, "vector_tile_1").id()
-    layer1 = QgsLayerTreeLayer(v1, "layer1", )
+    layer1 = QgsLayerTreeLayer(
+        v1,
+        "layer1",
+    )
     v2 = QgsVectorTileLayer(None, "vector_tile_2").id()
     layer2 = QgsLayerTreeLayer(v2, "layer2")
     non_layer = QgsLayerTreeLayer("non_layer")
@@ -11,8 +16,6 @@ def test_get_layers_from_group() -> None:
     group.addChildNode(layer1)
     group.addChildNode(layer2)
     group.addChildNode(non_layer)
-
-    from prettier_maps.core.layers import get_layers_from_group
 
     result = get_layers_from_group(group)
 
@@ -30,6 +33,8 @@ def test_filter_layers() -> None:
         QgsVectorTileBasicRendererStyle,
         QgsVectorTileLayer,
     )
+
+    from prettier_maps.core.layers import filter_layers
 
     instance = QgsProject()
     assert instance is not None
@@ -51,8 +56,6 @@ def test_filter_layers() -> None:
     renderer.setStyles([style1, style2])
     layer.setRenderer(renderer)
 
-    from prettier_maps.core.layers import filter_layers
-
     filter_layers({"water"}, instance)
 
     renderer = layer.renderer()
@@ -61,3 +64,50 @@ def test_filter_layers() -> None:
 
     assert styles[0].isEnabled() is True
     assert styles[1].isEnabled() is False
+
+
+def all_elements_equal(iterable) -> bool:
+    return iterable.count(iterable[0]) == len(iterable)
+
+
+def test_single_layer_styling() -> None:
+    from qgis.core import (
+        Qgis,
+        QgsFeatureRenderer,
+        QgsLayerTreeLayer,
+        QgsProject,
+        QgsSymbol,
+        QgsVectorLayer,
+    )
+
+    from prettier_maps.core.layers import style_single_layer
+
+    instance = QgsProject()
+    assert instance is not None
+    root = instance.layerTreeRoot()
+    assert root is not None
+
+    layer_tree = QgsLayerTreeLayer()
+    root.addChildNode(layer_tree)
+
+    layers = []
+    for geom_type in [Qgis.GeometryType(i) for i in range(3)]:
+        # problematic instantiation of layer
+        layer = QgsVectorLayer()
+        renderer = QgsFeatureRenderer()
+        symbol = QgsSymbol.defaultSymbol(geom_type)
+
+        renderer.setSymbol(symbol)
+        layer.setRenderer(renderer)
+
+        layers.append(layer)
+
+    for layer in layers:
+        style_single_layer(layer)
+
+    colors = [layer.renderer().symbol().color() for layer in layers]
+
+    assert all_elements_equal(colors) is True
+
+
+test_single_layer_styling()
