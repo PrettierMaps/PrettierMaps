@@ -24,7 +24,7 @@ from qgis.core import (
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
 from prettier_maps.core import apply_style_to_quick_osm_layers, filter_layers
-from prettier_maps.core.save_osm_layer import save_quick_osm_layers
+from prettier_maps.core.save_osm_layer import has_layers, save_quick_osm_layers
 
 
 class MainDialog(QDialog):  # type: ignore[misc]
@@ -231,10 +231,16 @@ class MainDialog(QDialog):  # type: ignore[misc]
         filter_layers(self.get_selected_layers())
 
     def save_layers_dialog(self) -> None:
+        if not has_layers():
+            QMessageBox.warning(
+                self,
+                "No OSM Layers",
+                "There are no OSM layers in the current project.",
+            )
+            return
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.FileMode.Directory)
         dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
-
         if dialog.exec_():
             folder_path = dialog.selectedFiles()[0]
             save_quick_osm_layers(folder_path)
