@@ -1,7 +1,8 @@
 from typing import TYPE_CHECKING
 
 from PyQt5.QtGui import QColor
-from quick_osm_utils import is_quick_osm_layer
+
+from prettier_maps.core.quick_osm_utils import is_quick_osm_layer
 
 if TYPE_CHECKING:
     from qgis.core import QgsVectorLayer
