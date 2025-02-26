@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from PyQt5.QtGui import QColor
+from quick_osm_utils import is_quick_osm_layer
 
 if TYPE_CHECKING:
     from qgis.core import QgsVectorLayer
@@ -19,10 +20,7 @@ def apply_style_to_quick_osm_layers() -> None:
             continue
         layer = child.layer()
 
-        variable_names = layer.customProperty("variableNames")
-        if variable_names is None:
-            continue
-        if "quickosm_query" not in variable_names:
+        if not is_quick_osm_layer(layer):
             continue
 
         style_single_layer(layer)
