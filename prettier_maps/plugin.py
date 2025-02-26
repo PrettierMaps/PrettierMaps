@@ -1,15 +1,17 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from PyQt5.QtGui import QIcon, QPainter
 from PyQt5.QtWidgets import QAction
 
 from .config import LOGO_PATH
-from .interfaces import IQgisInterface
 from .ui import MainDialog
+
+if TYPE_CHECKING:
+    from qgis.gui import QgisInterface
 
 
 class PrettierMapsPlugin:
-    def __init__(self, iface: IQgisInterface) -> None:
+    def __init__(self, iface: "QgisInterface") -> None:
         self.iface = iface
         self.action: Optional[QAction] = None
 
@@ -28,7 +30,7 @@ class PrettierMapsPlugin:
         self.iface.removeWebToolBarIcon(self.action)
 
     def open_dialog(self) -> None:
-        dialog = MainDialog()
+        dialog = MainDialog(self.iface)
         dialog.exec_()
 
     def renderTest(self, painter: QPainter) -> None:

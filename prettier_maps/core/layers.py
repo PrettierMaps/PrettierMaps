@@ -1,11 +1,13 @@
-from typing import TYPE_CHECKING, List, Set, Union
+from collections.abc import Iterable
+from typing import TYPE_CHECKING, List, Set, Tuple, Union
 
 from PyQt5.QtGui import QColor
+
+from prettier_maps.core.utils import get_layers_from_group, get_qgis_project
 
 if TYPE_CHECKING:
     from qgis.core import (
         QgsLayerTreeGroup,
-        QgsLayerTreeLayer,
         QgsProject,
         QgsVectorLayer,
         QgsVectorTileBasicRenderer,
@@ -14,22 +16,10 @@ if TYPE_CHECKING:
     )
 
 
-def get_layers_from_group(group: "QgsLayerTreeGroup") -> List["QgsLayerTreeLayer"]:
-    from qgis.core import QgsLayerTreeLayer
-
-    return [layer for layer in group.children() if isinstance(layer, QgsLayerTreeLayer)]
-
-
 def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRenderer"):
     layer.setRenderer(renderer.clone())
     layer.setBlendMode(layer.blendMode())
     layer.setOpacity(layer.opacity())
-
-
-def _get_qgis_project() -> Union["QgsProject", None]:
-    from qgis.core import QgsProject
-
-    return QgsProject.instance()
 
 
 def filter_layers(
@@ -38,10 +28,11 @@ def filter_layers(
     from qgis.core import (
         QgsLayerTreeGroup,
         QgsVectorTileBasicRenderer,
+        QgsVectorTileBasicRendererStyle,
         QgsVectorTileLayer,
     )
 
-    instance = instance_to_filter or _get_qgis_project()
+    instance = instance_to_filter or get_qgis_project()
     assert instance is not None
     root = instance.layerTreeRoot()
     assert root is not None
@@ -120,7 +111,10 @@ def style_single_layer(layer: "QgsVectorLayer"):
 
 
 def update_styled_layer(layer: "QgsVectorLayer"):
+    from qgis.gui import QgisInterface
     from qgis.utils import iface
+
+    assert isinstance(iface, QgisInterface)
 
     layer.triggerRepaint()
     iface.layerTreeView().refreshLayerSymbology(layer.id())

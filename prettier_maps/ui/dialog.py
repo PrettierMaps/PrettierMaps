@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from PyQt5.QtCore import (
     Qt,
 )
@@ -6,6 +8,7 @@ from PyQt5.QtWidgets import (
     QDialog,
     QFileDialog,
     QHBoxLayout,
+    QInputDialog,
     QLabel,
     QMessageBox,
     QPushButton,
@@ -16,21 +19,23 @@ from PyQt5.QtWidgets import (
 )
 from qgis.core import (
     QgsLayerTreeGroup,
-    QgsLayerTreeLayer,
     QgsProject,
     QgsVectorTileBasicRenderer,
     QgsVectorTileLayer,
 )
+from qgis.gui import QgisInterface
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
 from prettier_maps.core import apply_style_to_quick_osm_layers, filter_layers
 from prettier_maps.core.save_osm_layer import save_quick_osm_layers
+from prettier_maps.core.saving import load_vector_tiles, save_vector_tiles
 
 
 class MainDialog(QDialog):  # type: ignore[misc]
-    def __init__(self) -> None:
+    def __init__(self, iface: QgisInterface) -> None:
         super().__init__()
         self.layer_checkboxes: dict[str, QTreeWidgetItem] = {}
+        self.iface = iface
         self.init_ui()
         filter_layers(self.get_selected_layers())
 
@@ -71,6 +76,20 @@ class MainDialog(QDialog):  # type: ignore[misc]
         file_layout.addWidget(save_button)
         layout.addLayout(file_layout)
 
+        vector_layers_box = QHBoxLayout()
+
+        save_button = QPushButton("Save Vector Tiles")
+        save_button.setFont(self.get_font())
+        save_button.clicked.connect(self.save_vector_tiles)
+        vector_layers_box.addWidget(save_button)
+
+        load_button = QPushButton("Load Vector Tiles")
+        load_button.setFont(self.get_font())
+        load_button.clicked.connect(self.load_vector_tiles)
+        vector_layers_box.addWidget(load_button)
+
+        layout.addLayout(vector_layers_box)
+
         self.add_style_button(layout)
 
         close_button = QPushButton("Close")
@@ -79,6 +98,46 @@ class MainDialog(QDialog):  # type: ignore[misc]
         layout.addWidget(close_button)
 
         self.setLayout(layout)
+
+    def save_vector_tiles(self) -> None:
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.FileMode.Directory)
+        dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
+
+        if dialog.exec_():
+            folder_path = dialog.selectedFiles()[0]
+
+            max_zoom_dialog = QInputDialog(self)
+            max_zoom_dialog.setWindowTitle("Input Max Zoom Level")
+            max_zoom_dialog.setLabelText("Enter the maximum zoom level:")
+            max_zoom_dialog.setTextValue("10")
+            max_zoom_dialog.setIntRange(1, 14)
+            max_zoom_dialog.setIntStep(1)
+
+            if max_zoom_dialog.exec_() == QDialog.DialogCode.Accepted:
+                max_zoom = int(max_zoom_dialog.textValue())
+            else:
+                return
+            save_vector_tiles(
+                folder_path=Path(folder_path), max_zoom=max_zoom, iface=self.iface
+            )
+            QMessageBox.information(
+                self, "Layers Saved", "All OSM layers have been saved successfully."
+            )
+
+    def load_vector_tiles(self) -> None:
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.FileMode.Directory)
+        dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
+
+        if dialog.exec_():
+            folder_path = dialog.selectedFiles()[0]
+            load_vector_tiles(Path(folder_path))
+            QMessageBox.information(
+                self,
+                "Layers Loaded",
+                "All MapTiler layers have been loaded successfully.",
+            )
 
     def populate_layers(self) -> None:
         project = QgsProject.instance()
