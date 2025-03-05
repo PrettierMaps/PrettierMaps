@@ -28,5 +28,10 @@
     "python.analysis.diagnosticSeverityOverrides": {
         "reportMissingTypeStubs": "none",
         "reportWildcardImportFromLibrary": "none"
-    }
+    },
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }
