@@ -2,7 +2,7 @@ from pathlib import Path
 
 from qgis.core import QgsProject, QgsVectorFileWriter, QgsVectorLayer
 
-from prettier_maps.core.layers import has_layers, is_quick_osm_layer
+from prettier_maps.core.layers import is_quick_osm_layer
 
 
 def is_to_be_saved(layer: QgsVectorLayer) -> bool:

@@ -1,20 +1,15 @@
 from typing import Optional
 
-from PyQt5.QtGui import QColor
 from qgis.core import (
-    QgsFillSymbol,
     QgsLayerTreeGroup,
     QgsLayerTreeLayer,
     QgsLayerTreeNode,
-    QgsLineSymbol,
-    QgsMarkerSymbol,
     QgsProject,
     QgsVectorLayer,
     QgsVectorTileBasicRenderer,
     QgsVectorTileBasicRendererStyle,
     QgsVectorTileLayer,
 )
-from qgis.utils import iface
 
 
 def get_layers_from_group(group: QgsLayerTreeGroup) -> list[QgsLayerTreeLayer]:
@@ -43,7 +38,7 @@ def refresh_layer(
     layer.setOpacity(layer.opacity())
 
 
-def _get_groups(project: Optional[QgsProject] = None) -> list[QgsLayerTreeNode]:
+def get_groups(project: Optional[QgsProject] = None) -> list[QgsLayerTreeNode]:
     instance = project or QgsProject.instance()
     assert instance is not None
     root = instance.layerTreeRoot()

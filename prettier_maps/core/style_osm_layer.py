@@ -1,30 +1,23 @@
-from typing import Optional
-
 from PyQt5.QtGui import QColor
 from qgis.core import (
     QgsFillSymbol,
-    QgsLayerTreeGroup,
     QgsLayerTreeLayer,
-    QgsLayerTreeNode,
     QgsLineSymbol,
     QgsMarkerSymbol,
-    QgsProject,
     QgsVectorLayer,
-    QgsVectorTileBasicRenderer,
-    QgsVectorTileBasicRendererStyle,
     QgsVectorTileLayer,
 )
 from qgis.utils import iface
 
-from prettier_maps.core.layers import has_layers, is_quick_osm_layer
+from prettier_maps.core.layers import get_groups, is_quick_osm_layer
 
 
 def apply_style_to_quick_osm_layers() -> None:
     """
-    Main styling function, linked to styling button. Styles all QuickOSM layer.
+    Main styling function, linked to styling button. Styles all QuickOSM layers.
 
     """
-    for child in _get_groups():
+    for child in get_groups():
         if not isinstance(child, QgsLayerTreeLayer):
             continue
         layer = child.layer()
