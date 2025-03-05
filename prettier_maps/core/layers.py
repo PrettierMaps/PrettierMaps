@@ -86,6 +86,15 @@ def filter_layers(
             refresh_layer(map_layer, renderer)
 
 
+def has_layers() -> bool:
+    instance = QgsProject.instance()
+    assert instance is not None
+    layers = instance.mapLayers()
+
+    # See if the map has any elements
+    return bool(layers)
+
+
 def is_quick_osm_layer(layer: QgsVectorLayer) -> bool:
     """
     Simple filter for identifying which layers are the results of QuickOSM queries.
