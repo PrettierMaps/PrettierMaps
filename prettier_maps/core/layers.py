@@ -18,7 +18,8 @@ from qgis.utils import iface
 
 
 def get_layers_from_group(group: QgsLayerTreeGroup) -> list[QgsLayerTreeLayer]:
-    """Returns the direct descendant layers from a given QgsLayerTreeGroup.
+    """
+    Returns the direct descendant layers from a given QgsLayerTreeGroup.
 
     :param group: The group to get the descendant layers from
     :return: The direct descendant layers from group
@@ -30,7 +31,8 @@ def get_layers_from_group(group: QgsLayerTreeGroup) -> list[QgsLayerTreeLayer]:
 def refresh_layer(
     layer: QgsVectorTileLayer, renderer: QgsVectorTileBasicRenderer
 ) -> None:
-    """Refreshes a certain layer.
+    """
+    Refreshes a certain layer.
 
     :param layer: Layer to refresh
     :param renderer: The renderer that will be used for the layer
@@ -53,7 +55,8 @@ def _get_groups(project: Optional[QgsProject] = None) -> list[QgsLayerTreeNode]:
 def filter_layers(
     layers_to_turn_on: set[str], instance_to_filter: Optional[QgsProject] = None
 ) -> None:
-    """Given a set of layers, shows only those layers while hiding others.
+    """
+    Given a set of layers, shows only those layers while hiding others.
 
     :param layers_to_turn_on: Set of layers to be shown
     :param instance_to_filter: Instance of a QGISProject to filter
@@ -85,27 +88,38 @@ def filter_layers(
             refresh_layer(map_layer, renderer)
 
 
+def is_quick_osm_layer(layer: QgsVectorLayer) -> bool:
+    """
+    Simple filter for identifying which layers are the results of QuickOSM queries.
+    :param layer: Target layer.
+    """
+    variable_names = layer.customProperty("variableNames")
+    if variable_names is None:
+        return False
+    if "quickosm_query" not in variable_names:
+        return False
+    return True
+
+
 def apply_style_to_quick_osm_layers() -> None:
+    """
+    Main styling function, linked to styling button. Styles all QuickOSM layer.
+    """
     for child in _get_groups():
         if not isinstance(child, QgsLayerTreeLayer):
             continue
         layer = child.layer()
 
-        # Checks if a certain layer comes from a QuickOSM query
-        variable_names = layer.customProperty("variableNames")
-        if variable_names is None:
-            continue
-        if "quickosm_query" not in variable_names:
-            continue
-
-        style_single_layer(layer)
-        update_styled_layer(layer)
+        if is_quick_osm_layer(layer):
+            style_single_layer(layer)
+            update_styled_layer(layer)
 
 
 def style_single_layer(layer: QgsVectorLayer) -> None:
-    """Applies a styling to a certain layer
+    """
+    Makes an individual layer conform to the uniform style.
 
-    :param layer: layer to style
+    :param layer: Target layer.
     """
 
     symbol_renderer = layer.renderer()
@@ -118,7 +132,7 @@ def style_single_layer(layer: QgsVectorLayer) -> None:
         if isinstance(cur_symbol, symbol_type):
             symbol = symbol_type.createSimple({})
 
-    # If we can't overwrite with a simple, just change the colour
+    # If we can't overwrite with a simple, settle for just changing the colour
     if symbol is None:
         symbol = cur_symbol
 
@@ -127,9 +141,10 @@ def style_single_layer(layer: QgsVectorLayer) -> None:
 
 
 def update_styled_layer(layer: QgsVectorLayer) -> None:
-    """Refreshes a layer to reapply the changes.
+    """
+    Makes QGIS show the new style.
 
-    :param layer: layer to update
+    :param layer: Target layer.
     """
 
     layer.triggerRepaint()
