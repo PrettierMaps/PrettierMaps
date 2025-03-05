@@ -55,9 +55,10 @@ def filter_layers(
 ) -> None:
     """
     Given a set of layers, shows only those layers while hiding others.
+
     :param layers_to_turn_on: Set of layers to be shown
-    :param instance_to_filter: Instance of a QGISProject to filter
-      on. If not provided, the current QGIS project is used instead.
+    :param instance_to_filter: Instance of a QGISProject to filter on.
+        If none is provided, the current QGIS project is used instead.
     """
 
     for child in _get_groups(project=instance_to_filter):
@@ -88,6 +89,7 @@ def filter_layers(
 def is_quick_osm_layer(layer: QgsVectorLayer) -> bool:
     """
     Simple filter for identifying which layers are the results of QuickOSM queries.
+
     :param layer: Target layer.
     """
     variable_names = layer.customProperty("variableNames")
@@ -101,6 +103,7 @@ def is_quick_osm_layer(layer: QgsVectorLayer) -> bool:
 def apply_style_to_quick_osm_layers() -> None:
     """
     Main styling function, linked to styling button. Styles all QuickOSM layer.
+
     """
     for child in _get_groups():
         if not isinstance(child, QgsLayerTreeLayer):
@@ -115,6 +118,7 @@ def apply_style_to_quick_osm_layers() -> None:
 def style_single_layer(layer: QgsVectorLayer) -> None:
     """
     Makes an individual layer conform to the uniform style.
+
     :param layer: Target layer.
     """
 
@@ -139,6 +143,7 @@ def style_single_layer(layer: QgsVectorLayer) -> None:
 def update_styled_layer(layer: QgsVectorLayer) -> None:
     """
     Makes QGIS show the new style.
+
     :param layer: Target layer.
     """
 

@@ -17,6 +17,7 @@ def has_layers() -> bool:
 def is_to_be_saved(layer: QgsVectorLayer) -> bool:
     """
     Simple filter for selecting which layers will be saved.
+
     :param layer: Target layer.
     """
     isinstance(
@@ -30,6 +31,7 @@ def post_save_clean_up(
     """
     Delete the QML file to save storage space and
     remove the temporary layer from the project.
+
     :param instance: Current project.
     :param layer: Target layer.
     :qml_file: Remnant file.
@@ -41,6 +43,7 @@ def post_save_clean_up(
 def get_file_paths(directory: str, name: str):
     """
     Generates file path information given a directory and file name.
+
     :param directory: Location of file.
     :param name: File name.
     """
@@ -54,6 +57,7 @@ def get_file_paths(directory: str, name: str):
 def add_permanent_layer(instance: QgsProject, qml: Path, output_file: str, name: str):
     """
     Creates a permanent version of a layer and loads this into the current project.
+
     :param instance: Current project.
     :param qml: Path to the style file.
     :param output_file: Path to the
@@ -67,6 +71,7 @@ def add_permanent_layer(instance: QgsProject, qml: Path, output_file: str, name:
 def save_quick_osm_layers(output_directory: str) -> None:
     """
     Saves all layers which are outputs of QuickOSM queries.
+
     :param output_directory: Output directory to save the layers to.
     """
 
