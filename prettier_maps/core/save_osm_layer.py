@@ -25,9 +25,9 @@ def is_to_be_saved(layer: QgsVectorLayer) -> bool:
 
 
 def save_quick_osm_layers(output_directory: str) -> None:
-    """Saves the QuickOSM layers
-
-    :param output_directory: Output directory to save the layers to
+    """
+    Saves all outputs of QuickOSM queries.
+    :param output_directory: Output directory to save the layers to.
     """
 
     instance = QgsProject.instance()

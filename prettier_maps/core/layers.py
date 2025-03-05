@@ -20,7 +20,6 @@ from qgis.utils import iface
 def get_layers_from_group(group: QgsLayerTreeGroup) -> list[QgsLayerTreeLayer]:
     """
     Returns the direct descendant layers from a given QgsLayerTreeGroup.
-
     :param group: The group to get the descendant layers from
     :return: The direct descendant layers from group
     """
@@ -33,7 +32,6 @@ def refresh_layer(
 ) -> None:
     """
     Refreshes a certain layer.
-
     :param layer: Layer to refresh
     :param renderer: The renderer that will be used for the layer
     """
@@ -57,7 +55,6 @@ def filter_layers(
 ) -> None:
     """
     Given a set of layers, shows only those layers while hiding others.
-
     :param layers_to_turn_on: Set of layers to be shown
     :param instance_to_filter: Instance of a QGISProject to filter
       on. If not provided, the current QGIS project is used instead.
@@ -118,7 +115,6 @@ def apply_style_to_quick_osm_layers() -> None:
 def style_single_layer(layer: QgsVectorLayer) -> None:
     """
     Makes an individual layer conform to the uniform style.
-
     :param layer: Target layer.
     """
 
@@ -143,7 +139,6 @@ def style_single_layer(layer: QgsVectorLayer) -> None:
 def update_styled_layer(layer: QgsVectorLayer) -> None:
     """
     Makes QGIS show the new style.
-
     :param layer: Target layer.
     """
 
