@@ -1,3 +1,5 @@
+import webbrowser
+
 from PyQt5.QtCore import (
     Qt,
 )
@@ -10,6 +12,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QPushButton,
     QScrollArea,
+    QStyle,
     QTreeWidget,
     QTreeWidgetItem,
     QVBoxLayout,
@@ -43,6 +46,12 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
+
+        info_button = QPushButton()
+        info_button.setFont(self.get_font())
+        info_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView))
+        info_button.clicked.connect(lambda: webbrowser.open('https://prettiermaps.github.io/PrettierMaps/'))
+        layout.addWidget(info_button)
 
         instructions = QLabel("Select Layers")
         instructions.setFont(self.get_font())
