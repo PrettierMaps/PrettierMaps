@@ -20,6 +20,7 @@ from qgis.utils import iface
 def get_layers_from_group(group: QgsLayerTreeGroup) -> list[QgsLayerTreeLayer]:
     """
     Returns the direct descendant layers from a given QgsLayerTreeGroup.
+
     :param group: The group to get the descendant layers from
     :return: The direct descendant layers from group
     """
@@ -32,6 +33,7 @@ def refresh_layer(
 ) -> None:
     """
     Refreshes a certain layer.
+
     :param layer: Layer to refresh
     :param renderer: The renderer that will be used for the layer
     """
