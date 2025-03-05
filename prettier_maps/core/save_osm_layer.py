@@ -2,6 +2,8 @@ from pathlib import Path
 
 from qgis.core import QgsProject, QgsVectorFileWriter, QgsVectorLayer
 
+from prettier_maps.core.layers import is_quick_osm_layer
+
 
 def has_layers() -> bool:
     instance = QgsProject.instance()
@@ -10,6 +12,16 @@ def has_layers() -> bool:
 
     # See if the map has any elements
     return bool(layers)
+
+
+def is_to_be_saved(layer: QgsVectorLayer) -> bool:
+    """
+    Simple filter for selecting which layers will be saved.
+    :param layer: Target layer.
+    """
+    isinstance(
+        layer, QgsVectorLayer
+    ) and layer.isValid() and layer.dataProvider().name() == "memory"
 
 
 def save_quick_osm_layers(output_directory: str) -> None:
@@ -22,11 +34,7 @@ def save_quick_osm_layers(output_directory: str) -> None:
     assert instance is not None
 
     for layer in instance.mapLayers().values():
-        if (
-            isinstance(layer, QgsVectorLayer)
-            and layer.isValid()
-            and layer.dataProvider().name() == "memory"
-        ):
+        if is_to_be_saved(layer) and is_quick_osm_layer(layer):
             geom_type = layer.geometryType()
             geom_type_str = ["point", "line", "polygon"][geom_type]
 
