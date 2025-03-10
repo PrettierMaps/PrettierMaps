@@ -85,14 +85,7 @@ def test_single_layer_styling() -> None:
     root.addChildNode(layer_tree)
 
     layers = []
-    # this just prints the values of the enum
-    print(Qgis.GeometryType(0))
-    print(Qgis.GeometryType(1))
-    print(Qgis.GeometryType(2))
     for geom_type in [Qgis.GeometryType(i) for i in range(3)]:
-        # Correct instantiation of layer
-        print(geom_type)
-        # print(["point", "line", "polygon"][geom_type])
         layer = QgsVectorLayer(
             f"{['point', 'line', 'polygon'][geom_type]}?crs=EPSG:4326",
             f"{['point', 'line', 'polygon'][geom_type]}_layer",
@@ -100,7 +93,7 @@ def test_single_layer_styling() -> None:
         )
         # assert layer.isValid()
         symbol = QgsSymbol.defaultSymbol(geom_type)
-        # print(symbol)
+        # print(symbol, symbol.color())
         renderer = QgsSingleSymbolRenderer(symbol)
         layer.setRenderer(renderer)
 
