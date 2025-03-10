@@ -1,8 +1,24 @@
+from qgis.core import (
+    Qgis,
+    QgsFeatureRenderer,
+    QgsLayerTreeGroup,
+    QgsLayerTreeLayer,
+    QgsProject,
+    QgsSymbol,
+    QgsVectorLayer,
+    QgsVectorTileBasicRenderer,
+    QgsVectorTileBasicRendererStyle,
+    QgsVectorTileLayer,
+)
+
+from prettier_maps.core.layers import (
+    filter_layers,
+    get_layers_from_group,
+    style_single_layer,
+)
+
+
 def test_get_layers_from_group() -> None:
-    from qgis.core import QgsLayerTreeGroup, QgsLayerTreeLayer, QgsVectorTileLayer
-
-    from prettier_maps.core.layers import get_layers_from_group
-
     group = QgsLayerTreeGroup("test_group")
     v1 = QgsVectorTileLayer(None, "vector_tile_1").id()
     layer1 = QgsLayerTreeLayer(
@@ -25,17 +41,6 @@ def test_get_layers_from_group() -> None:
 
 
 def test_filter_layers() -> None:
-    from qgis.core import (
-        QgsLayerTreeGroup,
-        QgsLayerTreeLayer,
-        QgsProject,
-        QgsVectorTileBasicRenderer,
-        QgsVectorTileBasicRendererStyle,
-        QgsVectorTileLayer,
-    )
-
-    from prettier_maps.core.layers import filter_layers
-
     instance = QgsProject()
     assert instance is not None
     root = instance.layerTreeRoot()
@@ -70,44 +75,74 @@ def all_elements_equal(iterable) -> bool:
     return iterable.count(iterable[0]) == len(iterable)
 
 
+# def test_single_layer_styling() -> None:
+#     instance = QgsProject()
+#     assert instance is not None
+#     root = instance.layerTreeRoot()
+#     assert root is not None
+
+#     layer_tree = QgsLayerTreeLayer()
+#     root.addChildNode(layer_tree)
+
+#     layers = []
+#     for geom_type in [Qgis.GeometryType(i) for i in range(3)]:
+#         # problematic instantiation of layer
+#         layer = QgsVectorLayer()
+#         renderer = QgsFeatureRenderer()
+#         symbol = QgsSymbol.defaultSymbol(geom_type)
+
+#         renderer.setSymbol(symbol)
+#         layer.setRenderer(renderer)
+
+#         layers.append(layer)
+
+#     for layer in layers:
+#         style_single_layer(layer)
+
+#     colors = [layer.renderer().symbol().color() for layer in layers]
+
+#     assert all_elements_equal(colors)
+
+
+# test_single_layer_styling()
+
+
 def test_single_layer_styling() -> None:
-    from qgis.core import (
-        Qgis,
-        QgsFeatureRenderer,
-        QgsLayerTreeLayer,
-        QgsProject,
-        QgsSymbol,
-        QgsVectorLayer,
-    )
-
-    from prettier_maps.core.layers import style_single_layer
-
     instance = QgsProject()
     assert instance is not None
     root = instance.layerTreeRoot()
     assert root is not None
 
-    layer_tree = QgsLayerTreeLayer()
+    layer_tree = QgsLayerTreeGroup("root")
     root.addChildNode(layer_tree)
 
     layers = []
+    # this just prints the values of the enum
+    print(Qgis.GeometryType(0))
+    print(Qgis.GeometryType(1))
+    print(Qgis.GeometryType(2))
     for geom_type in [Qgis.GeometryType(i) for i in range(3)]:
-        # problematic instantiation of layer
-        layer = QgsVectorLayer()
-        renderer = QgsFeatureRenderer()
+        # Correct instantiation of layer
+        print(geom_type)
+        # print(["point", "line", "polygon"][geom_type])
+        layer = QgsVectorLayer(
+            f"{['point', 'line', 'polygon'][geom_type]}?crs=EPSG:4326",
+            f"{['point', 'line', 'polygon'][geom_type]}_layer",
+            "memory",
+        )
+        # assert layer.isValid()
         symbol = QgsSymbol.defaultSymbol(geom_type)
-
-        renderer.setSymbol(symbol)
+        # print(symbol)
+        renderer = QgsSingleSymbolRenderer(symbol)
         layer.setRenderer(renderer)
 
         layers.append(layer)
+        for layer in layers:
+            style_single_layer(layer)
 
-    for layer in layers:
-        style_single_layer(layer)
+        colors = [layer.renderer().symbol().color() for layer in layers]
 
-    colors = [layer.renderer().symbol().color() for layer in layers]
-
-    assert all_elements_equal(colors) is True
+        assert all_elements_equal(colors) is True
 
 
 test_single_layer_styling()
