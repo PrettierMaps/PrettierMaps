@@ -91,9 +91,9 @@ def test_single_layer_styling() -> None:
             f"{['point', 'line', 'polygon'][geom_type]}_layer",
             "memory",
         )
-        # assert layer.isValid()
+        # assert layer.isValid()  # noqa: ERA001
         symbol = QgsSymbol.defaultSymbol(geom_type)
-        # print(symbol, symbol.color())
+        # print(symbol, symbol.color())  # noqa: ERA001
         renderer = QgsSingleSymbolRenderer(symbol)
         layer.setRenderer(renderer)
 
