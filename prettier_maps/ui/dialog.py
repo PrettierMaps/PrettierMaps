@@ -1,9 +1,10 @@
 from PyQt5.QtCore import (
     Qt,
 )
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtWidgets import (
     QDialog,
+    QColorDialog,
     QFileDialog,
     QHBoxLayout,
     QLabel,
@@ -249,7 +250,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
         layout.addWidget(style_button)
 
     def style_QuickOSM_layers(self) -> None:
-        apply_style_to_quick_osm_layers()
+        colour = QColorDialog.getColor()
+        apply_style_to_quick_osm_layers(colour)
         self.close()
 
     def close_dialog(self) -> None:

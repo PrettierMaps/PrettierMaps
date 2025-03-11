@@ -76,7 +76,7 @@ def filter_layers(
             refresh_layer(map_layer, renderer)
 
 
-def apply_style_to_quick_osm_layers() -> None:
+def apply_style_to_quick_osm_layers(colour: QColor) -> None:
     from qgis.core import QgsLayerTreeLayer, QgsProject
 
     instance = QgsProject.instance()
@@ -95,11 +95,11 @@ def apply_style_to_quick_osm_layers() -> None:
         if "quickosm_query" not in variable_names:
             continue
 
-        style_single_layer(layer)
+        style_single_layer(layer, colour)
         update_styled_layer(layer)
 
 
-def style_single_layer(layer: "QgsVectorLayer"):
+def style_single_layer(layer: "QgsVectorLayer", colour: QColor):
     from qgis.core import QgsFillSymbol, QgsLineSymbol, QgsMarkerSymbol
 
     symbol_renderer = layer.renderer()
@@ -115,8 +115,13 @@ def style_single_layer(layer: "QgsVectorLayer"):
     if symbol is None:
         symbol = cur_symbol
 
-    symbol.setColor(QColor.fromRgb(155, 0, 155))
-    symbol_renderer.setSymbol(symbol)
+    if colour.isValid():
+        symbol.setColor(colour)
+        symbol_renderer.setSymbol(symbol)
+    else:
+        # defaults to purple
+        symbol.setColor(QColor.fromRgb(155, 0, 155))
+        symbol_renderer.setSymbol(symbol)
 
 
 def update_styled_layer(layer: "QgsVectorLayer"):
