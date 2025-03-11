@@ -78,7 +78,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         save_button = QPushButton("Save Quick OSM Layers")
         save_button.setFont(self.get_font())
         save_button.clicked.connect(self.save_layers_dialog)
-        layout.addWidget(file_layout)
+        layout.addWidget(layout)
 
     def add_style_button(self, layout: QVBoxLayout) -> None:
         style_button = QPushButton("Style QuickOSM Layer", self)
@@ -229,25 +229,27 @@ class MainDialog(QDialog):  # type: ignore[misc]
         if all_layers_item is not None:
             self.update_parent_check_state(all_layers_item)
 
+    def has_uniform_child_states(self, item: QTreeWidgetItem) -> None:
+        children = [
+            item.child(i)
+            for i in range(item.childCount())
+            if isinstance(item.child(i), QTreeWidgetItem)
+        ]
+        all_checked = all(
+            child.checkState(0) == Qt.CheckState.Checked for child in children
+        )
+        all_unchecked = all(
+            child.checkState(0) == Qt.CheckState.Unchecked for child in children
+        )
+        return all_checked, all_unchecked
+
     def update_parent_check_state(self, item: QTreeWidgetItem) -> None:
         if item is None:
             return
         if item.childCount() == 0:
             return
 
-        all_checked = True
-        all_unchecked = True
-
-        for i in range(item.childCount()):
-            child = item.child(i)
-            if not isinstance(child, QTreeWidgetItem):
-                continue
-            if child.checkState(0) == Qt.CheckState.Checked:
-                all_unchecked = False
-            elif child.checkState(0) == Qt.CheckState.Unchecked:
-                all_checked = False
-            else:
-                all_checked = all_unchecked = False
+        all_checked, all_unchecked = self.has_uniform_child_states(item)
 
         if all_checked:
             item.setCheckState(0, Qt.CheckState.Checked)
