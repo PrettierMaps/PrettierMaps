@@ -58,7 +58,7 @@ def filter_layers(
         If none is provided, the current QGIS project is used instead.
     """
 
-    for child in _get_groups(project=instance_to_filter):
+    for child in get_groups(project=instance_to_filter):
         if not isinstance(child, QgsLayerTreeGroup):
             continue
 
@@ -87,8 +87,6 @@ def has_layers() -> bool:
     instance = QgsProject.instance()
     assert instance is not None
     layers = instance.mapLayers()
-
-    # See if the map has any elements
     return bool(layers)
 
 
