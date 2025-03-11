@@ -5,7 +5,6 @@ from qgis.core import (
     QgsLineSymbol,
     QgsMarkerSymbol,
     QgsVectorLayer,
-    QgsVectorTileLayer,
 )
 from qgis.utils import iface
 

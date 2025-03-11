@@ -5,7 +5,6 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QDialog,
     QFileDialog,
-    QHBoxLayout,
     QLabel,
     QMessageBox,
     QPushButton,
@@ -16,7 +15,6 @@ from PyQt5.QtWidgets import (
 )
 from qgis.core import (
     QgsLayerTreeGroup,
-    QgsLayerTreeLayer,
     QgsProject,
     QgsVectorTileBasicRenderer,
     QgsVectorTileLayer,
