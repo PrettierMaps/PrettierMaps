@@ -125,15 +125,18 @@ class MainDialog(QDialog):  # type: ignore[misc]
     def close_dialog(self) -> None:
         self.close()
 
-    def populate_layers(self) -> None:
+    def no_maptier_layers_found(self):
+        all_layers_item = QTreeWidgetItem(self.tree_widget)
+        all_layers_item.setText(0, "No MapTiler Layers Found")
+        all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+
+    def get_vector_tile_layers(self):
         project = QgsProject.instance()
         root = project.layerTreeRoot()
 
         if not root or not root.children():
-            all_layers_item = QTreeWidgetItem(self.tree_widget)
-            all_layers_item.setText(0, "No map open")
-            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
-            return
+            self.no_maptier_layers_found()
+            return None
 
         maptiler_group = next(
             (
@@ -145,10 +148,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
         )
 
         if not maptiler_group:
-            all_layers_item = QTreeWidgetItem(self.tree_widget)
-            all_layers_item.setText(0, "No MapTiler Layers Found")
-            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
-            return
+            self.no_maptier_layers_found()
+            return None
 
         layer_tree_layers = [layer for layer in maptiler_group.children()]
 
@@ -159,9 +160,14 @@ class MainDialog(QDialog):  # type: ignore[misc]
         ]
 
         if not vector_tile_layers:
-            all_layers_item = QTreeWidgetItem(self.tree_widget)
-            all_layers_item.setText(0, "No MapTiler Layers Found")
-            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            self.no_maptier_layers_found()
+            return None
+
+        return vector_tile_layers
+
+    def populate_layers(self) -> None:
+        vector_tile_layers = self.get_vector_tile_layers()
+        if vector_tile_layers is None:
             return
 
         all_layers_item = QTreeWidgetItem(self.tree_widget)
