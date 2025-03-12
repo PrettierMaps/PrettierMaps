@@ -17,12 +17,13 @@ from qgis.core import QgsLayerTreeLayer, QgsVectorTileLayer
 
 # shouldn't it be QgsVectorTileLayer instead of QgsVectorLayer?
 def get_layers_from_group(group: "QgsLayerTreeGroup") -> List["QgsVectorTileLayer"]:
-    return [
-        child.layer()
-        for child in group.children()
-        if isinstance(child, QgsLayerTreeLayer)
-        and isinstance(child.layer(), QgsVectorTileLayer)
-    ]
+    layers = []
+    for child in group.children():
+        if isinstance(child, QgsLayerTreeLayer):
+            layer = child.layer()
+            if isinstance(layer, QgsVectorTileLayer):
+                layers.append(layer)
+    return layers
 
 
 def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRenderer"):
