@@ -58,11 +58,11 @@ class MainDialog(QDialog):  # type: ignore[misc]
         style = self.style()
         if style is not None:
             info_button.setIcon(style.standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView))
-            info_button.setIconSize(QSize(24, 24))
-            info_button.setFixedSize(24, 24)
+            info_button.setIconSize(QSize(20, 20))
+            info_button.setFixedSize(20, 20)
             info_button.setStyleSheet("""
                 QPushButton {
-                    border-radius: 12px;  /* Half of 24 to make it a circle */
+                    border-radius: 10px;  /* Half of 20 to make it a circle */
                     background-color: #0078D7; /* Windows info blue */
                     color: white;
                     border: none;
