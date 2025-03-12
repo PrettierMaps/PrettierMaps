@@ -6,9 +6,16 @@ if TYPE_CHECKING:
         QgsLayerTreeGroup,
         QgsLayerTreeLayer,
         QgsProject,
+        QgsVectorTileBasicRenderer,
         QgsVectorTileBasicRendererStyle,
         QgsVectorTileLayer,
     )
+
+
+def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRenderer"):
+    layer.setRenderer(renderer.clone())
+    layer.setBlendMode(layer.blendMode())
+    layer.setOpacity(layer.opacity())
 
 
 def get_qgis_project() -> Union["QgsProject", None]:
@@ -34,8 +41,6 @@ def get_each_style(
         map_layer = layer.layer()
         if not isinstance(map_layer, QgsVectorTileLayer):
             continue
-        renderer = map_layer.renderer()
-        assert renderer is not None
         renderer = map_layer.renderer()
         assert renderer is not None
 

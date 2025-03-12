@@ -1,25 +1,15 @@
-from collections.abc import Iterable
-from typing import TYPE_CHECKING, List, Set, Tuple, Union
+from typing import TYPE_CHECKING, Set, Union
 
 from PyQt5.QtGui import QColor
 
-from prettier_maps.core.utils import get_layers_from_group, get_qgis_project
+from prettier_maps.core.utils import (
+    get_layers_from_group,
+    get_qgis_project,
+    refresh_layer,
+)
 
 if TYPE_CHECKING:
-    from qgis.core import (
-        QgsLayerTreeGroup,
-        QgsProject,
-        QgsVectorLayer,
-        QgsVectorTileBasicRenderer,
-        QgsVectorTileBasicRendererStyle,
-        QgsVectorTileLayer,
-    )
-
-
-def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRenderer"):
-    layer.setRenderer(renderer.clone())
-    layer.setBlendMode(layer.blendMode())
-    layer.setOpacity(layer.opacity())
+    from qgis.core import QgsProject, QgsVectorLayer
 
 
 def filter_layers(
