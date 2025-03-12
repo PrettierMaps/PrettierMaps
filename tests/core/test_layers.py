@@ -17,24 +17,15 @@ from qgis.core import (
 from prettier_maps.core.layers import (
     filter_layers,
     # get_layer,
-    # get_layers_from_group,
+    get_layers_from_group,
     style_single_layer,
 )
 
-# def test_get_layers_from_group_with_empty_group() -> None:
-#     group = QgsLayerTreeGroup("empty_group")
-#     result = get_layers_from_group(group)
-#     assert result == []
 
-
-def get_layers_from_groups(group: "QgsLayerTreeGroup") -> List["QgsVectorTileLayer"]:
-    layers = []
-    for child in group.children():
-        if isinstance(child, QgsLayerTreeLayer):
-            layer = child.layer()
-            if isinstance(layer, QgsVectorTileLayer):
-                layers.append(layer)
-    return layers
+def test_get_layers_from_group_with_empty_group() -> None:
+    group = QgsLayerTreeGroup("empty_group")
+    result = get_layers_from_group(group)
+    assert result == []
 
 
 def test_get_layers_from_group() -> None:
@@ -59,7 +50,7 @@ def test_get_layers_from_group() -> None:
     group.addChildNode(layer2)
     group.addChildNode(non_layer)
     # print(len(get_layer(group)))
-    result = get_layers_from_groups(group)
+    result = get_layers_from_group(group)
     print(len(result))
     assert len(result) == 2
     assert result[0] == layer1

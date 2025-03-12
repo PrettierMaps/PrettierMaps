@@ -59,7 +59,7 @@ def filter_layers(
         vector_tile_layers = get_layers_from_group(parent)
 
         for layer in vector_tile_layers:
-            map_layer = layer.layer()
+            map_layer = layer
             if not isinstance(map_layer, QgsVectorTileLayer):
                 continue
             renderer = map_layer.renderer()
