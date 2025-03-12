@@ -29,6 +29,7 @@
         "reportMissingTypeStubs": "none",
         "reportWildcardImportFromLibrary": "none"
     },
+    "makefile.configureOnOpen": false,
     "python.testing.pytestArgs": [
         "tests"
     ],
