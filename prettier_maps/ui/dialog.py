@@ -1,10 +1,10 @@
 from PyQt5.QtCore import (
     Qt,
 )
-from PyQt5.QtGui import QFont, QColor
+from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtWidgets import (
-    QDialog,
     QColorDialog,
+    QDialog,
     QFileDialog,
     QHBoxLayout,
     QLabel,
