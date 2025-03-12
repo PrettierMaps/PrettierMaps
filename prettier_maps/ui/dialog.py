@@ -257,7 +257,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
         if self.check_has_QuickOSM_layers():
             colour = QColorDialog.getColor()
             apply_style_to_quick_osm_layers(colour)
-            self.close()
         else:
             return
 
