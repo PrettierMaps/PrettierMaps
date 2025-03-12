@@ -54,7 +54,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         info_button = QPushButton()
         info_button.setFont(self.get_font())
-        if self is not None:
+        if self.style() is not None:
             info_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView))
             info_button.setIconSize(QSize(24, 24))
             info_button.setFixedSize(24, 24)
