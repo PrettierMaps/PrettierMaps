@@ -51,7 +51,7 @@ def style_single_layer(layer: "QgsVectorLayer", colour: QColor):
         # defaults to purple
         symbol.setColor(QColor.fromRgb(155, 0, 155))
         symbol_renderer.setSymbol(symbol)
-    
+
 
 
 def update_styled_layer(layer: "QgsVectorLayer"):
