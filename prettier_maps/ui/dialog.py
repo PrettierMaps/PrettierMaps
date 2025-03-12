@@ -21,11 +21,12 @@ from qgis.core import (
 )
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
-from prettier_maps.core import apply_style_to_quick_osm_layers, filter_layers
+from prettier_maps.core.style_osm_layer import apply_style_to_quick_osm_layers
+from prettier_maps.core import filter_layers
 from prettier_maps.core.save_osm_layer import save_quick_osm_layers
 
 
-class MainDialog(QDialog):  # type: ignore[misc]
+class MainDialog(QDialog):
     def __init__(self) -> None:
         super().__init__()
         self.layer_checkboxes: dict[str, QTreeWidgetItem] = {}
@@ -44,7 +45,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         self.add_instructions(layout)
         self.add_scroll(layout)
-        self.save_button(layout)
+        self.add_save_button(layout)
         self.add_style_button(layout)
         self.add_close_button(layout)
 
@@ -76,7 +77,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         save_button = QPushButton("Save Quick OSM Layers")
         save_button.setFont(self.get_font())
         save_button.clicked.connect(self.save_layers_dialog)
-        layout.addWidget(layout)
+        layout.addWidget(save_button)
 
     def add_style_button(self, layout: QVBoxLayout) -> None:
         style_button = QPushButton("Style QuickOSM Layer", self)
@@ -203,7 +204,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
                     continue
 
                 if associated_layer not in sublayer_parents:
-                    parent_item = self.make_tree_widget(parent_item, associated_layer)
+                    child_item = self.make_tree_widget(parent_item, associated_layer)
                     sublayer_parents[associated_layer] = child_item
 
                 child_item = sublayer_parents[associated_layer]
