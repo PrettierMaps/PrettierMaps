@@ -12,7 +12,7 @@ if TYPE_CHECKING:
         QgsVectorTileBasicRendererStyle,
         QgsVectorTileLayer,
     )
-from qgis.core import QgsVectorTileLayer
+from qgis.core import QgsLayerTreeLayer, QgsVectorTileLayer
 
 
 # shouldn't it be QgsVectorTileLayer instead of QgsVectorLayer?
