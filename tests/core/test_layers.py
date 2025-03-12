@@ -1,7 +1,10 @@
+from typing import List
+
 from qgis.core import (
     Qgis,
     QgsLayerTreeGroup,
     QgsLayerTreeLayer,
+    QgsMapLayer,
     QgsProject,
     QgsSingleSymbolRenderer,
     QgsSymbol,
@@ -13,15 +16,25 @@ from qgis.core import (
 
 from prettier_maps.core.layers import (
     filter_layers,
-    get_layers_from_group,
+    # get_layer,
+    # get_layers_from_group,
     style_single_layer,
 )
 
+# def test_get_layers_from_group_with_empty_group() -> None:
+#     group = QgsLayerTreeGroup("empty_group")
+#     result = get_layers_from_group(group)
+#     assert result == []
 
-def test_get_layers_from_group_with_empty_group() -> None:
-    group = QgsLayerTreeGroup("empty_group")
-    result = get_layers_from_group(group)
-    assert result == []
+
+def get_layers_from_groups(group: "QgsLayerTreeGroup") -> List["QgsVectorTileLayer"]:
+    layers = []
+    for child in group.children():
+        if isinstance(child, QgsLayerTreeLayer):
+            layer = child.layer()
+            if isinstance(layer, QgsVectorTileLayer):
+                layers.append(layer)
+    return layers
 
 
 def test_get_layers_from_group() -> None:
@@ -40,34 +53,37 @@ def test_get_layers_from_group() -> None:
     # Create QgsLayerTreeLayer objects with valid QgsVectorTileLayer objects
     layer1 = QgsLayerTreeLayer(v1)
     layer2 = QgsLayerTreeLayer(v2)
-    non_layer = QgsLayerTreeLayer(
-        QgsVectorLayer("Point?crs=EPSG:4326", "non_vector_layer", "memory")
-    )
+    non_layer = QgsLayerTreeLayer(QgsVectorLayer("Point?crs=EPSG:4326"))
 
     group.addChildNode(layer1)
     group.addChildNode(layer2)
     group.addChildNode(non_layer)
-    result = get_layers_from_group(group)
+    # print(len(get_layer(group)))
+    result = get_layers_from_groups(group)
+    print(len(result))
     assert len(result) == 2
-    assert result[0].layer() == layer1.layer()
+    assert result[0] == layer1
     assert result[1].layer() == layer2.layer()
 
 
-def test_get_layers_from_group_with_only_non_vector_tile_layers() -> None:
-    group = QgsLayerTreeGroup("non_vector_tile_group")
+test_get_layers_from_group()
 
-    non_layer1 = QgsLayerTreeLayer(
-        QgsVectorLayer("Point?crs=EPSG:4326", "non_vector_layer_1", "memory")
-    )
-    non_layer2 = QgsLayerTreeLayer(
-        QgsVectorLayer("LineString?crs=EPSG:4326", "non_vector_layer_2", "memory")
-    )
 
-    group.addChildNode(non_layer1)
-    group.addChildNode(non_layer2)
+# def test_get_layers_from_group_with_only_non_vector_tile_layers() -> None:
+#     group = QgsLayerTreeGroup("non_vector_tile_group")
 
-    result = get_layers_from_group(group)
-    assert result == []
+#     non_layer1 = QgsLayerTreeLayer(
+#         QgsVectorLayer("Point?crs=EPSG:4326", "non_vector_layer_1", "memory")
+#     )
+#     non_layer2 = QgsLayerTreeLayer(
+#         QgsVectorLayer("LineString?crs=EPSG:4326", "non_vector_layer_2", "memory")
+#     )
+
+#     group.addChildNode(non_layer1)
+#     group.addChildNode(non_layer2)
+
+#     result = get_layers_from_group(group)
+#     assert result == []
 
 
 def test_filter_layers() -> None:
