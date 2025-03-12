@@ -58,6 +58,22 @@ To use the plugin, open a `Vector` map from MapTiler and then open the PrettierM
 
 To style or save a QuickOSM query, create a QuickOSM query using the QuickOSM plugin, then open the PrettierMaps plugin. You can now style this query by clicking the `Style QuickOSM Layer` button, and save by clicking `Save QuickOSM Layers`
 
+### Testing
+
+We have a growing test suite that ensures the plugin works as expected.
+
+To run the tests, use the following command:
+
+```bash
+make test
+```
+
+Or if you have docker installed, you can run the tests in a container:
+
+```bash
+make test-in-docker
+```
+
 ## Maintaining
 
 This project was a 3rd year University project at the University of Glasgow.
