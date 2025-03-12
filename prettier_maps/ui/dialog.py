@@ -164,33 +164,31 @@ class MainDialog(QDialog):  # type: ignore[misc]
             return None
 
         return vector_tile_layers
+    
+    def make_tree_widget(self, parent_widget_item, name):
+        child_widget_item = QTreeWidgetItem(parent_widget_item)
+        child_widget_item.setText(0, name)
+        child_widget_item.setFlags(
+            child_widget_item.flags()
+            | Qt.ItemFlag.ItemIsUserCheckable
+            | Qt.ItemFlag.ItemIsTristate
+        )
+        child_widget_item.setCheckState(0, Qt.CheckState.Checked)
+        return child_widget_item
 
     def populate_layers(self) -> None:
         vector_tile_layers = self.get_vector_tile_layers()
         if vector_tile_layers is None:
             return
 
-        all_layers_item = QTreeWidgetItem(self.tree_widget)
-        all_layers_item.setText(0, "All Layers")
-        all_layers_item.setFlags(
-            all_layers_item.flags()
-            | Qt.ItemFlag.ItemIsUserCheckable
-            | Qt.ItemFlag.ItemIsTristate
-        )
-        all_layers_item.setExpanded(True)
-        all_layers_item.setCheckState(0, Qt.CheckState.Checked)
+        all_layers_item = self.make_tree_widget(self.tree_widget, "All layers")
         self.layer_checkboxes["All Layers"] = all_layers_item
+        all_layers_item.setExpanded(True)
 
         for layer in vector_tile_layers:
-            parent_item = QTreeWidgetItem(all_layers_item)
-            parent_item.setText(0, layer.name())
-            parent_item.setFlags(
-                parent_item.flags()
-                | Qt.ItemFlag.ItemIsUserCheckable
-                | Qt.ItemFlag.ItemIsTristate
-            )
-            parent_item.setCheckState(0, Qt.CheckState.Checked)
+            parent_item = self.make_tree_widget(all_layers_item, layer.name())
             self.layer_checkboxes[layer.name()] = parent_item
+
             renderer = layer.renderer()
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
             styles = renderer.styles()
@@ -205,31 +203,13 @@ class MainDialog(QDialog):  # type: ignore[misc]
                     continue
 
                 if associated_layer not in sublayer_parents:
-                    child_item = QTreeWidgetItem(parent_item)
-                    child_item.setText(0, associated_layer)
-                    child_item.setFlags(
-                        child_item.flags()
-                        | Qt.ItemFlag.ItemIsUserCheckable
-                        | Qt.ItemFlag.ItemIsTristate
-                    )
-                    child_item.setCheckState(0, Qt.CheckState.Checked)
-                    self.layer_checkboxes[associated_layer] = child_item
+                    parent_item = self.make_tree_widget(parent_item, associated_layer)
                     sublayer_parents[associated_layer] = child_item
 
                 child_item = sublayer_parents[associated_layer]
 
-                grandchild_item = QTreeWidgetItem(child_item)
-                grandchild_item.setText(0, label_name)
-                grandchild_item.setFlags(
-                    grandchild_item.flags() | Qt.ItemFlag.ItemIsUserCheckable
-                )
-                grandchild_item.setCheckState(
-                    0,
-                    Qt.CheckState.Checked
-                    if style.isEnabled()
-                    else Qt.CheckState.Unchecked,
-                )
-                self.layer_checkboxes[label_name] = grandchild_item
+                self.layer_checkboxes[label_name] = self.make_tree_widget(child_item, label_name)
+
         if all_layers_item is not None:
             self.update_parent_check_state(all_layers_item)
 
