@@ -18,26 +18,56 @@ from prettier_maps.core.layers import (
 )
 
 
+def test_get_layers_from_group_with_empty_group() -> None:
+    group = QgsLayerTreeGroup("empty_group")
+    result = get_layers_from_group(group)
+    assert result == []
+
+
 def test_get_layers_from_group() -> None:
     group = QgsLayerTreeGroup("test_group")
-    v1 = QgsVectorTileLayer(None, "vector_tile_1").id()
-    layer1 = QgsLayerTreeLayer(
-        v1,
-        "layer1",
+
+    # Create valid QgsVectorTileLayer objects
+    v1 = QgsVectorTileLayer(
+        "type=xyz&url=http://tile.stamen.com/toner/{z}/{x}/{y}.png",
+        "vector_tile_1",
     )
-    v2 = QgsVectorTileLayer(None, "vector_tile_2").id()
-    layer2 = QgsLayerTreeLayer(v2, "layer2")
-    non_layer = QgsLayerTreeLayer("non_layer")
+    v2 = QgsVectorTileLayer(
+        "type=xyz&url=http://tile.stamen.com/toner/{z}/{x}/{y}.png",
+        "vector_tile_2",
+    )
+
+    # Create QgsLayerTreeLayer objects with valid QgsVectorTileLayer objects
+    layer1 = QgsLayerTreeLayer(v1)
+    layer2 = QgsLayerTreeLayer(v2)
+    non_layer = QgsLayerTreeLayer(
+        QgsVectorLayer("Point?crs=EPSG:4326", "non_vector_layer", "memory")
+    )
 
     group.addChildNode(layer1)
     group.addChildNode(layer2)
     group.addChildNode(non_layer)
+    result = get_layers_from_group(group)
+    assert len(result) == 2
+    assert result[0].layer() == layer1.layer()
+    assert result[1].layer() == layer2.layer()
+
+
+def test_get_layers_from_group_with_only_non_vector_tile_layers() -> None:
+    group = QgsLayerTreeGroup("non_vector_tile_group")
+
+    non_layer1 = QgsLayerTreeLayer(
+        QgsVectorLayer("Point?crs=EPSG:4326", "non_vector_layer_1", "memory")
+    )
+    non_layer2 = QgsLayerTreeLayer(
+        QgsVectorLayer("LineString?crs=EPSG:4326", "non_vector_layer_2", "memory")
+    )
+
+    group.addChildNode(non_layer1)
+    group.addChildNode(non_layer2)
 
     result = get_layers_from_group(group)
-
-    assert len(result) == 2
-    assert result[0] == layer1.layer()
-    assert result[1] == layer2.layer()
+    assert result == []
 
 
 def test_filter_layers() -> None:
@@ -86,14 +116,13 @@ def test_single_layer_styling() -> None:
 
     layers = []
     for geom_type in [Qgis.GeometryType(i) for i in range(3)]:
+        current_geom_type = ["point", "line", "polygon"][geom_type]
         layer = QgsVectorLayer(
-            f"{['point', 'line', 'polygon'][geom_type]}?crs=EPSG:4326",
-            f"{['point', 'line', 'polygon'][geom_type]}_layer",
+            f"{current_geom_type}?crs=EPSG:4326",
+            f"{current_geom_type}_layer",
             "memory",
         )
-        # assert layer.isValid()  # noqa: ERA001
         symbol = QgsSymbol.defaultSymbol(geom_type)
-        # print(symbol, symbol.color())  # noqa: ERA001
         renderer = QgsSingleSymbolRenderer(symbol)
         layer.setRenderer(renderer)
 
@@ -104,6 +133,3 @@ def test_single_layer_styling() -> None:
         colors = [layer.renderer().symbol().color() for layer in layers]
 
         assert all_elements_equal(colors) is True
-
-
-test_single_layer_styling()
