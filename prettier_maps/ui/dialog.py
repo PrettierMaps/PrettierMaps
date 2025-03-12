@@ -52,32 +52,32 @@ class MainDialog(QDialog):  # type: ignore[misc]
         instructions.setFont(self.get_font())
         instructions.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
-
         info_button = QPushButton()
         info_button.setFont(self.get_font())
-        info_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView))
-        info_button.setIconSize(QSize(24, 24))
-        info_button.setFixedSize(24, 24)
-        info_button.setStyleSheet("""
-            QPushButton {
-                border-radius: 12px;  /* Half of 24 to make it a circle */
-                background-color: #0078D7; /* Windows info blue */
-                color: white;
-                border: none;
-            }
-            QPushButton:hover {
-                background-color: #005A9E;
-            }
-            QPushButton:pressed {
-                background-color: #004E8C;
-            }
-        """)
+        if self is not None:
+            info_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView))
+            info_button.setIconSize(QSize(24, 24))
+            info_button.setFixedSize(24, 24)
+            info_button.setStyleSheet("""
+                QPushButton {
+                    border-radius: 12px;  /* Half of 24 to make it a circle */
+                    background-color: #0078D7; /* Windows info blue */
+                    color: white;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #005A9E;
+                }
+                QPushButton:pressed {
+                    background-color: #004E8C;
+                }
+            """)
 
         info_layout = QHBoxLayout()
 
-        info_button.clicked.connect(lambda: webbrowser.open('https://prettiermaps.github.io/PrettierMaps/'))
-        info_layout.addWidget(instructions, alignment=Qt.AlignLeft)
-        info_layout.addWidget(info_button, alignment=Qt.AlignRight)
+        info_button.clicked.connect(self.open_browser)
+        info_layout.addWidget(instructions, alignment=Qt.AlignmentFlag.AlignLeft)
+        info_layout.addWidget(info_button, alignment=Qt.AlignmentFlag.AlignRight)
 
         layout.addLayout(info_layout)
 
@@ -283,6 +283,9 @@ class MainDialog(QDialog):  # type: ignore[misc]
     def style_QuickOSM_layers(self) -> None:
         apply_style_to_quick_osm_layers()
         self.close()
+
+    def open_browser(self) -> None:
+        webbrowser.open('https://prettiermaps.github.io/PrettierMaps/')
 
     def close_dialog(self) -> None:
         self.close()
