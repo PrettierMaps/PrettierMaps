@@ -32,14 +32,14 @@ def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRend
     layer.setOpacity(layer.opacity())
 
 
-def _get_qgis_project() -> "Union[QgsProject, None]":
+def _get_qgis_project() -> Union["QgsProject", None]:
     from qgis.core import QgsProject
 
     return QgsProject.instance()
 
 
 def filter_layers(
-    layers_to_turn_on: Set[str], instance_to_filter: "Union[QgsProject, None]" = None
+    layers_to_turn_on: Set[str], instance_to_filter: Union["QgsProject", None] = None
 ):
     from qgis.core import (
         QgsLayerTreeGroup,
@@ -59,10 +59,12 @@ def filter_layers(
         vector_tile_layers = get_layers_from_group(parent)
 
         for layer in vector_tile_layers:
-            if not isinstance(layer, QgsVectorTileLayer):
+            map_layer = layer.layer()
+            if not isinstance(map_layer, QgsVectorTileLayer):
                 continue
-
-            renderer = layer.renderer()
+            renderer = map_layer.renderer()
+            assert renderer is not None
+            renderer = map_layer.renderer()
             assert renderer is not None
 
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
@@ -77,7 +79,7 @@ def filter_layers(
                 new_styles.append(style)
 
             renderer.setStyles(new_styles)
-            refresh_layer(layer, renderer)
+            refresh_layer(map_layer, renderer)
 
 
 def apply_style_to_quick_osm_layers() -> None:
