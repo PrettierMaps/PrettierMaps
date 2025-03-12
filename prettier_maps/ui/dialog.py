@@ -54,8 +54,10 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         info_button = QPushButton()
         info_button.setFont(self.get_font())
-        if self.style() is not None:
-            info_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView))
+
+        style = self.style()
+        if style is not None:
+            info_button.setIcon(style.standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView))
             info_button.setIconSize(QSize(24, 24))
             info_button.setFixedSize(24, 24)
             info_button.setStyleSheet("""
@@ -72,6 +74,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
                     background-color: #004E8C;
                 }
             """)
+        
 
         info_layout = QHBoxLayout()
 
