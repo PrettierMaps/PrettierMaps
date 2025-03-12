@@ -21,9 +21,9 @@ from qgis.core import (
 )
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
-from prettier_maps.core.style_osm_layer import apply_style_to_quick_osm_layers
 from prettier_maps.core import filter_layers
 from prettier_maps.core.save_osm_layer import save_quick_osm_layers
+from prettier_maps.core.style_osm_layer import apply_style_to_quick_osm_layers
 
 
 class MainDialog(QDialog):
@@ -165,7 +165,7 @@ class MainDialog(QDialog):
             return None
 
         return vector_tile_layers
-    
+
     def make_tree_widget(self, parent_widget_item, name):
         child_widget_item = QTreeWidgetItem(parent_widget_item)
         child_widget_item.setText(0, name)
@@ -209,12 +209,14 @@ class MainDialog(QDialog):
 
                 child_item = sublayer_parents[associated_layer]
 
-                self.layer_checkboxes[label_name] = self.make_tree_widget(child_item, label_name)
+                self.layer_checkboxes[label_name] = self.make_tree_widget(
+                    child_item, label_name
+                )
 
         if all_layers_item is not None:
             self.update_parent_check_state(all_layers_item)
 
-    def has_uniform_child_states(self, item: QTreeWidgetItem) -> None:
+    def has_uniform_child_states(self, item: QTreeWidgetItem) -> tuple[bool, bool]:
         children = [
             item.child(i)
             for i in range(item.childCount())
