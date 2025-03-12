@@ -74,7 +74,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
                     background-color: #004E8C;
                 }
             """)
-        
 
         info_layout = QHBoxLayout()
 
