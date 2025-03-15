@@ -1,4 +1,7 @@
+import webbrowser
+
 from PyQt5.QtCore import (
+    QSize,
     Qt,
 )
 from PyQt5.QtGui import QFont
@@ -10,6 +13,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QPushButton,
     QScrollArea,
+    QStyle,
     QTreeWidget,
     QTreeWidgetItem,
     QVBoxLayout,
@@ -48,7 +52,37 @@ class MainDialog(QDialog):  # type: ignore[misc]
         instructions = QLabel("Select Layers")
         instructions.setFont(self.get_font())
         instructions.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        layout.addWidget(instructions)
+
+        info_button = QPushButton()
+        info_button.setFont(self.get_font())
+
+        style = self.style()
+        if style is not None:
+            info_button.setIcon(style.standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView))
+            info_button.setIconSize(QSize(20, 20))
+            info_button.setFixedSize(20, 20)
+            info_button.setStyleSheet("""
+                QPushButton {
+                    border-radius: 10px;  /* Half of 20 to make it a circle */
+                    background-color: #0078D7; /* Windows info blue */
+                    color: white;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #005A9E;
+                }
+                QPushButton:pressed {
+                    background-color: #004E8C;
+                }
+            """)
+
+        info_layout = QHBoxLayout()
+
+        info_button.clicked.connect(self.open_browser)
+        info_layout.addWidget(instructions, alignment=Qt.AlignmentFlag.AlignLeft)
+        info_layout.addWidget(info_button, alignment=Qt.AlignmentFlag.AlignRight)
+
+        layout.addLayout(info_layout)
 
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
@@ -258,6 +292,9 @@ class MainDialog(QDialog):  # type: ignore[misc]
     def style_QuickOSM_layers(self) -> None:
         apply_style_to_quick_osm_layers()
         self.close()
+
+    def open_browser(self) -> None:
+        webbrowser.open('https://prettiermaps.github.io/PrettierMaps/')
 
     def close_dialog(self) -> None:
         self.close()

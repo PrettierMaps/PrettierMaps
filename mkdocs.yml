@@ -1,6 +1,13 @@
 site_name: Prettier Maps
 repo_url: https://github.com/PrettierMaps/PrettierMaps
 
+nav:
+  - Home:
+      - index.md
+      - tutorial.md
+  - Code:
+      - code.md
+
 theme:
   name: material
   locale: en
@@ -29,3 +36,7 @@ theme:
 
 extra_css:
   - stylesheets/extra.css
+
+plugins:
+  - search
+  - mermaid2
