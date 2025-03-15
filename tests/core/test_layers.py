@@ -142,18 +142,15 @@ def test_single_layer_styling() -> None:
 def test_save_quick_osm_layers():
     project = QgsProject.instance()
     project.clear()
-    # Create the first temporary memory layer
+
     layer1 = QgsVectorLayer("Point?crs=EPSG:4326", "test_layer1", "memory")
     project.addMapLayer(layer1)
-
-    # Create the second temporary memory layer
     layer2 = QgsVectorLayer("LineString?crs=EPSG:4326", "test_layer2", "memory")
     project.addMapLayer(layer2)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         save_quick_osm_layers(temp_dir)
 
-        # Check if the GeoPackage files are created
         output_file1 = Path(temp_dir) / "test_layer1_point.gpkg"
         output_file2 = Path(temp_dir) / "test_layer2_line.gpkg"
         assert output_file1.exists()
@@ -163,13 +160,11 @@ def test_save_quick_osm_layers():
         layer1 = None
         layer2 = None
 
-        # Check if the QML files are deleted
         qml_file1 = Path(temp_dir) / "test_layer1_point.qml"
         qml_file2 = Path(temp_dir) / "test_layer2_line.qml"
         assert not qml_file1.exists()
         assert not qml_file2.exists()
 
-        # Check if the new layers are added to the project
         new_layer1 = QgsProject.instance().mapLayersByName("test_layer1_point")
         new_layer2 = QgsProject.instance().mapLayersByName("test_layer2_line")
         assert len(new_layer1) == 1
@@ -181,5 +176,4 @@ def test_save_quick_osm_layers():
         QgsProject.instance().removeMapLayer(new_layer1[0].id())
         QgsProject.instance().removeMapLayer(new_layer2[0].id())
 
-    # Cleanup after test
     project.clear()
