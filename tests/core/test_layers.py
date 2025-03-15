@@ -17,8 +17,8 @@ from qgis.core import (
 from prettier_maps.core.layers import (
     filter_layers,
     get_layers_from_group,
-    style_single_layer,
 )
+from prettier_maps.core.style_osm_layer import style_single_layer
 
 
 def test_get_layers_from_group_with_empty_group() -> None:
@@ -58,10 +58,10 @@ def test_get_layers_from_group_with_only_non_vector_tile_layers() -> None:
     group = QgsLayerTreeGroup("non_vector_tile_group")
 
     non_layer1 = QgsLayerTreeLayer(
-        QgsVectorLayer("Point?crs=EPSG:4326", "non_vector_layer_1", "memory")
+        QgsVectorLayer("Point?crs=EPSG:4326", "non_vector_tile_layer_1", "memory")
     )
     non_layer2 = QgsLayerTreeLayer(
-        QgsVectorLayer("LineString?crs=EPSG:4326", "non_vector_layer_2", "memory")
+        QgsVectorLayer("LineString?crs=EPSG:4326", "non_vector_tile_layer_2", "memory")
     )
 
     group.addChildNode(non_layer1)
