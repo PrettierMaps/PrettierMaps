@@ -140,6 +140,8 @@ def test_single_layer_styling() -> None:
 
 
 def test_save_quick_osm_layers():
+    project = QgsProject.instance()
+    project.clear()
     # Create the first temporary memory layer
     layer1 = QgsVectorLayer("Point?crs=EPSG:4326", "test_layer1", "memory")
     project.addMapLayer(layer1)
