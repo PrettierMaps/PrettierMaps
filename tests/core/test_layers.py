@@ -19,8 +19,8 @@ from qgis.core import (
 from prettier_maps.core.layers import (
     filter_layers,
     get_layers_from_group,
-    save_quick_osm_layers,
 )
+from prettier_maps.core.save_osm_layer import save_quick_osm_layers
 from prettier_maps.core.style_osm_layer import style_single_layer
 
 
