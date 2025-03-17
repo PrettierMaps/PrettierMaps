@@ -3,6 +3,7 @@ import webbrowser
 from PyQt5.QtCore import (
     QSize,
     Qt,
+    QTimer,
 )
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
@@ -19,11 +20,13 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 from qgis.core import (
+    Qgis,
     QgsLayerTreeGroup,
     QgsProject,
     QgsVectorTileBasicRenderer,
     QgsVectorTileLayer,
 )
+from qgis.gui import QgsMessageBar
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
 from prettier_maps.core import filter_layers
@@ -49,6 +52,10 @@ class MainDialog(QDialog):  # type: ignore[misc]
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
 
+        # Adding QGIS Message Bar
+        self.message_bar = QgsMessageBar(self)
+        layout.addWidget(self.message_bar)
+
         instructions = QLabel("Select Layers")
         instructions.setFont(self.get_font())
         instructions.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -58,7 +65,9 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         style = self.style()
         if style is not None:
-            info_button.setIcon(style.standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView))
+            info_button.setIcon(
+                style.standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView)
+            )
             info_button.setIconSize(QSize(20, 20))
             info_button.setFixedSize(20, 20)
             info_button.setStyleSheet("""
@@ -114,6 +123,23 @@ class MainDialog(QDialog):  # type: ignore[misc]
         layout.addWidget(close_button)
 
         self.setLayout(layout)
+
+    def show_message(
+        self, text: str, level: str = "success", duration: int = 5000
+    ) -> None:
+        colors = {
+            "success": "green",
+            "warning": "orange",
+            "error": "red",
+        }
+        self.message_label.setText(text)
+        self.message_label.setStyleSheet(
+            f"QLabel {{ color: white; background-color: {colors.get(level, 'blue')}; padding: 10px; border-radius: 5px; }}"
+        )
+        self.message_label.show()
+
+        # Hide the message after the duration
+        QTimer.singleShot(duration, self.message_label.hide)
 
     def populate_layers(self) -> None:
         project = QgsProject.instance()
@@ -267,20 +293,25 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
     def save_layers_dialog(self) -> None:
         if not has_quick_osm_layers():
-            QMessageBox.warning(
-                self,
-                "No OSM Layers",
+            self.message_bar.pushMessage(
+                "Warning",
                 "There are no OSM layers in the current project.",
+                level=Qgis.Warning,  # Orange banner
+                duration=5,  # Automatically disappears after 5 seconds
             )
             return
+
         dialog = QFileDialog()
         dialog.setFileMode(QFileDialog.FileMode.Directory)
         dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
         if dialog.exec_():
             folder_path = dialog.selectedFiles()[0]
             save_quick_osm_layers(folder_path)
-            QMessageBox.information(
-                self, "Layers Saved", "All OSM layers have been saved successfully."
+            self.message_bar.pushMessage(
+                "Success",
+                "All OSM layers have been saved successfully.",
+                level=Qgis.Success,  # Green banner
+                duration=5,  # Automatically disappears after 5 seconds
             )
 
     def add_style_button(self, layout: QVBoxLayout) -> None:
@@ -294,7 +325,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         self.close()
 
     def open_browser(self) -> None:
-        webbrowser.open('https://prettiermaps.github.io/PrettierMaps/')
+        webbrowser.open("https://prettiermaps.github.io/PrettierMaps/")
 
     def close_dialog(self) -> None:
         self.close()
