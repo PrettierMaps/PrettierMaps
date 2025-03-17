@@ -5,8 +5,9 @@ from PyQt5.QtCore import (
     Qt,
     QTimer,
 )
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtWidgets import (
+    QColorDialog,
     QDialog,
     QFileDialog,
     QHBoxLayout,
@@ -321,8 +322,22 @@ class MainDialog(QDialog):  # type: ignore[misc]
         layout.addWidget(style_button)
 
     def style_QuickOSM_layers(self) -> None:
-        apply_style_to_quick_osm_layers()
-        self.close()
+        if self.check_has_QuickOSM_layers():
+            colour = QColorDialog.getColor()
+            apply_style_to_quick_osm_layers(colour)
+        else:
+            return
+
+    def check_has_QuickOSM_layers(self) -> bool:
+        if not has_quick_osm_layers():
+            QMessageBox.warning(
+                self,
+                "No OSM Layers",
+                "There are no OSM layers in the current project.",
+            )
+            return False
+        else:
+            return True
 
     def open_browser(self) -> None:
         webbrowser.open("https://prettiermaps.github.io/PrettierMaps/")
