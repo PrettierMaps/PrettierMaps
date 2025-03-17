@@ -148,7 +148,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         if not root or not root.children():
             all_layers_item = QTreeWidgetItem(self.tree_widget)
-            all_layers_item.setText(0, "No map open")
+            all_layers_item.setText(0, "No MapTiler Layers Found")
             all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
             return
 
@@ -293,13 +293,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         filter_layers(self.get_selected_layers())
 
     def save_layers_dialog(self) -> None:
-        if not has_quick_osm_layers():
-            self.message_bar.pushMessage(
-                "Warning",
-                "There are no OSM layers in the current project.",
-                level=Qgis.Warning,  # Orange banner
-                duration=5,  # Automatically disappears after 5 seconds
-            )
+        if not self.check_has_QuickOSM_layers():
             return
 
         dialog = QFileDialog()
@@ -311,8 +305,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
             self.message_bar.pushMessage(
                 "Success",
                 "All OSM layers have been saved successfully.",
-                level=Qgis.Success,  # Green banner
-                duration=5,  # Automatically disappears after 5 seconds
+                level=Qgis.Success,
+                duration=5,
             )
 
     def add_style_button(self, layout: QVBoxLayout) -> None:
@@ -330,14 +324,14 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
     def check_has_QuickOSM_layers(self) -> bool:
         if not has_quick_osm_layers():
-            QMessageBox.warning(
-                self,
-                "No OSM Layers",
+            self.message_bar.pushMessage(
+                "Warning",
                 "There are no OSM layers in the current project.",
+                level=Qgis.Warning,
+                duration=5,
             )
             return False
-        else:
-            return True
+        return True
 
     def open_browser(self) -> None:
         webbrowser.open("https://prettiermaps.github.io/PrettierMaps/")
