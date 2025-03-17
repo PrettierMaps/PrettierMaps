@@ -4,8 +4,9 @@ from PyQt5.QtCore import (
     QSize,
     Qt,
 )
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtWidgets import (
+    QColorDialog,
     QDialog,
     QFileDialog,
     QHBoxLayout,
@@ -266,22 +267,19 @@ class MainDialog(QDialog):  # type: ignore[misc]
         filter_layers(self.get_selected_layers())
 
     def save_layers_dialog(self) -> None:
-        if not has_quick_osm_layers():
-            QMessageBox.warning(
-                self,
-                "No OSM Layers",
-                "There are no OSM layers in the current project.",
-            )
+        if self.check_has_QuickOSM_layers():
+            dialog = QFileDialog()
+            dialog.setFileMode(QFileDialog.FileMode.Directory)
+            dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
+            if dialog.exec_():
+                folder_path = dialog.selectedFiles()[0]
+                save_quick_osm_layers(folder_path)
+                QMessageBox.information(
+                    self, "Layers Saved", "All OSM layers have been saved successfully."
+                )
+        else:
             return
-        dialog = QFileDialog()
-        dialog.setFileMode(QFileDialog.FileMode.Directory)
-        dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
-        if dialog.exec_():
-            folder_path = dialog.selectedFiles()[0]
-            save_quick_osm_layers(folder_path)
-            QMessageBox.information(
-                self, "Layers Saved", "All OSM layers have been saved successfully."
-            )
+
 
     def add_style_button(self, layout: QVBoxLayout) -> None:
         style_button = QPushButton("Style QuickOSM Layer", self)
@@ -290,8 +288,22 @@ class MainDialog(QDialog):  # type: ignore[misc]
         layout.addWidget(style_button)
 
     def style_QuickOSM_layers(self) -> None:
-        apply_style_to_quick_osm_layers()
-        self.close()
+        if self.check_has_QuickOSM_layers():
+            colour = QColorDialog.getColor()
+            apply_style_to_quick_osm_layers(colour)
+        else:
+            return
+
+    def check_has_QuickOSM_layers(self) -> bool:
+        if not has_quick_osm_layers():
+            QMessageBox.warning(
+                self,
+                "No OSM Layers",
+                "There are no OSM layers in the current project.",
+            )
+            return False
+        else:
+            return True
 
     def open_browser(self) -> None:
         webbrowser.open('https://prettiermaps.github.io/PrettierMaps/')
