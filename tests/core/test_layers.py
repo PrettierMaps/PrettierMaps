@@ -2,6 +2,7 @@ import tempfile
 from pathlib import Path
 from typing import List
 
+from PyQt5.QtGui import QColor
 from qgis.core import (
     Qgis,
     QgsLayerTreeGroup,
@@ -110,7 +111,7 @@ def all_elements_equal(iterable) -> bool:
 
 
 def test_single_layer_styling() -> None:
-    instance = QgsProject()
+    instance = QgsProject.instance()
     assert instance is not None
     root = instance.layerTreeRoot()
     assert root is not None
@@ -131,17 +132,20 @@ def test_single_layer_styling() -> None:
         layer.setRenderer(renderer)
 
         layers.append(layer)
-        for layer in layers:
-            style_single_layer(layer)
+        layer_tree.addLayer(layer)
 
-        colors = [layer.renderer().symbol().color() for layer in layers]
+    # Use a predefined color for testing
+    test_color = QColor(255, 0, 0)  # Red color
 
-        assert all_elements_equal(colors) is True
+    for layer in layers:
+        style_single_layer(layer, test_color)
+
+    colors = [layer.renderer().symbol().color() for layer in layers]
+    assert all_elements_equal(colors) is True
 
 
 def test_save_quick_osm_layers():
     project = QgsProject.instance()
-    project.clear()
 
     layer1 = QgsVectorLayer("Point?crs=EPSG:4326", "test_layer1", "memory")
     project.addMapLayer(layer1)
@@ -175,5 +179,3 @@ def test_save_quick_osm_layers():
         # Remove the new layers from the project to release the file handles
         QgsProject.instance().removeMapLayer(new_layer1[0].id())
         QgsProject.instance().removeMapLayer(new_layer2[0].id())
-
-    project.clear()
