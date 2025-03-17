@@ -113,11 +113,6 @@ def all_elements_equal(iterable) -> bool:
 def test_single_layer_styling() -> None:
     instance = QgsProject.instance()
     assert instance is not None
-    root = instance.layerTreeRoot()
-    assert root is not None
-
-    layer_tree = QgsLayerTreeGroup("root")
-    root.addChildNode(layer_tree)
 
     layers = []
     for geom_type in [Qgis.GeometryType(i) for i in range(3)]:
@@ -132,7 +127,6 @@ def test_single_layer_styling() -> None:
         layer.setRenderer(renderer)
 
         layers.append(layer)
-        layer_tree.addLayer(layer)
 
     # Use a predefined color for testing
     test_color = QColor(255, 0, 0)  # Red color
