@@ -135,7 +135,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
         }
         self.message_label.setText(text)
         self.message_label.setStyleSheet(
-            f"QLabel {{ color: white; background-color: {colors.get(level, 'blue')}; padding: 10px; border-radius: 5px; }}"
+            f"QLabel {{ color: white; background-color:{colors.get(level, 'blue')};"
+            f"padding: 10px; border-radius: 5px; }}"
         )
         self.message_label.show()
 
