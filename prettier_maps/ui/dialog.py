@@ -1,6 +1,6 @@
 import webbrowser
 from pathlib import Path
-from typing import List
+from typing import Dict, List, Set, Tuple
 
 from PyQt5.QtCore import (
     QSize,
@@ -37,7 +37,7 @@ from prettier_maps.core.style_osm_layer import apply_style_to_quick_osm_layers
 class MainDialog(QDialog):
     def __init__(self) -> None:
         super().__init__()
-        self.layer_checkboxes: dict[str, QTreeWidgetItem] = {}
+        self.layer_checkboxes: Dict[str, QTreeWidgetItem] = {}
         self.init_ui()
         filter_layers(self.get_selected_layers())
 
@@ -119,7 +119,7 @@ class MainDialog(QDialog):
         close_button.clicked.connect(self.close_dialog)
         layout.addWidget(close_button)
 
-    def get_selected_layers(self) -> set[str]:
+    def get_selected_layers(self) -> Set[str]:
         selected_layers = {
             k
             for k, v in self.layer_checkboxes.items()
@@ -247,7 +247,7 @@ class MainDialog(QDialog):
         if all_layers_item is not None:
             self.update_parent_check_state(all_layers_item)
 
-    def has_uniform_child_states(self, item: QTreeWidgetItem) -> tuple[bool, bool]:
+    def has_uniform_child_states(self, item: QTreeWidgetItem) -> Tuple[bool, bool]:
         """
         Indicates whether the parent item should be checked, unchecked or partially
         checked through a pair of booleans.

@@ -1,6 +1,5 @@
-from typing import Optional
+from typing import List, Optional
 
-from PyQt5.QtGui import QColor
 from qgis.core import (
     QgsLayerTreeGroup,
     QgsLayerTreeLayer,
@@ -14,7 +13,7 @@ from qgis.core import (
 
 
 # shouldn't it be QgsVectorTileLayer instead of QgsVectorLayer?
-def get_layers_from_group(group: "QgsLayerTreeGroup") -> List["QgsVectorTileLayer"]:
+def get_layers_from_group(group: QgsLayerTreeGroup) -> List[QgsVectorTileLayer]:
     layers = []
     for child in group.children():
         if isinstance(child, QgsLayerTreeLayer):
