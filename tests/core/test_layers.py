@@ -135,7 +135,7 @@ def test_single_layer_styling() -> None:
         style_single_layer(layer, test_color)
 
     colors = [layer.renderer().symbol().color() for layer in layers]
-    assert all_elements_equal(colors) is True
+    assert all_elements_equal(colors)
     assert all(color == test_color for color in colors)
 
 
