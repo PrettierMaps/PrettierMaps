@@ -10,9 +10,11 @@ def is_to_be_saved(layer: QgsVectorLayer) -> bool:
     """
     Simple filter for selecting which layers will be saved.
     """
-    isinstance(
-        layer, QgsVectorLayer
-    ) and layer.isValid() and layer.dataProvider().name() == "memory"
+    return (
+        isinstance(layer, QgsVectorLayer)
+        and layer.isValid()
+        and layer.dataProvider().name() == "memory"
+    )
 
 
 def post_save_clean_up(
@@ -71,7 +73,12 @@ def save_quick_osm_layers(output_directory: str) -> None:
     quick_osm_geoms = ("point", "line", "polygon")
 
     for layer in instance.mapLayers().values():
+        print(f"looking at {layer}:{layer.name}")
+        print(is_to_be_saved(layer))
+        print(is_quick_osm_layer(layer))
+        print()
         if is_to_be_saved(layer) and is_quick_osm_layer(layer):
+            print(f"found layer {layer.name}")
             geom_type = layer.geometryType()
             geom_type_str = quick_osm_geoms[geom_type]
 
