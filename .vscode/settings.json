@@ -28,5 +28,6 @@
     "python.analysis.diagnosticSeverityOverrides": {
         "reportMissingTypeStubs": "none",
         "reportWildcardImportFromLibrary": "none"
-    }
+    },
+    "makefile.configureOnOpen": false
 }

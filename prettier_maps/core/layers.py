@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import TYPE_CHECKING, List, Optional, Set, Union
 
+from PyQt5.QtGui import QColor
 from qgis.core import (
     QgsLayerTreeGroup,
     QgsLayerTreeLayer,
