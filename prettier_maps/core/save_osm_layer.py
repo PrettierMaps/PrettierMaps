@@ -45,14 +45,16 @@ def get_file_paths(directory: str, name: str):
     return output_file_str, qml_file
 
 
-def add_permanent_layer(instance: QgsProject, qml: Path, output_file: str, name: str):
+def add_permanent_layer(
+    instance: QgsProject, qml: Path, output_file: str, name: str
+) -> None:
     """
     Creates a permanent version of a layer and loads this into the current project.
 
     :param instance: Current project.
-    :param qml: Path to the style file.
-    :param output_file: Path to the
-    :param:
+    :param qml: Path of the style file.
+    :param output_file: Path of hte output file.
+    :param name: Name of the permanent layer.
     """
     permanent_layer = QgsVectorLayer(f"{output_file}|layername={name}", name, "ogr")
     instance.addMapLayer(permanent_layer)
