@@ -13,12 +13,15 @@ from qgis.core import (
 )
 
 
-def get_layers_from_group(group: QgsLayerTreeGroup) -> list[QgsLayerTreeLayer]:
-    """
-    Returns the direct descendant layers from a given QgsLayerTreeGroup.
-    """
-
-    return [layer for layer in group.children() if isinstance(layer, QgsLayerTreeLayer)]
+# shouldn't it be QgsVectorTileLayer instead of QgsVectorLayer?
+def get_layers_from_group(group: "QgsLayerTreeGroup") -> List["QgsVectorTileLayer"]:
+    layers = []
+    for child in group.children():
+        if isinstance(child, QgsLayerTreeLayer):
+            layer = child.layer()
+            if isinstance(layer, QgsVectorTileLayer):
+                layers.append(layer)
+    return layers
 
 
 def refresh_layer(
