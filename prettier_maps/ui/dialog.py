@@ -1,11 +1,12 @@
 import webbrowser
+from pathlib import Path
 from typing import List
 
 from PyQt5.QtCore import (
     QSize,
     Qt,
 )
-from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QColorDialog,
     QDialog,
@@ -73,20 +74,8 @@ class MainDialog(QDialog):
             )
             info_button.setIconSize(QSize(20, 20))
             info_button.setFixedSize(20, 20)
-            info_button.setStyleSheet("""
-                QPushButton {
-                    border-radius: 10px;  /* Half of 20 to make it a circle */
-                    background-color: #0078D7; /* Windows info blue */
-                    color: white;
-                    border: none;
-                }
-                QPushButton:hover {
-                    background-color: #005A9E;
-                }
-                QPushButton:pressed {
-                    background-color: #004E8C;
-                }
-            """)
+            with Path.open("button_style.css") as info_style_file:
+                info_button.setStyleSheet(info_style_file.read())
 
         info_layout = QHBoxLayout()
 
