@@ -1,3 +1,5 @@
+from typing import List
+
 from PyQt5.QtCore import (
     Qt,
 )
@@ -100,6 +102,9 @@ class MainDialog(QDialog):
         return selected_layers
 
     def on_item_changed(self, item: QTreeWidgetItem) -> None:
+        """
+        Update widget tree and the set of layers shown to the user.
+        """
         parent = item.parent()
         if parent is not None:
             self.update_parent_check_state(parent)
@@ -127,11 +132,18 @@ class MainDialog(QDialog):
         self.close()
 
     def no_maptier_layers_found(self):
+        """
+        Raises a relevant error to the user.
+        """
         all_layers_item = QTreeWidgetItem(self.tree_widget)
         all_layers_item.setText(0, "No MapTiler Layers Found")
         all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
 
-    def get_vector_tile_layers(self):
+    def get_vector_tile_layers(self) -> List[QgsVectorTileLayer]:
+        """
+        Find and return the vector tile layers,
+        showing the relevant error when there are none.
+        """
         project = QgsProject.instance()
         root = project.layerTreeRoot()
 
@@ -166,7 +178,13 @@ class MainDialog(QDialog):
 
         return vector_tile_layers
 
-    def make_tree_widget(self, parent_widget_item, name):
+    def make_tree_widget_item(
+        self, parent_widget_item: QTreeWidgetItem, name: str
+    ) -> QTreeWidgetItem:
+        """
+        Setup a new tree widge items, including linking to parent in tree.
+        """
+
         child_widget_item = QTreeWidgetItem(parent_widget_item)
         child_widget_item.setText(0, name)
         child_widget_item.setFlags(
@@ -175,9 +193,13 @@ class MainDialog(QDialog):
             | Qt.ItemFlag.ItemIsTristate
         )
         child_widget_item.setCheckState(0, Qt.CheckState.Checked)
+
         return child_widget_item
 
     def populate_layers(self) -> None:
+        """
+        Creates a widget tree for the open maptiler groups and displays it to the user.
+        """
         vector_tile_layers = self.get_vector_tile_layers()
         if vector_tile_layers is None:
             return
@@ -217,6 +239,13 @@ class MainDialog(QDialog):
             self.update_parent_check_state(all_layers_item)
 
     def has_uniform_child_states(self, item: QTreeWidgetItem) -> tuple[bool, bool]:
+        """
+        Indicates whether the parent item should be checked, unchecked or partially
+        checked through a pair of booleans.
+
+        :param item: parent item.
+        :return: all chlidren are checked, all children are unchecked.
+        """
         children = [
             item.child(i)
             for i in range(item.childCount())
@@ -231,6 +260,10 @@ class MainDialog(QDialog):
         return all_checked, all_unchecked
 
     def update_parent_check_state(self, item: QTreeWidgetItem) -> None:
+        """
+        Recurse back up the widget tree, correcting the checkstate of each parent,
+        when an update is made to the check state of an item.
+        """
         if item is None:
             return
         if item.childCount() == 0:
