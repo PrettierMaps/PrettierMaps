@@ -9,12 +9,18 @@ if TYPE_CHECKING:
         QgsVectorTileBasicRendererStyle,
         QgsVectorTileLayer,
     )
+from qgis.core import QgsLayerTreeLayer, QgsVectorTileLayer
 
 
-def get_layers_from_group(group: "QgsLayerTreeGroup") -> List["QgsLayerTreeLayer"]:
-    from qgis.core import QgsLayerTreeLayer
-
-    return [layer for layer in group.children() if isinstance(layer, QgsLayerTreeLayer)]
+# shouldn't it be QgsVectorTileLayer instead of QgsVectorLayer?
+def get_layers_from_group(group: "QgsLayerTreeGroup") -> List["QgsVectorTileLayer"]:
+    layers = []
+    for child in group.children():
+        if isinstance(child, QgsLayerTreeLayer):
+            layer = child.layer()
+            if isinstance(layer, QgsVectorTileLayer):
+                layers.append(layer)
+    return layers
 
 
 def refresh_layer(layer: "QgsVectorTileLayer", renderer: "QgsVectorTileBasicRenderer"):
@@ -50,7 +56,7 @@ def filter_layers(
         vector_tile_layers = get_layers_from_group(parent)
 
         for layer in vector_tile_layers:
-            map_layer = layer.layer()
+            map_layer = layer
             if not isinstance(map_layer, QgsVectorTileLayer):
                 continue
             renderer = map_layer.renderer()
