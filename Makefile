@@ -28,6 +28,10 @@ mypy:
 test:
 	uv run pytest
 
+.PHONY: cov
+cov:
+	pytest -s -v --cov=prettier_maps --cov=tests --cov-report=term-missing:skip-covered
+
 .PHONY: test-in-docker
 test-in-docker:
 	docker build -t my-qgis-app -f .devcontainer/Dockerfile.test .

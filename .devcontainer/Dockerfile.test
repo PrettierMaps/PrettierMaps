@@ -6,4 +6,4 @@ COPY . /app
 
 RUN pip install --break-system-packages -e '.[test]' --no-deps pytest-cov coverage
 
-CMD ["pytest", "-s", "-v", "--cov=prettier_maps", "--cov=tests", "--cov-report=term-missing:skip-covered"]
+CMD ["make", "cov"]
