@@ -5,4 +5,4 @@ __version__ = "1.3.0"
 
 
 def classFactory(iface: IQgisInterface) -> PrettierMapsPlugin:
-    return PrettierMapsPlugin(iface)
+    return PrettierMapsPlugin(iface)  # pragma: no cover
