@@ -74,7 +74,7 @@ class MainDialog(QDialog):
             )
             info_button.setIconSize(QSize(20, 20))
             info_button.setFixedSize(20, 20)
-            with Path.open("button_style.css") as info_style_file:
+            with Path("button_style.css").open("r") as info_style_file:
                 info_button.setStyleSheet(info_style_file.read())
 
         info_layout = QHBoxLayout()
