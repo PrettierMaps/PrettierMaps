@@ -28,6 +28,7 @@ from qgis.core import (
     QgsVectorTileLayer,
 )
 
+from prettier_maps.config import INFO_STYLE_PATH
 from prettier_maps.config.layers import POSSIBLE_LAYERS
 from prettier_maps.core import filter_layers, has_quick_osm_layers
 from prettier_maps.core.save_osm_layer import save_quick_osm_layers
@@ -74,7 +75,8 @@ class MainDialog(QDialog):
             )
             info_button.setIconSize(QSize(20, 20))
             info_button.setFixedSize(20, 20)
-            with Path("button_style.css").open("r") as info_style_file:
+            style_path = Path(INFO_STYLE_PATH)
+            with style_path.open("r") as info_style_file:
                 info_button.setStyleSheet(info_style_file.read())
 
         info_layout = QHBoxLayout()
