@@ -15,9 +15,6 @@ from qgis.core import (
 def get_layers_from_group(group: QgsLayerTreeGroup) -> list[QgsLayerTreeLayer]:
     """
     Returns the direct descendant layers from a given QgsLayerTreeGroup.
-
-    :param group: The group to get the descendant layers from
-    :return: The direct descendant layers from group
     """
 
     return [layer for layer in group.children() if isinstance(layer, QgsLayerTreeLayer)]
@@ -27,10 +24,7 @@ def refresh_layer(
     layer: QgsVectorTileLayer, renderer: QgsVectorTileBasicRenderer
 ) -> None:
     """
-    Refreshes a certain layer.
-
-    :param layer: Layer to refresh
-    :param renderer: The renderer that will be used for the layer
+    Refreshes a given layer.
     """
 
     layer.setRenderer(renderer.clone())
@@ -93,8 +87,6 @@ def has_layers() -> bool:
 def is_quick_osm_layer(layer: QgsVectorLayer) -> bool:
     """
     Simple filter for identifying which layers are the results of QuickOSM queries.
-
-    :param layer: Target layer.
     """
     variable_names = layer.customProperty("variableNames")
     if variable_names is None:

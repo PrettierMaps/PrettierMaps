@@ -14,7 +14,6 @@ from prettier_maps.core.layers import get_groups, is_quick_osm_layer
 def apply_style_to_quick_osm_layers() -> None:
     """
     Main styling function, linked to styling button. Styles all QuickOSM layers.
-
     """
     for child in get_groups():
         if not isinstance(child, QgsLayerTreeLayer):
@@ -29,8 +28,6 @@ def apply_style_to_quick_osm_layers() -> None:
 def style_single_layer(layer: QgsVectorLayer) -> None:
     """
     Makes an individual layer conform to the uniform style.
-
-    :param layer: Target layer.
     """
 
     symbol_renderer = layer.renderer()
@@ -54,8 +51,6 @@ def style_single_layer(layer: QgsVectorLayer) -> None:
 def update_styled_layer(layer: QgsVectorLayer) -> None:
     """
     Makes QGIS show the new style.
-
-    :param layer: Target layer.
     """
 
     layer.triggerRepaint()

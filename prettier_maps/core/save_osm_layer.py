@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Tuple
 
 from qgis.core import QgsProject, QgsVectorFileWriter, QgsVectorLayer
 
@@ -8,8 +9,6 @@ from prettier_maps.core.layers import is_quick_osm_layer
 def is_to_be_saved(layer: QgsVectorLayer) -> bool:
     """
     Simple filter for selecting which layers will be saved.
-
-    :param layer: Target layer.
     """
     isinstance(
         layer, QgsVectorLayer
@@ -31,7 +30,7 @@ def post_save_clean_up(
     qml_file.unlink()
 
 
-def get_file_paths(directory: str, name: str):
+def get_file_paths(directory: str, name: str) -> Tuple[str, Path]:
     """
     Generates file path information given a directory and file name.
 
@@ -64,8 +63,6 @@ def add_permanent_layer(
 def save_quick_osm_layers(output_directory: str) -> None:
     """
     Saves all layers which are outputs of QuickOSM queries.
-
-    :param output_directory: Output directory to save the layers to.
     """
 
     instance = QgsProject.instance()
