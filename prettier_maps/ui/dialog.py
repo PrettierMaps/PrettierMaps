@@ -267,10 +267,14 @@ class MainDialog(QDialog):
             return True, False
 
         all_checked = all(
-            child.checkState(0) == Qt.CheckState.Checked for child in children
+            child.checkState(0) == Qt.CheckState.Checked
+            for child in children
+            if child is not None
         )
         all_unchecked = all(
-            child.checkState(0) == Qt.CheckState.Unchecked for child in children
+            child.checkState(0) == Qt.CheckState.Unchecked
+            for child in children
+            if child is not None
         )
         return all_checked, all_unchecked
 
