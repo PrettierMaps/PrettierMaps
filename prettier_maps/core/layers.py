@@ -12,7 +12,6 @@ from qgis.core import (
 )
 
 
-# shouldn't it be QgsVectorTileLayer instead of QgsVectorLayer?
 def get_layers_from_group(group: QgsLayerTreeGroup) -> List[QgsVectorTileLayer]:
     layers = []
     for child in group.children():
@@ -60,10 +59,9 @@ def filter_layers(
             continue
 
         for layer in get_layers_from_group(child):
-            map_layer = layer.layer()
-            if not isinstance(map_layer, QgsVectorTileLayer):
+            if not isinstance(layer, QgsVectorTileLayer):
                 continue
-            renderer = map_layer.renderer()
+            renderer = layer.renderer()
             assert renderer is not None
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
 
@@ -77,7 +75,7 @@ def filter_layers(
                 new_styles.append(style)
 
             renderer.setStyles(new_styles)
-            refresh_layer(map_layer, renderer)
+            refresh_layer(layer, renderer)
 
 
 def has_layers() -> bool:
