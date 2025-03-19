@@ -260,6 +260,10 @@ class MainDialog(QDialog):
             for i in range(item.childCount())
             if isinstance(item.child(i), QTreeWidgetItem)
         ]
+
+        if not children:
+            return True, False
+
         all_checked = all(
             child.checkState(0) == Qt.CheckState.Checked for child in children
         )
