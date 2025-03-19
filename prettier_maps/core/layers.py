@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List, Optional, Set, Union
+from typing import Optional
 
 from PyQt5.QtGui import QColor
 from qgis.core import (
@@ -95,3 +95,13 @@ def is_quick_osm_layer(layer: QgsVectorLayer) -> bool:
     if "quickosm_query" not in variable_names:
         return False
     return True
+
+
+def has_quick_osm_layers() -> bool:
+    """
+    Simple check that there is at least one QuickOSM layer.
+    """
+    for layer in QgsProject.instance().mapLayers().values():
+        if isinstance(layer, QgsVectorLayer) and is_quick_osm_layer(layer):
+            return True
+    return False

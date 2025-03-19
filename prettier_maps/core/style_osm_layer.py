@@ -11,7 +11,7 @@ from qgis.utils import iface
 from prettier_maps.core.layers import get_groups, is_quick_osm_layer
 
 
-def apply_style_to_quick_osm_layers() -> None:
+def apply_style_to_quick_osm_layers(colour: QColor) -> None:
     """
     Main styling function, linked to styling button. Styles all QuickOSM layers.
     """
@@ -21,11 +21,11 @@ def apply_style_to_quick_osm_layers() -> None:
         layer = child.layer()
 
         if is_quick_osm_layer(layer):
-            style_single_layer(layer)
+            style_single_layer(layer, colour)
             update_styled_layer(layer)
 
 
-def style_single_layer(layer: QgsVectorLayer) -> None:
+def style_single_layer(layer: "QgsVectorLayer", colour: QColor) -> None:
     """
     Makes an individual layer conform to the uniform style.
     """
@@ -44,8 +44,13 @@ def style_single_layer(layer: QgsVectorLayer) -> None:
     if symbol is None:
         symbol = cur_symbol
 
-    symbol.setColor(QColor.fromRgb(155, 0, 155))
-    symbol_renderer.setSymbol(symbol)
+    if colour.isValid():
+        symbol.setColor(colour)
+        symbol_renderer.setSymbol(symbol)
+    else:
+        # defaults to purple
+        symbol.setColor(QColor.fromRgb(155, 0, 155))
+        symbol_renderer.setSymbol(symbol)
 
 
 def update_styled_layer(layer: QgsVectorLayer) -> None:

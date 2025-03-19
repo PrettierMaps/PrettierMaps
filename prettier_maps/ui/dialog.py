@@ -28,8 +28,7 @@ from qgis.core import (
 )
 
 from prettier_maps.config.layers import POSSIBLE_LAYERS
-from prettier_maps.core import filter_layers
-from prettier_maps.core.quick_osm_utils import has_quick_osm_layers
+from prettier_maps.core import filter_layers, has_quick_osm_layers
 from prettier_maps.core.save_osm_layer import save_quick_osm_layers
 from prettier_maps.core.style_osm_layer import apply_style_to_quick_osm_layers
 
@@ -51,7 +50,7 @@ class MainDialog(QDialog):
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
 
-        self.add_instructions(layout)
+        self.add_instructions_and_info_button(layout)
         self.add_scroll(layout)
         self.add_save_button(layout)
         self.add_style_button(layout)
@@ -59,7 +58,7 @@ class MainDialog(QDialog):
 
         self.setLayout(layout)
 
-    def add_insturctions_and_info_button(self, layout: QVBoxLayout) -> None:
+    def add_instructions_and_info_button(self, layout: QVBoxLayout) -> None:
         instructions = QLabel("Select Layers")
         instructions.setFont(self.get_font())
         instructions.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -120,7 +119,7 @@ class MainDialog(QDialog):
         layout.addWidget(save_button)
 
     def add_style_button(self, layout: QVBoxLayout) -> None:
-        style_button = QPushButton("Style QuickOSM Layer", self)
+        style_button = QPushButton("Style QuickOSM Layer")
         style_button.setFont(self.get_font())
         style_button.clicked.connect(self.style_QuickOSM_layers)
         layout.addWidget(style_button)
@@ -149,25 +148,6 @@ class MainDialog(QDialog):
             return
 
         filter_layers(self.get_selected_layers())
-
-    def save_layers_dialog(self) -> None:
-        dialog = QFileDialog()
-        dialog.setFileMode(QFileDialog.FileMode.Directory)
-        dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
-
-        if dialog.exec_():
-            folder_path = dialog.selectedFiles()[0]
-            save_quick_osm_layers(folder_path)
-            QMessageBox.information(
-                self, "Layers Saved", "All OSM layers have been saved successfully."
-            )
-
-    def style_QuickOSM_layers(self) -> None:
-        apply_style_to_quick_osm_layers()
-        self.close()
-
-    def close_dialog(self) -> None:
-        self.close()
 
     def no_maptier_layers_found(self):
         """
@@ -242,12 +222,12 @@ class MainDialog(QDialog):
         if vector_tile_layers is None:
             return
 
-        all_layers_item = self.make_tree_widget(self.tree_widget, "All layers")
+        all_layers_item = self.make_tree_widget_item(self.tree_widget, "All layers")
         self.layer_checkboxes["All Layers"] = all_layers_item
         all_layers_item.setExpanded(True)
 
         for layer in vector_tile_layers:
-            parent_item = self.make_tree_widget(all_layers_item, layer.name())
+            parent_item = self.make_tree_widget_item(all_layers_item, layer.name())
             self.layer_checkboxes[layer.name()] = parent_item
 
             renderer = layer.renderer()
@@ -264,12 +244,14 @@ class MainDialog(QDialog):
                     continue
 
                 if associated_layer not in sublayer_parents:
-                    child_item = self.make_tree_widget(parent_item, associated_layer)
+                    child_item = self.make_tree_widget_item(
+                        parent_item, associated_layer
+                    )
                     sublayer_parents[associated_layer] = child_item
 
                 child_item = sublayer_parents[associated_layer]
 
-                self.layer_checkboxes[label_name] = self.make_tree_widget(
+                self.layer_checkboxes[label_name] = self.make_tree_widget_item(
                     child_item, label_name
                 )
 
@@ -321,22 +303,6 @@ class MainDialog(QDialog):
         if parent is not None:
             self.update_parent_check_state(parent)
 
-    def get_selected_layers(self) -> set[str]:
-        selected_layers = {
-            k
-            for k, v in self.layer_checkboxes.items()
-            if v.checkState(0) == Qt.CheckState.Checked
-        }
-        return selected_layers
-
-    def on_item_changed(self, item: QTreeWidgetItem) -> None:
-        parent = item.parent()
-        if parent is not None:
-            self.update_parent_check_state(parent)
-            return
-
-        filter_layers(self.get_selected_layers())
-
     def save_layers_dialog(self) -> None:
         if self.check_has_QuickOSM_layers():
             dialog = QFileDialog()
@@ -350,12 +316,6 @@ class MainDialog(QDialog):
                 )
         else:
             return
-
-    def add_style_button(self, layout: QVBoxLayout) -> None:
-        style_button = QPushButton("Style QuickOSM Layer", self)
-        style_button.setFont(self.get_font())
-        style_button.clicked.connect(self.style_QuickOSM_layers)
-        layout.addWidget(style_button)
 
     def style_QuickOSM_layers(self) -> None:
         if self.check_has_QuickOSM_layers():
