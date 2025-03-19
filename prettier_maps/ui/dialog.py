@@ -146,7 +146,7 @@ class MainDialog(QDialog):
         all_layers_item.setText(0, "No MapTiler Layers Found")
         all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
 
-    def get_vector_tile_layers(self) -> List[QgsVectorTileLayer]:
+    def get_vector_tile_layers(self) -> List[QgsVectorTileLayer] | None:
         """
         Find and return the vector tile layers,
         showing the relevant error when there are none.
