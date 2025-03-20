@@ -73,11 +73,7 @@ def save_quick_osm_layers(output_directory: str) -> None:
     quick_osm_geoms = ("point", "line", "polygon")
 
     for layer in instance.mapLayers().values():
-        print(f"looking at {layer}:{layer.name}")
-        print(is_to_be_saved(layer))
-        print(is_quick_osm_layer(layer))
-        print()
-        if is_to_be_saved(layer) and is_quick_osm_layer(layer):
+        if is_to_be_saved(layer):
             print(f"found layer {layer.name}")
             geom_type = layer.geometryType()
             geom_type_str = quick_osm_geoms[geom_type]
