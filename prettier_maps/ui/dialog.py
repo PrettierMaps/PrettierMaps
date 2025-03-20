@@ -112,6 +112,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
         file_layout = QHBoxLayout()
         save_button = QPushButton("Save Quick OSM Layers")
         save_button.setFont(self.get_font())
+        save_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         save_button.clicked.connect(self.save_layers_dialog)
         file_layout.addWidget(save_button)
         layout.addLayout(file_layout)
@@ -120,6 +121,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         close_button = QPushButton("Close")
         close_button.setFont(self.get_font())
+        close_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         close_button.clicked.connect(self.close_dialog)
         layout.addWidget(close_button)
 
@@ -148,9 +150,9 @@ class MainDialog(QDialog):  # type: ignore[misc]
         root = project.layerTreeRoot()
 
         if not root or not root.children():
-            all_layers_item = QTreeWidgetItem(self.tree_widget)
-            all_layers_item.setText(0, "No MapTiler Layers Found")
-            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            self.message_bar.pushMessage(
+                "Error", "No MapTiler Layers Found", level=Qgis.Critical
+            )
             return
 
         maptiler_group = next(
@@ -163,9 +165,9 @@ class MainDialog(QDialog):  # type: ignore[misc]
         )
 
         if not maptiler_group:
-            all_layers_item = QTreeWidgetItem(self.tree_widget)
-            all_layers_item.setText(0, "No MapTiler Layers Found")
-            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            self.message_bar.pushMessage(
+                "Error", "No MapTiler Layers Found", level=Qgis.Critical
+            )
             return
 
         layer_tree_layers = [layer for layer in maptiler_group.children()]
@@ -177,9 +179,9 @@ class MainDialog(QDialog):  # type: ignore[misc]
         ]
 
         if not vector_tile_layers:
-            all_layers_item = QTreeWidgetItem(self.tree_widget)
-            all_layers_item.setText(0, "No MapTiler Layers Found")
-            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            self.message_bar.pushMessage(
+                "Error", "No MapTiler Layers Found", level=Qgis.Critical
+            )
             return
 
         all_layers_item = QTreeWidgetItem(self.tree_widget)
@@ -313,6 +315,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
     def add_style_button(self, layout: QVBoxLayout) -> None:
         style_button = QPushButton("Style QuickOSM Layer", self)
         style_button.setFont(self.get_font())
+        style_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         style_button.clicked.connect(self.style_QuickOSM_layers)
         layout.addWidget(style_button)
 
