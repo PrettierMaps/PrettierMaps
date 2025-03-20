@@ -1,35 +1,34 @@
-from typing import TYPE_CHECKING
-
 from PyQt5.QtGui import QColor
+from qgis.core import (
+    QgsFillSymbol,
+    QgsLayerTreeLayer,
+    QgsLineSymbol,
+    QgsMarkerSymbol,
+    QgsVectorLayer,
+)
+from qgis.utils import iface
 
-from prettier_maps.core.quick_osm_utils import is_quick_osm_layer
-
-if TYPE_CHECKING:
-    from qgis.core import QgsVectorLayer
+from prettier_maps.core.layers import get_groups, is_quick_osm_layer
 
 
 def apply_style_to_quick_osm_layers(colour: QColor) -> None:
-    from qgis.core import QgsLayerTreeLayer, QgsProject
-
-    instance = QgsProject.instance()
-    assert instance is not None
-    root = instance.layerTreeRoot()
-    assert root is not None
-
-    for child in root.children():
+    """
+    Main styling function, linked to styling button. Styles all QuickOSM layers.
+    """
+    for child in get_groups():
         if not isinstance(child, QgsLayerTreeLayer):
             continue
         layer = child.layer()
 
-        if not is_quick_osm_layer(layer):
-            continue
-
-        style_single_layer(layer, colour)
-        update_styled_layer(layer)
+        if is_quick_osm_layer(layer):
+            style_single_layer(layer, colour)
+            update_styled_layer(layer)
 
 
-def style_single_layer(layer: "QgsVectorLayer", colour: QColor):
-    from qgis.core import QgsFillSymbol, QgsLineSymbol, QgsMarkerSymbol
+def style_single_layer(layer: "QgsVectorLayer", colour: QColor) -> None:
+    """
+    Makes an individual layer conform to the uniform style.
+    """
 
     symbol_renderer = layer.renderer()
     cur_symbol = symbol_renderer.symbol()
@@ -40,7 +39,8 @@ def style_single_layer(layer: "QgsVectorLayer", colour: QColor):
     for symbol_type in basic_symbols:
         if isinstance(cur_symbol, symbol_type):
             symbol = symbol_type.createSimple({})
-    # If we can't overwrite with a simple, just change the colour
+
+    # If we can't overwrite with a simple, settle for just changing the colour
     if symbol is None:
         symbol = cur_symbol
 
@@ -53,9 +53,10 @@ def style_single_layer(layer: "QgsVectorLayer", colour: QColor):
         symbol_renderer.setSymbol(symbol)
 
 
-
-def update_styled_layer(layer: "QgsVectorLayer"):
-    from qgis.utils import iface
+def update_styled_layer(layer: QgsVectorLayer) -> None:
+    """
+    Makes QGIS show the new style.
+    """
 
     layer.triggerRepaint()
     iface.layerTreeView().refreshLayerSymbology(layer.id())

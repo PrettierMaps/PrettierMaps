@@ -1,10 +1,12 @@
 import webbrowser
+from pathlib import Path
+from typing import Dict, List, Set, Tuple, Union
 
 from PyQt5.QtCore import (
     QSize,
     Qt,
 )
-from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QColorDialog,
     QDialog,
@@ -26,17 +28,17 @@ from qgis.core import (
     QgsVectorTileLayer,
 )
 
+from prettier_maps.config import INFO_STYLE_PATH
 from prettier_maps.config.layers import POSSIBLE_LAYERS
-from prettier_maps.core import filter_layers
-from prettier_maps.core.quick_osm_utils import has_quick_osm_layers
+from prettier_maps.core import filter_layers, has_quick_osm_layers
 from prettier_maps.core.save_osm_layer import save_quick_osm_layers
 from prettier_maps.core.style_osm_layer import apply_style_to_quick_osm_layers
 
 
-class MainDialog(QDialog):  # type: ignore[misc]
+class MainDialog(QDialog):
     def __init__(self) -> None:
         super().__init__()
-        self.layer_checkboxes: dict[str, QTreeWidgetItem] = {}
+        self.layer_checkboxes: Dict[str, QTreeWidgetItem] = {}
         self.init_ui()
         filter_layers(self.get_selected_layers())
 
@@ -50,6 +52,15 @@ class MainDialog(QDialog):  # type: ignore[misc]
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
 
+        self.add_instructions_and_info_button(layout)
+        self.add_scroll(layout)
+        self.add_save_button(layout)
+        self.add_style_button(layout)
+        self.add_close_button(layout)
+
+        self.setLayout(layout)
+
+    def add_instructions_and_info_button(self, layout: QVBoxLayout) -> None:
         instructions = QLabel("Select Layers")
         instructions.setFont(self.get_font())
         instructions.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -59,23 +70,14 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         style = self.style()
         if style is not None:
-            info_button.setIcon(style.standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView))
+            info_button.setIcon(
+                style.standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView)
+            )
             info_button.setIconSize(QSize(20, 20))
             info_button.setFixedSize(20, 20)
-            info_button.setStyleSheet("""
-                QPushButton {
-                    border-radius: 10px;  /* Half of 20 to make it a circle */
-                    background-color: #0078D7; /* Windows info blue */
-                    color: white;
-                    border: none;
-                }
-                QPushButton:hover {
-                    background-color: #005A9E;
-                }
-                QPushButton:pressed {
-                    background-color: #004E8C;
-                }
-            """)
+            style_path = Path(INFO_STYLE_PATH)
+            with style_path.open("r") as info_style_file:
+                info_button.setStyleSheet(info_style_file.read())
 
         info_layout = QHBoxLayout()
 
@@ -85,6 +87,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
 
         layout.addLayout(info_layout)
 
+    def add_scroll(self, layout: QVBoxLayout) -> None:
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setContentsMargins(0, 0, 0, 0)
@@ -100,31 +103,62 @@ class MainDialog(QDialog):  # type: ignore[misc]
         scroll.setWidget(self.tree_widget)
         layout.addWidget(scroll)
 
-        file_layout = QHBoxLayout()
+    def add_save_button(self, layout: QVBoxLayout) -> None:
         save_button = QPushButton("Save Quick OSM Layers")
         save_button.setFont(self.get_font())
         save_button.clicked.connect(self.save_layers_dialog)
-        file_layout.addWidget(save_button)
-        layout.addLayout(file_layout)
+        layout.addWidget(save_button)
 
-        self.add_style_button(layout)
+    def add_style_button(self, layout: QVBoxLayout) -> None:
+        style_button = QPushButton("Style QuickOSM Layer")
+        style_button.setFont(self.get_font())
+        style_button.clicked.connect(self.style_QuickOSM_layers)
+        layout.addWidget(style_button)
 
+    def add_close_button(self, layout: QVBoxLayout) -> None:
         close_button = QPushButton("Close")
         close_button.setFont(self.get_font())
         close_button.clicked.connect(self.close_dialog)
         layout.addWidget(close_button)
 
-        self.setLayout(layout)
+    def get_selected_layers(self) -> Set[str]:
+        selected_layers = {
+            k
+            for k, v in self.layer_checkboxes.items()
+            if v.checkState(0) == Qt.CheckState.Checked
+        }
+        return selected_layers
 
-    def populate_layers(self) -> None:
+    def on_item_changed(self, item: QTreeWidgetItem) -> None:
+        """
+        Update widget tree and the set of layers shown to the user.
+        """
+        parent = item.parent()
+        if parent is not None:
+            self.update_parent_check_state(parent)
+            return
+
+        filter_layers(self.get_selected_layers())
+
+    def no_maptier_layers_found(self):
+        """
+        Raises a relevant error to the user.
+        """
+        all_layers_item = QTreeWidgetItem(self.tree_widget)
+        all_layers_item.setText(0, "No MapTiler Layers Found")
+        all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+
+    def get_vector_tile_layers(self) -> Union[List[QgsVectorTileLayer], None]:
+        """
+        Find and return the vector tile layers,
+        showing the relevant error when there are none.
+        """
         project = QgsProject.instance()
         root = project.layerTreeRoot()
 
         if not root or not root.children():
-            all_layers_item = QTreeWidgetItem(self.tree_widget)
-            all_layers_item.setText(0, "No map open")
-            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
-            return
+            self.no_maptier_layers_found()
+            return None
 
         maptiler_group = next(
             (
@@ -136,10 +170,8 @@ class MainDialog(QDialog):  # type: ignore[misc]
         )
 
         if not maptiler_group:
-            all_layers_item = QTreeWidgetItem(self.tree_widget)
-            all_layers_item.setText(0, "No MapTiler Layers Found")
-            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
-            return
+            self.no_maptier_layers_found()
+            return None
 
         layer_tree_layers = [layer for layer in maptiler_group.children()]
 
@@ -150,32 +182,45 @@ class MainDialog(QDialog):  # type: ignore[misc]
         ]
 
         if not vector_tile_layers:
-            all_layers_item = QTreeWidgetItem(self.tree_widget)
-            all_layers_item.setText(0, "No MapTiler Layers Found")
-            all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
-            return
+            self.no_maptier_layers_found()
+            return None
 
-        all_layers_item = QTreeWidgetItem(self.tree_widget)
-        all_layers_item.setText(0, "All Layers")
-        all_layers_item.setFlags(
-            all_layers_item.flags()
+        return vector_tile_layers
+
+    def make_tree_widget_item(
+        self, parent_widget_item: QTreeWidgetItem, name: str
+    ) -> QTreeWidgetItem:
+        """
+        Setup a new tree widge items, including linking to parent in tree.
+        """
+
+        child_widget_item = QTreeWidgetItem(parent_widget_item)
+        child_widget_item.setText(0, name)
+        child_widget_item.setFlags(
+            child_widget_item.flags()
             | Qt.ItemFlag.ItemIsUserCheckable
             | Qt.ItemFlag.ItemIsTristate
         )
-        all_layers_item.setExpanded(True)
-        all_layers_item.setCheckState(0, Qt.CheckState.Checked)
+        child_widget_item.setCheckState(0, Qt.CheckState.Checked)
+
+        return child_widget_item
+
+    def populate_layers(self) -> None:
+        """
+        Creates a widget tree for the open maptiler groups and displays it to the user.
+        """
+        vector_tile_layers = self.get_vector_tile_layers()
+        if vector_tile_layers is None:
+            return
+
+        all_layers_item = self.make_tree_widget_item(self.tree_widget, "All layers")
         self.layer_checkboxes["All Layers"] = all_layers_item
+        all_layers_item.setExpanded(True)
 
         for layer in vector_tile_layers:
-            parent_item = QTreeWidgetItem(all_layers_item)
-            parent_item.setText(0, layer.name())
-            parent_item.setFlags(
-                parent_item.flags()
-                | Qt.ItemFlag.ItemIsUserCheckable
-                | Qt.ItemFlag.ItemIsTristate
-            )
-            parent_item.setCheckState(0, Qt.CheckState.Checked)
+            parent_item = self.make_tree_widget_item(all_layers_item, layer.name())
             self.layer_checkboxes[layer.name()] = parent_item
+
             renderer = layer.renderer()
             assert isinstance(renderer, QgsVectorTileBasicRenderer)
             styles = renderer.styles()
@@ -190,53 +235,60 @@ class MainDialog(QDialog):  # type: ignore[misc]
                     continue
 
                 if associated_layer not in sublayer_parents:
-                    child_item = QTreeWidgetItem(parent_item)
-                    child_item.setText(0, associated_layer)
-                    child_item.setFlags(
-                        child_item.flags()
-                        | Qt.ItemFlag.ItemIsUserCheckable
-                        | Qt.ItemFlag.ItemIsTristate
+                    child_item = self.make_tree_widget_item(
+                        parent_item, associated_layer
                     )
-                    child_item.setCheckState(0, Qt.CheckState.Checked)
-                    self.layer_checkboxes[associated_layer] = child_item
                     sublayer_parents[associated_layer] = child_item
 
                 child_item = sublayer_parents[associated_layer]
 
-                grandchild_item = QTreeWidgetItem(child_item)
-                grandchild_item.setText(0, label_name)
-                grandchild_item.setFlags(
-                    grandchild_item.flags() | Qt.ItemFlag.ItemIsUserCheckable
+                self.layer_checkboxes[label_name] = self.make_tree_widget_item(
+                    child_item, label_name
                 )
-                grandchild_item.setCheckState(
-                    0,
-                    Qt.CheckState.Checked
-                    if style.isEnabled()
-                    else Qt.CheckState.Unchecked,
-                )
-                self.layer_checkboxes[label_name] = grandchild_item
+
         if all_layers_item is not None:
             self.update_parent_check_state(all_layers_item)
 
+    def has_uniform_child_states(self, item: QTreeWidgetItem) -> Tuple[bool, bool]:
+        """
+        Indicates whether the parent item should be checked, unchecked or partially
+        checked through a pair of booleans.
+
+        :param item: parent item.
+        :return: all chlidren are checked, all children are unchecked.
+        """
+        children = [
+            item.child(i)
+            for i in range(item.childCount())
+            if isinstance(item.child(i), QTreeWidgetItem)
+        ]
+
+        if not children:
+            return True, False
+
+        all_checked = all(
+            child.checkState(0) == Qt.CheckState.Checked
+            for child in children
+            if child is not None
+        )
+        all_unchecked = all(
+            child.checkState(0) == Qt.CheckState.Unchecked
+            for child in children
+            if child is not None
+        )
+        return all_checked, all_unchecked
+
     def update_parent_check_state(self, item: QTreeWidgetItem) -> None:
+        """
+        Recurse back up the widget tree, correcting the checkstate of each parent,
+        when an update is made to the check state of an item.
+        """
         if item is None:
             return
         if item.childCount() == 0:
             return
 
-        all_checked = True
-        all_unchecked = True
-
-        for i in range(item.childCount()):
-            child = item.child(i)
-            if not isinstance(child, QTreeWidgetItem):
-                continue
-            if child.checkState(0) == Qt.CheckState.Checked:
-                all_unchecked = False
-            elif child.checkState(0) == Qt.CheckState.Unchecked:
-                all_checked = False
-            else:
-                all_checked = all_unchecked = False
+        all_checked, all_unchecked = self.has_uniform_child_states(item)
 
         if all_checked:
             item.setCheckState(0, Qt.CheckState.Checked)
@@ -249,22 +301,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
         parent = item.parent()
         if parent is not None:
             self.update_parent_check_state(parent)
-
-    def get_selected_layers(self) -> set[str]:
-        selected_layers = {
-            k
-            for k, v in self.layer_checkboxes.items()
-            if v.checkState(0) == Qt.CheckState.Checked
-        }
-        return selected_layers
-
-    def on_item_changed(self, item: QTreeWidgetItem) -> None:
-        parent = item.parent()
-        if parent is not None:
-            self.update_parent_check_state(parent)
-            return
-
-        filter_layers(self.get_selected_layers())
 
     def save_layers_dialog(self) -> None:
         if self.check_has_QuickOSM_layers():
@@ -279,13 +315,6 @@ class MainDialog(QDialog):  # type: ignore[misc]
                 )
         else:
             return
-
-
-    def add_style_button(self, layout: QVBoxLayout) -> None:
-        style_button = QPushButton("Style QuickOSM Layer", self)
-        style_button.setFont(self.get_font())
-        style_button.clicked.connect(self.style_QuickOSM_layers)
-        layout.addWidget(style_button)
 
     def style_QuickOSM_layers(self) -> None:
         if self.check_has_QuickOSM_layers():
@@ -306,7 +335,7 @@ class MainDialog(QDialog):  # type: ignore[misc]
             return True
 
     def open_browser(self) -> None:
-        webbrowser.open('https://prettiermaps.github.io/PrettierMaps/')
+        webbrowser.open("https://prettiermaps.github.io/PrettierMaps/")
 
     def close_dialog(self) -> None:
         self.close()
