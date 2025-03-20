@@ -1,6 +1,6 @@
 import webbrowser
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Union
 
 from PyQt5.QtCore import (
     QSize,
@@ -148,7 +148,7 @@ class MainDialog(QDialog):
         all_layers_item.setText(0, "No MapTiler Layers Found")
         all_layers_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
 
-    def get_vector_tile_layers(self) -> List[QgsVectorTileLayer] | None:
+    def get_vector_tile_layers(self) -> Union[List[QgsVectorTileLayer],None]:
         """
         Find and return the vector tile layers,
         showing the relevant error when there are none.
