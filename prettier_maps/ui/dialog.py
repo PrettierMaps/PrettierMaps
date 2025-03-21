@@ -190,7 +190,7 @@ class MainDialog(QDialog):
         if not root or not root.children():
             self.no_maptier_layers_found(
                 "Error",
-                "No MapTiler Layers Found in the Current Project",
+                "No MapTiler Layers Found",
                 level=Qgis.Critical,
             )
 
@@ -208,7 +208,7 @@ class MainDialog(QDialog):
         if not maptiler_group:
             self.no_maptier_layers_founde(
                 "Error",
-                "No MapTiler Layers Found in the Current Project",
+                "No MapTiler Layers Found",
                 level=Qgis.Critical,
             )
             return None
@@ -224,7 +224,7 @@ class MainDialog(QDialog):
         if not vector_tile_layers:
             self.no_maptier_layers_founde(
                 "Error",
-                "No MapTiler Layers Found in the Current Project",
+                "No MapTiler Layers Found",
                 level=Qgis.Critical,
             )
             return None
@@ -248,19 +248,6 @@ class MainDialog(QDialog):
         child_widget_item.setCheckState(0, Qt.CheckState.Checked)
 
         return child_widget_item
-
-        #  might or might not need
-
-        # all_layers_item = QTreeWidgetItem(self.tree_widget)
-        # all_layers_item.setText(0, "All Layers")
-        # all_layers_item.setFlags(
-        #     all_layers_item.flags()
-        #     | Qt.ItemFlag.ItemIsUserCheckable
-        #     | Qt.ItemFlag.ItemIsTristate
-        # )
-        # child_widget_item.setCheckState(0, Qt.CheckState.Checked)
-
-        # return child_widget_item
 
     def populate_layers(self) -> None:
         """
@@ -299,9 +286,18 @@ class MainDialog(QDialog):
 
                 child_item = sublayer_parents[associated_layer]
 
-                self.layer_checkboxes[label_name] = self.make_tree_widget_item(
-                    child_item, label_name
+                grandchild_item = QTreeWidgetItem(child_item)
+                grandchild_item.setText(0, label_name)
+                grandchild_item.setFlags(
+                    grandchild_item.flags() | Qt.ItemFlag.ItemIsUserCheckable
                 )
+                grandchild_item.setCheckState(
+                    0,
+                    Qt.CheckState.Checked
+                    if style.isEnabled()
+                    else Qt.CheckState.Unchecked,
+                )
+                self.layer_checkboxes[label_name] = grandchild_item
 
         if all_layers_item is not None:
             self.update_parent_check_state(all_layers_item)
@@ -375,12 +371,6 @@ class MainDialog(QDialog):
                 )
         else:
             return
-
-    def add_style_button(self, layout: QVBoxLayout) -> None:
-        style_button = QPushButton("Style QuickOSM Layer", self)
-        style_button.setFont(self.get_font())
-        style_button.clicked.connect(self.style_QuickOSM_layers)
-        layout.addWidget(style_button)
 
     def style_QuickOSM_layers(self) -> None:
         if self.check_has_QuickOSM_layers():
