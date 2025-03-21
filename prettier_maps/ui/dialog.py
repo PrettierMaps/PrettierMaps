@@ -188,7 +188,7 @@ class MainDialog(QDialog):
         root = project.layerTreeRoot()
 
         if not root or not root.children():
-            self.no_maptier_layers_founde(
+            self.no_maptier_layers_found(
                 "Error",
                 "No MapTiler Layers Found in the Current Project",
                 level=Qgis.Critical,
@@ -260,7 +260,7 @@ class MainDialog(QDialog):
         # )
         # child_widget_item.setCheckState(0, Qt.CheckState.Checked)
 
-        return child_widget_item
+        # return child_widget_item
 
     def populate_layers(self) -> None:
         """
