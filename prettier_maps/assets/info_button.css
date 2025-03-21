@@ -1,0 +1,12 @@
+QPushButton {
+    border-radius: 10px;  /* Half of 20 to make it a circle */
+    background-color: #0078D7; /* Windows info blue */
+    color: white;
+    border: none;
+}
+QPushButton:hover {
+    background-color: #005A9E;
+}
+QPushButton:pressed {
+    background-color: #004E8C;
+}
