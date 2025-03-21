@@ -17,21 +17,6 @@ def is_to_be_saved(layer: QgsVectorLayer) -> bool:
     )
 
 
-def post_save_clean_up(
-    instance: QgsProject, layer: QgsVectorLayer, qml_file: Path
-) -> None:
-    """
-    Delete the QML file to save storage space and
-    remove the temporary layer from the project.
-
-    :param instance: Current project.
-    :param layer: Target layer.
-    :qml_file: Remnant file.
-    """
-    instance.removeMapLayer(layer.id())
-    qml_file.unlink()
-
-
 def get_file_paths(directory: str, name: str) -> Tuple[str, Path]:
     """
     Generates file path information given a directory and file name.
@@ -95,4 +80,4 @@ def save_quick_osm_layers(output_directory: str) -> None:
             )
 
             add_permanent_layer(instance, qml_file, output_file_str, new_layer_name)
-            post_save_clean_up(instance, layer, qml_file)
+            instance.removeMapLayer(layer.id())
