@@ -43,8 +43,8 @@ test:
   stage: test
   image: qgis/qgis:latest
   script:
-    - pip install --break-system-packages -e '.[test]' --no-deps || true
-    - pytest
+    - pip install --break-system-packages -e '.[test]' --no-deps pytest-cov coverage
+    - make cov
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
