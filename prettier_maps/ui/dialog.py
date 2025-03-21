@@ -173,7 +173,7 @@ class MainDialog(QDialog):
         filter_layers(self.get_selected_layers())
 
     # might or might not need
-    def no_maptier_layers_found(self, title, message, level=Qgis.Info):
+    def no_maptiler_layers_found(self, title, message, level=Qgis.Info):
         """
         Raises a relevant error to the user.
         """
@@ -188,7 +188,7 @@ class MainDialog(QDialog):
         root = project.layerTreeRoot()
 
         if not root or not root.children():
-            self.no_maptier_layers_found(
+            self.no_maptiler_layers_found(
                 "Error",
                 "No MapTiler Layers Found",
                 level=Qgis.Critical,
@@ -206,7 +206,7 @@ class MainDialog(QDialog):
         )
 
         if not maptiler_group:
-            self.no_maptier_layers_founde(
+            self.no_maptiler_layers_found(
                 "Error",
                 "No MapTiler Layers Found",
                 level=Qgis.Critical,
@@ -222,7 +222,7 @@ class MainDialog(QDialog):
         ]
 
         if not vector_tile_layers:
-            self.no_maptier_layers_founde(
+            self.no_maptiler_layers_found(
                 "Error",
                 "No MapTiler Layers Found",
                 level=Qgis.Critical,
