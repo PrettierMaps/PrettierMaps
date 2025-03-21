@@ -161,8 +161,8 @@ def test_save_quick_osm_layers():
 
         qml_file1 = Path(temp_dir) / "test_layer1_point.qml"
         qml_file2 = Path(temp_dir) / "test_layer2_line.qml"
-        assert not qml_file1.exists()
-        assert not qml_file2.exists()
+        assert qml_file1.exists()
+        assert qml_file2.exists()
 
         new_layer1 = QgsProject.instance().mapLayersByName("test_layer1_point")
         new_layer2 = QgsProject.instance().mapLayersByName("test_layer2_line")
