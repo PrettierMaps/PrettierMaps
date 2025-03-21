@@ -85,6 +85,23 @@ disallow_untyped_defs = false
 disallow_untyped_decorators = false
 ignore_missing_imports = true
 
+[tool.coverage.report]
+exclude_also = [
+    "if self\\.debug",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "@(abc\\.)?abstractmethod",
+    "if TYPE_CHECKING:",
+    "@overload",
+]
+ignore_errors = true
+
+[tool.coverage.run]
+omit = ["prettier_maps/ui/**", "prettier_maps/plugin.py"]
+
+
 [tool.tbump]
 
 [[tool.tbump.file]]
