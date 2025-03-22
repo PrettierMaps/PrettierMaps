@@ -1,7 +1,7 @@
 from .interfaces import IQgisInterface
 from .plugin import PrettierMapsPlugin
 
-__version__ = "1.4.0"
+__version__ = "1.4.1"
 
 
 def classFactory(iface: IQgisInterface) -> PrettierMapsPlugin:

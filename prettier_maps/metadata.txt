@@ -2,7 +2,7 @@
 name=Prettier Maps
 description=Split a MapTiler layer.
 about=Prettier Maps is a plugin that helps with separating a given vector tile layer from MapTiler into their respective vector tile sublayers for easier manageability. To start, open a map from MapTiler. Then open PrettierMaps and click split layers.
-version=1.4.0
+version=1.4.1
 qgisMinimumVersion=3.0
 
 author=Matthew Mckee, Fraser Spalding, Nicole Sung, Irene Hanna Anu, Ben Whitehead, Daniel Deneb Mecha Martín
