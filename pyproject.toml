@@ -116,6 +116,9 @@ src = "prettier_maps/metadata.txt"
 [[tool.tbump.file]]
 src = "prettier_maps/__init__.py"
 
+[[tool.tbump.file]]
+src = "docs/index.md"
+
 [tool.tbump.git]
 message_template = "Bump to {new_version}"
 tag_template = "{new_version}"
