@@ -1,4 +1,4 @@
-<h1 align="center">Prettier Maps 1.4.3</h1>
+<h1 align="center">Prettier Maps 1.4.4</h1>
 
 <p align="center">
   <img src="prettier_maps/assets/logo.png" alt="SQLModel" width="350">
@@ -53,7 +53,7 @@ To use the plugin, open a `Vector` map from MapTiler and then open the PrettierM
 
 <figure align="center">
   <img src="docs/assets/ui.png" alt="Image of PrettierMaps plugin UI" width="700">
-  <figcaption>Figure 1: Example UI of PrettierMaps plugin v1.4.3</figcaption>
+  <figcaption>Figure 1: Example UI of PrettierMaps plugin v1.4.4</figcaption>
 </figure>
 
 To style or save a QuickOSM query, create a QuickOSM query using the QuickOSM plugin, then open the PrettierMaps plugin. You can now style this query by clicking the `Style QuickOSM Layer` button, and save by clicking `Save QuickOSM Layers`
