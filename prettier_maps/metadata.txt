@@ -12,6 +12,6 @@ homepage=https://prettiermaps.github.io/PrettierMaps/
 tracker=https://github.com/PrettierMaps/PrettierMaps/issues
 repository=https://github.com/PrettierMaps/PrettierMaps
 
-icon=assets/icon.png
+icon=assets/logo.png
 category=Vector
 plugin_dependencies=MapTiler
