@@ -603,7 +603,7 @@ wheels = [
 
 [[package]]
 name = "prettier-maps"
-version = "1.4.0"
+version = "1.4.3"
 source = { virtual = "." }
 dependencies = [
     { name = "pyqt5" },
